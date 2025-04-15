@@ -3,14 +3,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:wght@400;700&display=swap');
 
 :root {
-  --bs-primary: #6fb3d4;      
-  --bs-secondary: #6f7ec3;    
+  --bs-primary: #6fb3d4;   
+  --bs-primary-dark: #1F516B;  
+  --bs-secondary: #6f7ec3; 
+  --bs-secondary-dark: #42539E;   
   --bs-success: #367c74;    
   --bs-info: #6fc3b4;         
   --bs-warning: #c97a41;      
   --bs-danger: #a33f3f;       
   --bs-light: #8799a0;      
-  --bs-dark: #000000;  
+  --bs-dark: #000000;
 }
 
 body {
