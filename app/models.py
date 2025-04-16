@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
 
@@ -14,8 +15,8 @@ class Account(db.Model):
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
     role: Mapped[str] = mapped_column(nullable=False)
     password_hash: Mapped[str] = mapped_column(nullable=False)
-    created_at: Mapped[str] = mapped_column(nullable=False)
-    updated_at: Mapped[str] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     
     user: Mapped['User'] = db.relationship(back_populates="account", uselist=False)
 
@@ -32,6 +33,6 @@ class User(db.Model):
     city: Mapped[str] = mapped_column(nullable=False)
     state: Mapped[str] = mapped_column(nullable=False)
     zip_code: Mapped[str] = mapped_column(nullable=False)
-    created_at: Mapped[str] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     
     account: Mapped['Account'] = db.relationship(back_populates="user")
