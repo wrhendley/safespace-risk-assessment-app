@@ -1,6 +1,8 @@
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 function NavBar(){
+    const navigate = useNavigate();
 
     return(
         <>
@@ -14,7 +16,8 @@ function NavBar(){
                 <Nav>
                     <Nav.Link href='/'>Home</Nav.Link>
                     <Nav.Link href='/'>Features</Nav.Link>
-                    <Nav.Link href='/'>Login</Nav.Link>
+                    <Nav.Link href='/login'>Login</Nav.Link>
+                    <Button variant='primary' onClick={()=>navigate('/register')}>Get Started</Button>
                 </Nav>
                 </Navbar.Collapse>
             </Container>
