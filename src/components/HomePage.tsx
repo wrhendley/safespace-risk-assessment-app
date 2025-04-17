@@ -1,52 +1,47 @@
-import { Container, Button, Alert } from "react-bootstrap";
-// import { TableauViz } from '@tableau/embedding-api-react';
-// import LineChartOption2 from "./LineChart";
+import { Container, Button, Row, Col, Image } from "react-bootstrap";
 import { onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "react";
-import { auth } from '../firebaseConfig';
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from '../firebaseConfig';
+import { User } from "firebase/auth";
 
 function HomePage(){
     const navigate = useNavigate();
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(()=>{
         onAuthStateChanged(auth, (user) => {
             if (user) {
-              // User is signed in, see docs for a list of available properties
-              // https://firebase.google.com/docs/reference/js/firebase.User
-                const uid = user.uid;
-                // ...
-                console.log("uid", uid)
+                setUser(user);
             } else {
-                // User is signed out
-                // ...
-                console.log("user is logged out")
+                setUser(null);
             }
         });
-    }, [])
-
+    }, []);
 
     return (
-        <Container className="p-5 my-3 rounded text-center">
-            
+        <Container className="p-5 my-5 rounded">
+            <Row className="align-items-center">
+                <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
+                    <h1>SafeSpace is your money's comfort zone.</h1>
+                    <p>Plan smarter, learn faster, and take control with total peace of mind.</p>
+                    <div className='text-center'>
+                    {user?(
+                        <Button variant="primary">Go to Dashboard</Button>
+                    ):(
+                        <>
+                        <Button variant="primary">Continue as Guest</Button>
+                        <Button variant="secondary" onClick={() => navigate('/register')}>Get Started</Button></>
+                    )}
+                    </div>
+                    
+                </Col>
 
-            <h1>Let's get started!</h1>
-            <p>Here's a description of our application...</p>
-            <div className='text-center'>
-            <Button variant="primary" className='m-3'>Continue as Guest</Button>
-            <Button variant="secondary" className='m-3' onClick={()=>navigate('/register')}>Get Started</Button>
-            </div>
-            
-            
-            <h1 className="text-center mt-5">Tableau Example</h1>
-            <div className='m-3'>
-            {/* <TableauViz 
-                src='https://public.tableau.com/shared/NWPCF5CJP?:display_count=n&:origin=viz_share_link'
-                toolbar="bottom" 
-                hideTabs
-            /> */}
-            </div>
-            
+                <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
+                    <Image src="/home-page-image.jpg" alt="" width="100%" fluid />
+                </Col>
+
+            </Row>
         </Container>
     );
 };

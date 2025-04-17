@@ -6,6 +6,7 @@ import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import Register from './components/Register';
 import Login from './components/Login';
+import UserProfileForm from './components/UserProfileForm';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path='/' element={<HomePage/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/login' element={<Login/>}/>
+          <Route path='/userprofileform' element={<UserProfileForm/>}/>
         </Routes>
       </main>
       <Footer/>
