@@ -29,10 +29,11 @@ class User(db.Model):
     phone_number: Mapped[str] = mapped_column(unique=True, nullable=False)
     first_name: Mapped[str] = mapped_column(nullable=False)
     last_name: Mapped[str] = mapped_column(nullable=False)
-    street_address: Mapped[str] = mapped_column(nullable=False)
-    city: Mapped[str] = mapped_column(nullable=False)
-    state: Mapped[str] = mapped_column(nullable=False)
-    zip_code: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
+    # the code below is commented out for possible use in future implementations
+    # street_address: Mapped[str] = mapped_column(nullable=False)
+    # city: Mapped[str] = mapped_column(nullable=False)
+    # state: Mapped[str] = mapped_column(nullable=False)
+    # zip_code: Mapped[str] = mapped_column(nullable=False)
     
     account: Mapped['Account'] = db.relationship(back_populates="user")
