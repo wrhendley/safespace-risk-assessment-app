@@ -18,6 +18,9 @@ securityDefinitions:
     in: header
 
 paths:
- # Accounts
- # Users
+  # Accounts
+  # Users
 
+definitions:
+  # Accounts
+  # Users
