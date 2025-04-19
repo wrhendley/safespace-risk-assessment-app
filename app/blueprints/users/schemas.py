@@ -8,7 +8,3 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 # instantiating schemas
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
-
-# Left the part below in just in case we end up needing it, can be removed later
-# Creating a login schema that excludes details name, phone for user authentication
-# user_login_schema = UserSchema(exclude=['name', 'phone'])
