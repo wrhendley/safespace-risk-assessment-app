@@ -1,9 +1,6 @@
 from flask import Flask
-from flask_migrate import Migrate
 from app.models import db
-from app.extensions import ma, limiter, cache
-
-migrate = Migrate()
+from app.extensions import ma, limiter, cache, migrate
 
 def create_app(config_name = 'DevelopmentConfig'):
     app = Flask(__name__)
