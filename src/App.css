@@ -77,9 +77,14 @@ h1 {
   border-radius: 5px;
 }
 
+.dropdown-toggle,
+.dropdown-toggle:focus,
+.dropdown-toggle.show {
+  color: white !important;
+}
+
 footer a:hover {
   color: var(--bs-primary);
-  font-size: 1.5rem;
 }
 
 .navbar .navbar-nav .nav-link:hover{
@@ -87,7 +92,25 @@ footer a:hover {
   background-color: var(--bs-secondary);
   text-decoration: none;
   border-radius: 5px;
-  
+}
+
+.modal-content.success {
+  border: 3px solid var(--bs-success);
+}
+
+.side-bar {
+  background-color: var(--bs-primary-dark);
+  color: white;
+  border-radius: 6px;
+}
+
+.side-bar-link {
+  font-size:1.5rem;
+}
+
+.side-bar-link:hover {
+  color: var(--bs-secondary);
+  text-decoration: underline;
 }
 
 .container {

@@ -1,12 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Routes, Route} from 'react-router-dom';
-import HomePage from './components/HomePage';
-import NavBar from './components/NavBar';
-import Footer from './components/Footer';
-import Register from './components/Register';
-import Login from './components/Login';
-import UserProfileForm from './components/UserProfileForm';
+import HomePage from './components/Other/HomePage';
+import NavBar from './components/Other/NavBar';
+import Footer from './components/Other/Footer';
+import SignUp from './components/Authorization/SignUp';
+import Login from './components/Authorization/Login';
+import UserProfileForm from './components/Users/UserProfileForm';
+import UserDashboard from './components/Users/UserDashboard';
+import NotFound from './components/Other/NotFound';
+import NoAccess from './components/Other/NoAccess';
 
 function App() {
 
@@ -16,9 +19,13 @@ function App() {
       <NavBar/>
         <Routes>
           <Route path='/' element={<HomePage/>}/>
-          <Route path='/register' element={<Register/>}/>
+          <Route path='/signup' element={<SignUp/>}/>
           <Route path='/login' element={<Login/>}/>
-          <Route path='/userprofileform' element={<UserProfileForm/>}/>
+          <Route path='/users/:id' element={<UserProfileForm />}/>
+          <Route path='/userdashboard' element={<UserDashboard/>}/>
+          <Route path='*' element={<NotFound/>}/>
+          <Route path='/noaccess' element={<NoAccess/>}/>
+          
         </Routes>
       </main>
       <Footer/>

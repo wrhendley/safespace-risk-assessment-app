@@ -1,37 +1,26 @@
 // Login.tsx
-import { useState, useEffect, FormEvent } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { useState, FormEvent } from "react";
 import { Container, Row, Col, Button, Form, Image,  } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import SuccessModal from "./SuccessModal";
-import { onAuthStateChanged, User } from "firebase/auth";
+import SuccessModal from "../Other/SuccessModal";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [error, setError] = useState<string | null>(null);
+    const [errorPage, setErrorPage] = useState<string | null>(null);
     const navigate = useNavigate();
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-    const [user, setUser] = useState<User|null>(null);
+    const { signIn, user, error } = useAuth();
 
-    useEffect(()=>{
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        });
-    }, []);
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signIn(email, password);
             setShowSuccessModal(true);
         } catch (err: any) {
-            setError(err.message);
+            setErrorPage(`Login failed: ${err.message}`);
         }
     };
 
@@ -63,13 +52,13 @@ const Login = () => {
                         <Button variant='primary' type='submit'>Log In</Button>
                         <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
                     </div>
-                {error && <p>{error}</p>}
+                {error || errorPage && <p>{error || errorPage}</p>}
                 </Form>
                     <SuccessModal 
                     show={showSuccessModal}
                     onClose={() => {
                         setShowSuccessModal(false);
-                        navigate('/');
+                        navigate('/userdashboard');
                     }}
                     title="Login Successful!"
                     message= {`Hey, ${user?.email}, let's get to work.`}

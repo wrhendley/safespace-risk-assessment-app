@@ -1,56 +1,73 @@
-// Register.tsx
 import { useState, FormEvent } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Row, Col, Image, Button, Alert } from "react-bootstrap";
-import SuccessModal from "./SuccessModal";
+import SuccessModal from "../Other/SuccessModal";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
-const Register = () => {
+const SignUp = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [username, setUsername] = useState<string>("");
     const [role, setRole] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [error, setError] = useState<string | null>(null);
+    const [errorPage, setErrorPage] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const navigate = useNavigate();
+    const { user, signUp, error } = useAuth();
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
     
-        if (!email || !password || !confirmPassword || !username || !role) {
-            setError("Please fill out all required fields.");
+        if (!email || !password || !confirmPassword || !role) {
+            setErrorPage("Please fill out all required fields.");
             return;
         }
     
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("Please enter a valid email address.");
+            setErrorPage("Please enter a valid email address.");
             return;
         }
     
         if (password !== confirmPassword) {
-            setError("Passwords do not match.");
+            setErrorPage("Passwords do not match.");
             return;
         }
     
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
         if (!strongPasswordRegex.test(password)) {
-            setError("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
+            setErrorPage("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
             return;
         }
     
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            // Add Firestore storage here
+            // First, register with Firebase
+            await signUp(email, password);
+    
+            // Prepare payload for PostgreSQL
+            const payload = {
+                email: email,
+                firebase_uid: user?.uid,
+                email_verified: user?.emailVerified,
+                role: role || "user", // default to "user"
+                created_at: new Date(),
+                is_active: true
+            };
+    
+            // Make the Axios POST request
+            const response = await axios.post("http://127.0.0.1:5000/accounts", payload);
+    
+            if (response.status !== 200) {
+                throw new Error("Failed to create account.");
+            }
+    
+            console.log("Account created:", response.data);
             setShowSuccessModal(true);
         } catch (err: any) {
-            setError(err.message);
+            setErrorPage(err.message || "An error occurred during the registration process.");
         }
     };
     
-
     return (
         <Container className="p-5 my-5 rounded">
             <Row className="align-items-center">
@@ -71,18 +88,10 @@ const Register = () => {
                             <option value="admin">Admin</option>
                         </Form.Select>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="registerUsername">
-                        <Form.Label>Username*</Form.Label>
-                        <Form.Control 
-                            type="text" 
-                            placeholder="Enter username"                     
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}/>
-                    </Form.Group>
                     <Form.Group className="mb-3" controlId="registerEmail">
                         <Form.Label>Email address*</Form.Label>
                         <Form.Control 
-                            type="email" 
+                            type="text" 
                             placeholder="Enter email"                     
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}/>
@@ -109,15 +118,15 @@ const Register = () => {
                         <Button variant='primary' type='submit'>Create Account</Button>
                         <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
                     </div>
-                {error && 
-                <Alert className='mt-3' variant='danger'>{error}</Alert>
+                {error || errorPage && 
+                <Alert className='mt-3' variant='danger'>{error || errorPage}</Alert>
                 }
                 </Form>
                 <SuccessModal 
                 show={showSuccessModal}
                 onClose={() => {
                     setShowSuccessModal(false);
-                    navigate('/userprofileform');
+                    navigate(`/userprofile/${user?.uid}`);
                 }}
                 title="Account Created"
                 message="Your account has been created successfully."
@@ -135,4 +144,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default SignUp;

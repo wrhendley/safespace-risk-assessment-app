@@ -1,22 +1,9 @@
-import { Navbar, Nav, Container, Button, NavDropdown } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import { auth } from '../firebaseConfig';
-import { User, signOut, onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '../../context/AuthContext';
 
 function NavBar(){
-    const navigate = useNavigate();
-    const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        });
-    }, []);
+    const {user, logOut} = useAuth();
 
     return (
         <>
@@ -44,14 +31,13 @@ function NavBar(){
 
                         {user ? (
                             <>
-                                <Nav.Link href="/user-profile">USER PROFILE</Nav.Link>
-                                <Nav.Link onClick={() => signOut(auth)}>SIGN OUT</Nav.Link>
+                                <Nav.Link href={`/userprofile/${user.uid}`}>USER PROFILE</Nav.Link>
+                                <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link>
                             </>
                         ) : (
                             <>
                                 <Nav.Link href="/login">LOG IN</Nav.Link>
                                 <Nav.Link id='nav-get-started' href='/register'>GET STARTED</Nav.Link>
-                                {/* <Button variant="primary" className="m-0" onClick={() => navigate('/register')}>GET STARTED</Button> */}
                             </>
                         )}
                     </Nav>
@@ -59,9 +45,7 @@ function NavBar(){
             </Container>
         </Navbar>
 
-        <div className="text-center" style={{ backgroundColor: "black" }}>
-            <img src="/safespace-business-card-750x300.jpeg" height="200px" alt="SafeSpace Promo" />
-        </div>
+
         </>
     );
 }

@@ -18,15 +18,17 @@ const SuccessModal = ({
 }: SuccessModalProps) => {
     return (
         <Modal show={show} onHide={onClose} centered>
-        <Modal.Header closeButton>
-            <Modal.Title>{title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{message}</Modal.Body>
-        <Modal.Footer>
-            <Button variant="primary" onClick={onClose}>
-            {buttonText}
-            </Button>
-        </Modal.Footer>
+            <div className='modal-content success'>
+            <Modal.Header closeButton>
+                <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{message}</Modal.Body>
+            <Modal.Footer>
+                <Button variant="success" onClick={onClose}>
+                {buttonText}
+                </Button>
+            </Modal.Footer>
+        </div>
         </Modal>
     );
 };
