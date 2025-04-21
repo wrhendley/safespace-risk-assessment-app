@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import request, jsonify
-from firebase_admin import credentials
+from firebase_admin import auth, credentials
 import pyrebase
 import os
 
