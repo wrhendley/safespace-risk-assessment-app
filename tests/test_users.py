@@ -8,7 +8,7 @@ from datetime import datetime
 # need token creation and decoding funcions started to use function names
 # add test functions from Accounts to log into account, add Account in setup for login purposes and authorization for token required routes
 
-# Account Test Cases
+# User Test Cases
 class TestUser(unittest.TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
@@ -24,10 +24,10 @@ class TestUser(unittest.TestCase):
         self.client = self.app.test_client()
 
     # Create New User
-    def test_user_signup(self):
+    def test_create_user(self):
         pass
 
-    def test_invalid_signup(self):
+    def test_invalid_create(self):
         pass
 
     # Get User by ID, auth required
