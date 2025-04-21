@@ -1,8 +1,11 @@
 from flask import Flask
+from flask_migrate import Migrate
 from app.models import db
 from app.extensions import ma, limiter, cache
 
-def create_app(config_name):
+migrate = Migrate()
+
+def create_app(config_name = 'DevelopmentConfig'):
     app = Flask(__name__)
     app.config.from_object(f'config.{config_name}')
     
@@ -11,6 +14,7 @@ def create_app(config_name):
     ma.init_app(app)
     limiter.init_app(app)
     cache.init_app(app)
+    migrate.init_app(app, db)
     
     # Register blueprints
     
