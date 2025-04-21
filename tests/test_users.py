@@ -12,16 +12,10 @@ from datetime import datetime
 class TestUser(unittest.TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
-        today = datetime
-        self.user = User(email="accountemail@test.com", firebase_uid="", email_verified="true", role='admin', created_at=today, updated_at=today) # attributes can be adjusted, placed all for time being
-        self.account = Account(email="accountemail@test.com", firebase_uid="", email_verified="true", role='admin', created_at=today, updated_at=today)
+        self.client = self.app.test_client()
         with self.app.app_context():
             db.drop_all()
             db.create_all()
-            db.session.add(self.customer)
-            db.session.commit()
-        self.token = encode_token(1) # need to update this according to the util file
-        self.client = self.app.test_client()
 
     # Create New User
     def test_create_user(self):
