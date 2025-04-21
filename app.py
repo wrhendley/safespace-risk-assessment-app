@@ -1,10 +1,8 @@
-import os
 from app import create_app
 from app.models import db
-from dotenv import load_dotenv
-load_dotenv()
+from config import Env
 
-env = os.getenv('FLASK_ENV')
+env = Env.FLASK_ENV
 
 app = create_app(env)
 
