@@ -7,16 +7,13 @@ import firebase_admin
 firebaseConfig = Env.FIREBASE_CONFIG
 cred = credentials.Certificate(Env.FIREBASE_CREDENTIAL_PATH)
 
-firebase = firebase_admin.initialize_app(cred)
-auth = firebase.auth()
-
 def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
         
         if 'Authorization' in request.headers:
-            token = request.headers.get('Authorization').split()[1]
+            token = request.headers.get('Authorization').split('Bearer ')[1]
             
             if not token:
                 return jsonify({'message': 'Missing token'}), 401
