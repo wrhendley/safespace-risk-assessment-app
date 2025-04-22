@@ -16,6 +16,9 @@ class Env:
     
     FLASK_ENV = os.getenv('FLASK_ENV')
     
+    FIREBASE_CREDENTIAL_PATH = os.getenv('FIREBASE_CREDENTIAL_PATH')
+    FIREBASE_CONFIG = os.getenv('FIREBASE_CONFIG')
+    
 class DevelopmentConfig:
     SQLALCHEMY_DATABASE_URI = Env.POSTGRES_URI
     DEBUG = True
