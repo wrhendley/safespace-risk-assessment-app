@@ -10,4 +10,4 @@ account_schema = AccountSchema()
 accounts_schema = AccountSchema(many=True)
 
 # Creating a login schema that excludes details name, phone for account authentication
-account_login_schema = AccountSchema(include=['id', 'firebase_uid'])
+account_login_schema = AccountSchema(only=['id', 'firebase_uid'])
