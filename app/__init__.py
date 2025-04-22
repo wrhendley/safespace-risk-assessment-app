@@ -1,6 +1,7 @@
 from flask import Flask
 from app.models import db
 from app.extensions import ma, limiter, cache, migrate
+from app.blueprints.accounts import accounts_bp
 
 def create_app(config_name = 'DevelopmentConfig'):
     app = Flask(__name__)
@@ -14,6 +15,6 @@ def create_app(config_name = 'DevelopmentConfig'):
     migrate.init_app(app, db)
     
     # Register blueprints
-    
+    app.register_blueprint(accounts_bp, url_prefix='/accounts')
     
     return app
