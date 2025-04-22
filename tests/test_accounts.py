@@ -4,8 +4,6 @@ import unittest
 from unittest.mock import patch
 from datetime import datetime
 
-# Needs: verify attributes for table, update on this file after confirmation of attributes
-
 # Account Test Cases
 class TestAccount(unittest.TestCase):
     def setUp(self):
@@ -169,9 +167,9 @@ class TestAccount(unittest.TestCase):
 
     # Get Account by ID, auth required
     @patch('firebase_admin.auth.verify_id_token')
-    def test_get_account_success(self, mock_verify_id_token):
+    def test_get_account_success(self, mock_firebase_token):
         # Mock Firebase token
-        mock_verify_id_token.return_value = {
+        mock_firebase_token.return_value = {
             'uid': 'test_uid_123',
             'email': 'user@example.com',
             'email_verified': True
@@ -191,8 +189,8 @@ class TestAccount(unittest.TestCase):
         self.assertIn(b'user@example.com', response.data)
 
     @patch('firebase_admin.auth.verify_id_token')
-    def test_get_account_not_found(self, mock_verify_id_token):
-        mock_verify_id_token.return_value = {
+    def test_get_account_not_found(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
             'uid': 'irrelevant_uid',
             'email': 'ghost@example.com',
             'email_verified': True
@@ -208,8 +206,8 @@ class TestAccount(unittest.TestCase):
         self.assertIn(b'Unauthorized', response.data)
 
     @patch('firebase_admin.auth.verify_id_token')
-    def test_get_account_invalid_token(self, mock_verify_id_token):
-        mock_verify_id_token.side_effect = Exception("Invalid token")
+    def test_get_account_invalid_token(self, mock_firebase_token):
+        mock_firebase_token.side_effect = Exception("Invalid token")
         headers = {'Authorization': 'Bearer fake_token'}
         response = self.client.get('/account/1', headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
@@ -217,8 +215,8 @@ class TestAccount(unittest.TestCase):
 
     # Delete Account by ID, auth required
     @patch('firebase_admin.auth.verify_id_token')
-    def test_delete_own_account_success(self, mock_verify_id_token):
-        mock_verify_id_token.return_value = {
+    def test_delete_own_account_success(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
             'uid': 'delete_me_uid',
             'email': 'deleteme@example.com',
             'email_verified': True
@@ -239,16 +237,16 @@ class TestAccount(unittest.TestCase):
         self.assertIn(b'Unauthorized', response.data)
 
     @patch('firebase_admin.auth.verify_id_token')
-    def test_delete_account_invalid_token(self, mock_verify_id_token):
-        mock_verify_id_token.side_effect = Exception("Invalid token")
+    def test_delete_account_invalid_token(self, mock_firebase_token):
+        mock_firebase_token.side_effect = Exception("Invalid token")
         headers = {'Authorization': 'Bearer invalid_token'}
         response = self.client.delete('/account/1', headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
         self.assertIn(b'Invalid or expired token', response.data)
 
     @patch('firebase_admin.auth.verify_id_token')
-    def test_delete_account_not_found(self, mock_verify_id_token):
-        mock_verify_id_token.return_value = {
+    def test_delete_account_not_found(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
             'uid': 'any_uid',
             'email': 'user@example.com',
             'email_verified': True
@@ -282,9 +280,9 @@ class TestAccount(unittest.TestCase):
         self.assertIn(b'insufficient role', response.data)
 
     @patch('firebase_admin.auth.verify_id_token')
-    def test_delete_other_user_forbidden(self, mock_verify_id_token):
+    def test_delete_other_user_forbidden(self, mock_firebase_token):
         # Authenticated user (not admin)
-        mock_verify_id_token.return_value = {
+        mock_firebase_token.return_value = {
             'uid': 'uid_user1',
             'email': 'user1@example.com',
             'email_verified': True
@@ -299,8 +297,8 @@ class TestAccount(unittest.TestCase):
         self.assertIn(b'Forbidden', response.data)
 
     @patch('firebase_admin.auth.verify_id_token')
-    def test_admin_can_delete_any_account(self, mock_verify_id_token):
-        mock_verify_id_token.return_value = {
+    def test_admin_can_delete_any_account(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
             'uid': 'admin_uid',
             'email': 'admin@example.com',
             'email_verified': True
