@@ -6,10 +6,12 @@ import { Container, Form, Row, Col, Image, Button, Alert } from "react-bootstrap
 import SuccessModal from "../Other/SuccessModal";
 import { useAuth } from '../../context/AuthContext';
 import axios from "axios";
+import NoAccess from "../Other/NoAccess";
 
 const UserProfileForm: React.FC = () => {
     const { id } = useParams();
     const { user, logOut } = useAuth();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
@@ -17,21 +19,29 @@ const UserProfileForm: React.FC = () => {
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const navigate = useNavigate();
 
-
-    // Fetch user data on mount and if user Id updates
-    useEffect(() => {
+// Fetch user data when component mounts or when ID changes
+useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try{
+                const response = await axios.get(`http://127.0.0.1:5000/users/${id}`);
+                const { first_name, last_name, phone_number } = response.data[0];
+                setFirstName(first_name);
+                setLastName(last_name);
+                setPhone(phone_number);
+            }catch(error){
+                const err = error as Error;
+                console.error("Error fetching user data:", err.message);
+                setError(err.message);
+            }finally{
+                setIsLoading(false);
+            }
+        }
         if (id) {
-            axios.get(`http://127.0.0.1:5000/users/${id}`)
-                .then(response => {
-                    setFirstName(response.data[0].first_name);
-                    setLastName(response.data[0].last_name);
-                    setPhone(response.data[0].phone_number);
-                })
-                .catch(error =>{
-                    console.error("Error fetching user data:", error.message);
-                    setError(error.message);
-                });
-    }}, [id]);
+            fetchData();
+        }
+            
+    }, [id]);
 
         // Handle account deletion
         const handleDeleteAccount = async () => {
@@ -71,125 +81,114 @@ const UserProfileForm: React.FC = () => {
         }
         
         try {
-            let userData = {
-                account_id: user?.uid,
-                first_name: firstName,
-                last_name: lastName,
-                phone_number: phone,
-                created_at: new Date(),
-                updated_at: new Date()
-            };
             // Put/Post the User Info
             let response;
+            let userData;
             if(id){
+                userData = {
+                    account_id: user?.uid,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone_number: phone,
+                    updated_at: new Date()
+                };
                 response = await axios.put(`http://127.0.0.1:5000/users/${id}`, userData,
                     {headers:{'Content-Type': 'application/json'}}
                 );
             }else{
+                userData = {
+                    account_id: user?.uid,
+                    first_name: firstName,
+                    last_name: lastName,
+                    phone_number: phone,
+                    created_at: new Date(),
+                    updated_at: new Date()
+                };
                 response = await axios.post(
                     `http://127.0.0.1:5000/customers/`, 
                     userData, 
                     {headers:{'Content-Type': 'application/json'}}
                 );
             }
-            if (response.status !== 200) {
+            if (response.status < 200 || response.status >= 300) {
                 throw new Error("Failed to save user info.");
             }
             setShowSuccessModal(true);           
-        }catch(err){
+        }catch(error){
+            const err = error as Error;
             console.error("Error submitting form:", err.message);
             setError(err.message);
         }
 
     };
-    
-    return (
-        <Container className="p-5 my-5 rounded">
-            <Row className="align-items-center">
-                <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
-                <h1>Your personal info's safe with us.</h1>
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="userFirstName">
-                        <Form.Label>First Name*</Form.Label>
-                        <Form.Control 
-                            type="text" 
-                            placeholder="Enter your first name"                     
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}/>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="userLastName">
-                        <Form.Label>Last Name*</Form.Label>
-                        <Form.Control 
-                            type="text" 
-                            placeholder="Enter your last name"                     
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}/>
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="userPhone">
-                        <Form.Label>Phone Number*</Form.Label>
-                        <Form.Control 
-                            type="tel" 
-                            placeholder="Enter your phone number" 
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}/>
-                    </Form.Group>
-
-                    
-                    <div className='text-center'>
-                        <Button variant='primary' type='submit'>Save</Button>
-                        <Button variant='danger' onClick={handleDeleteAccount}>Delete Account</Button>
-                    </div>
-                {error && 
-                <Alert className='mt-3' variant='danger'>{error}</Alert>
-                }
-                </Form>
-                <SuccessModal 
-                show={showSuccessModal}
-                onClose={() => {
-                    setShowSuccessModal(false);
-                    navigate('/userdashboard');
-                }}
-                title="Success!"
-                message="Your user profile has been successfully updated."
-                buttonText="Go to Your Dashboard"
-                />
-
-                </Col>
-
-                <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
-                    <Image src="/sign-up-img.jpg" alt="" width="100%" fluid />
-                </Col>
-
-            </Row>
-        </Container>
-    );
+    if(user){
+        return (
+            <Container className="p-5 my-5 rounded">
+                <Row className="align-items-center">
+                    <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
+                    <h1>Your personal info's safe with us.</h1>
+                    {isLoading&&<>
+                            <div className="text-center">
+                                <div className="spinner" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                    </>}
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3" controlId="userFirstName">
+                            <Form.Label>First Name*</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                placeholder="Enter your first name"                     
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}/>
+                                autoFocus
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="userLastName">
+                            <Form.Label>Last Name*</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                placeholder="Enter your last name"                     
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="userPhone">
+                            <Form.Label>Phone Number*</Form.Label>
+                            <Form.Control 
+                                type="tel" 
+                                placeholder="Enter your phone number" 
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}/>
+                        </Form.Group>                        
+                        <div className='d-flex justify-content-center gap-3 mt-3'>
+                            <Button variant='primary' type='submit'>Save</Button>
+                            <Button variant='danger' onClick={handleDeleteAccount}>Delete Account</Button>
+                        </div>
+                    {error && 
+                    <Alert className='mt-3' variant='danger'>{error}</Alert>
+                    }
+                    </Form>
+                    <SuccessModal 
+                    show={showSuccessModal}
+                    onClose={() => {
+                        setShowSuccessModal(false);
+                        navigate('/userdashboard');
+                    }}
+                    title="Success!"
+                    message="Your user profile has been successfully updated."
+                    buttonText="Go to Your Dashboard"
+                    />
+                    </Col>
+                    <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
+                        <Image src="/sign-up-img.jpg" alt="" width="100%" fluid />
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }else{
+        if (isLoading) return null;
+        return <NoAccess />;
+    }
 };
 
 export default UserProfileForm;
-
-type UserProfileFormProps = {
-    id: string;
-};
-
-    // const [profilePic, setProfilePic] = useState<File |null>(null);
-    // const [imagePreview, setImagePreview] = useState('');
-
-
-        // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target.files?.[0];
-    //     if (file) {
-    //         setProfilePic(file);
-    //         setImagePreview(URL.createObjectURL(file)); 
-    //     }
-    // };
-
-    {/* <Form.Group controlId="userImage" className="mb-3">
-    <Form.Label>Upload a Profile Image</Form.Label>
-    <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
-</Form.Group>
-{imagePreview&&
-<div className="text-center mb-3">
-    <Image src={imagePreview} alt="Preview" rounded width={120} height={120} />
-</div>
-} */}

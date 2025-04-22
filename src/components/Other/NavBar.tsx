@@ -1,6 +1,7 @@
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import SignOutButton from './SignOutButton';
 
 function NavBar(){
     const {user, logOut} = useAuth();
@@ -31,13 +32,14 @@ function NavBar(){
 
                         {user ? (
                             <>
-                                <Nav.Link href={`/userprofile/${user.uid}`}>USER PROFILE</Nav.Link>
-                                <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link>
+                                <Nav.Link href={`/users/${user.uid}`}>USER PROFILE</Nav.Link>
+                                <SignOutButton/>
+                                {/* <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link> */}
                             </>
                         ) : (
                             <>
                                 <Nav.Link href="/login">LOG IN</Nav.Link>
-                                <Nav.Link id='nav-get-started' href='/register'>GET STARTED</Nav.Link>
+                                <Nav.Link id='nav-get-started' href='/signup'>GET STARTED</Nav.Link>
                             </>
                         )}
                     </Nav>

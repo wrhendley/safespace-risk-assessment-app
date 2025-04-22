@@ -1,6 +1,7 @@
 import { Container, Button, Row, Col, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import SignOutButton from "./SignOutButton";
 
 function HomePage(){
     const navigate = useNavigate();
@@ -18,16 +19,17 @@ function HomePage(){
                 <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>SafeSpace is your money's comfort zone.</h1>
                     <p>Plan smarter, learn faster, and take control with total peace of mind.</p>
-                    <div className='text-center'>
+                    <div className='d-flex justify-content-center gap-2'>
                         {/* If user is signed in, option to go to dashboard, 
                         otherwise, continue as guest or sign in*/}
                     {user?(
                         <><Button variant="primary" onClick={()=>navigate('/userdashboard')}>Go to Dashboard</Button>
-                        <Button variant="secondary" onClick={()=>logOut()}>Sign Out</Button></>
+                        <SignOutButton/></>
+                        // {/* <Button variant="secondary" onClick={()=>logOut()}>Sign Out</Button></> */}
                     ):(
                         <>
                         <Button variant="primary">Continue as Guest</Button>
-                        <Button variant="secondary" onClick={() => navigate('/register')}>Get Started</Button></>
+                        <Button variant="secondary" onClick={() => navigate('/signup')}>Get Started</Button></>
                     )}
                     </div>
                     

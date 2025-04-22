@@ -16,7 +16,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null);
+
+    // useEffect(()=>{
+    //     const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
+    //         setUser(currentUser);
+    //         setLoading(false);
+    //         setError(null);
+    //     });
+
+    //     return ()=>{
+    //         try{
+    //             unsubscribe();
+    //         }catch(err:any){
+    //             setError(err.message);
+    //         }};
+    // }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -25,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (currentUser) {
                 // If user is signed in, set 'is_active' to true in your database
                 try {
-                    await axios.post("http://localhost:5000/api/accounts/update", {
+                    await axios.post("http://127.0.0.1:5000/accounts/update", {
                         firebase_uid: currentUser.uid,
                         is_active: true
                     });
@@ -35,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             } else {
                 // If user is signed out, set 'is_active' to false in your database
                 try {
-                    await axios.post("http://localhost:5000/api/accounts/update", {
+                    await axios.post("http://127.0.0.1:5000/accounts/update", {
                         firebase_uid: user?.uid,
                         is_active: false
                     });
@@ -60,7 +76,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const signIn = async (email: string, password: string) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-
         } catch (err: any) {
             setError(err.message);
             throw err;

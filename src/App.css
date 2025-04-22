@@ -104,6 +104,12 @@ footer a:hover {
   border-radius: 6px;
 }
 
+.bottom-nav {
+  background-color: var(--bs-primary-dark);
+  color: white;
+  border-color: var(--bs-primary-dark);
+}
+
 .side-bar-link {
   font-size:1.5rem;
 }
@@ -169,6 +175,10 @@ p {
 
 .bg-primary {
   background-color: var(--bs-primary) !important;
+}
+
+.bg-primary-dark {
+  background-color: var(--bs-primary-dark) !important;
 }
 
 .bg-secondary {
@@ -273,6 +283,21 @@ a:hover {
   background-color: var(--bs-danger);
   color: white;
 }
+
+/* Spinning the loading spinner */ 
+.spinner {
+  width: 40px;
+  height: 40px;
+  animation: rotate 2s infinite linear;
+  background-image: url('/safespace-logo-80x80.jpeg');
+  background-size: 40px 40px;
+}
+
+@keyframes rotate{ 
+  from {transform: rotate(0deg);} /* define the animation, from what to what*/
+  to {transform: rotate(360deg);}
+}
+
 
 
 /* Option 3*/
