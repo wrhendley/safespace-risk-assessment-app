@@ -12,12 +12,12 @@ class Account(db.Model):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    firebase_uid: Mapped[str] = mapped_column(unique=True)
+    firebase_uid: Mapped[str] = mapped_column(unique=True, nullable=False)
     role: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
-    last_login_at: Mapped[datetime] = mapped_column(nullable=True)
+    email_verified: Mapped[bool] = mapped_column(default=False)
     
     user: Mapped['User'] = db.relationship(back_populates="account", uselist=False)
 
