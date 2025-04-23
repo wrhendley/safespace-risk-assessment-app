@@ -5,35 +5,48 @@ import { useNavigate } from "react-router-dom";
 import SuccessModal from "../Other/SuccessModal";
 import { useAuth } from "../../context/AuthContext";
 import AlreadySignedIn from "./AlreadySignedIn";
-import api from "../../api";
+import LoadingPage from "../Other/LoadingPage";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [errorPage, setErrorPage] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
     const navigate = useNavigate();
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-    const { signIn, user, error } = useAuth();
+    const { signIn, loading, user, error } = useAuth();
 
     const handleLogin = async (e: FormEvent) => {
-        setIsLoading(true);
         e.preventDefault();
         try {
             await signIn(email, password);
+            setJustLoggedIn(true);
             setShowSuccessModal(true);
-            setIsLoading(false);
         } catch (err: any) {
             setErrorPage(`Login failed: ${err.message}`);
         }
     };
 
-    if(!user||isLoading){
+    if (loading) {
+        return <LoadingPage />;
+    }
+
+    if (user && !justLoggedIn) {
+    return <AlreadySignedIn />;
+    }
+
     return (
             <Container className="p-5 my-5 rounded">
                 <Row className="align-items-center">
                     <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>Welcome back.</h1>
+                    {loading&&<>
+                            <div className="text-center">
+                                <div className="spinner" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                    </>}
                     <Form onSubmit={handleLogin}>
                         <Form.Group className="mb-3" controlId="loginEmail">
                             <Form.Label>Email address</Form.Label>
@@ -56,6 +69,7 @@ const Login = () => {
                         <div className='text-center'>
                             <Button variant='primary' type='submit'>Log In</Button>
                             <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
+                            <br/><a className='small' href='/forgot-password'>Forgot password?</a>
                         </div>
                         {(error || errorPage) && (
                             <Alert variant="danger">
@@ -67,6 +81,7 @@ const Login = () => {
                         onClose={() => {
                             setShowSuccessModal(false);
                             navigate('/userdashboard');
+                            setJustLoggedIn(false);
                         }}
                         title="Login Successful!"
                         message= {`Hey, ${user?.email}, let's get to work.`}
@@ -81,9 +96,7 @@ const Login = () => {
                 </Row>
             </Container>
         );
-    }else{
-        return (<AlreadySignedIn/>);
-    }
+
 };
 
 export default Login;

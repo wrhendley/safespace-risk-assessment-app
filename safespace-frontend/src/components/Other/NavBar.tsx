@@ -39,8 +39,8 @@ function NavBar(){
                             </>
                         ) : (
                             <>
-                                <Nav.Link href="/login">LOG IN</Nav.Link>
-                                <Nav.Link id='nav-get-started' href='/signup'>GET STARTED</Nav.Link>
+                                <Nav.Link href="/accounts/login">LOG IN</Nav.Link>
+                                <Nav.Link id='nav-get-started' href='/accounts/signup'>GET STARTED</Nav.Link>
                             </>
                         )}
                     </Nav>

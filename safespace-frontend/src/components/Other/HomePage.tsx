@@ -6,7 +6,7 @@ import SignOutButton from "./SignOutButton";
 
 function HomePage(){
     const navigate = useNavigate();
-    const { user, logOut } = useAuth();
+    const { user } = useAuth();
 
     return (
         <>
@@ -26,11 +26,10 @@ function HomePage(){
                     {user?(
                         <><Button variant="primary" onClick={()=>navigate('/userdashboard')}>Go to Dashboard</Button>
                         <SignOutButton/></>
-                        // {/* <Button variant="secondary" onClick={()=>logOut()}>Sign Out</Button></> */}
                     ):(
                         <>
                         <Button variant="primary">Continue as Guest</Button>
-                        <Button variant="secondary" onClick={() => navigate('/signup')}>Get Started</Button></>
+                        <Button variant="secondary" onClick={() => navigate('/accounts/signup')}>Get Started</Button></>
                     )}
                     </div>
                     

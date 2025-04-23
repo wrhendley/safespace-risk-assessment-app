@@ -9,7 +9,7 @@ import Login from './components/Authorization/Login';
 import UserProfileForm from './components/Users/UserProfileForm';
 import UserDashboard from './components/Users/UserDashboard';
 import NotFound from './components/Other/NotFound';
-import NoAccess from './components/Other/NoAccess';
+import ForgotPassword from './components/Authorization/ForgotPassword';
 
 function App() {
 
@@ -23,6 +23,7 @@ function App() {
           <Route path='/accounts/login' element={<Login/>}/>
           <Route path='/users/:id' element={<UserProfileForm />}/>
           <Route path='/userdashboard' element={<UserDashboard/>}/>
+          <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='*' element={<NotFound/>}/>          
         </Routes>
       </main>

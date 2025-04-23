@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from "../../api";
 import NoAccess from "../Other/NoAccess";
 import React from "react";
+import { deleteUser } from "firebase/auth";
 
 const UserProfileForm: React.FC = () => {
     const { id } = useParams();
@@ -49,15 +50,15 @@ useEffect(() => {
             if (id) {
                 try {
                     // Call your API to delete the user account
-                    const response = await api.delete(`/users/${id}`);
-    
-                    if (response.status === 200) {
+                    // const response = await api.delete(`/users/${id}`);
+
+                    // if (response.status === 200) {
                         // Successfully deleted the account
-                        await logOut();  // Log out the user
+                        await deleteUser(user);
                         navigate("/"); // Redirect home
-                    } else {
-                        setError("An error occurred while deleting your account. Please try again later.");
-                    }
+                    // } else {
+                    //     setError("An error occurred while deleting your account. Please try again later.");
+                    // }
                 } catch (err) {
                     console.error("Error deleting account:", err);
                     setError("An error occurred while deleting your account. Please try again later.");
@@ -83,37 +84,37 @@ useEffect(() => {
         
         try {
             // Put/Post the User Info
-            let response;
-            let userData;
-            if(id){
-                userData = {
-                    account_id: user?.uid,
-                    first_name: firstName,
-                    last_name: lastName,
-                    phone_number: phone,
-                    updated_at: new Date()
-                };
-                response = await api.put(`/users/${id}`, userData,
-                    {headers:{'Content-Type': 'application/json'}}
-                );
-            }else{
-                userData = {
-                    account_id: user?.uid,
-                    first_name: firstName,
-                    last_name: lastName,
-                    phone_number: phone,
-                    created_at: new Date(),
-                    updated_at: new Date()
-                };
-                response = await api.post(
-                    `/customers/`, 
-                    userData, 
-                    {headers:{'Content-Type': 'application/json'}}
-                );
-            }
-            if (response.status < 200 || response.status >= 300) {
-                throw new Error("Failed to save user info.");
-            }
+            // let response;
+            // let userData;
+            // if(id){
+            //     userData = {
+            //         account_id: user?.uid,
+            //         first_name: firstName,
+            //         last_name: lastName,
+            //         phone_number: phone,
+            //         updated_at: new Date()
+            //     };
+            //     response = await api.put(`/users/${id}`, userData,
+            //         {headers:{'Content-Type': 'application/json'}}
+            //     );
+            // }else{
+            //     userData = {
+            //         account_id: user?.uid,
+            //         first_name: firstName,
+            //         last_name: lastName,
+            //         phone_number: phone,
+            //         created_at: new Date(),
+            //         updated_at: new Date()
+            //     };
+            //     response = await api.post(
+            //         `/customers/`, 
+            //         userData, 
+            //         {headers:{'Content-Type': 'application/json'}}
+            //     );
+            // }
+            // if (response.status < 200 || response.status >= 300) {
+            //     throw new Error("Failed to save user info.");
+            // }
             setShowSuccessModal(true);           
         }catch(error){
             const err = error as Error;
