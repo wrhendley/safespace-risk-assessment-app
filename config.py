@@ -16,7 +16,7 @@ class Env:
     
     FLASK_ENV = os.getenv('FLASK_ENV')
     
-    FIREBASE_CREDENTIAL_PATH = os.getenv('FIREBASE_CREDENTIAL_PATH')
+    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS').strip('"')
     FIREBASE_CONFIG = os.getenv('FIREBASE_CONFIG')
     
 class DevelopmentConfig:
