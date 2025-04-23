@@ -4,9 +4,6 @@ from firebase_admin import auth, credentials
 from config import Env
 import firebase_admin
 
-firebaseConfig = Env.FIREBASE_CONFIG
-cred = credentials.Certificate(Env.FIREBASE_CREDENTIAL_PATH)
-
 def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
