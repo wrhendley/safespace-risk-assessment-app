@@ -34,4 +34,7 @@ venv/
 .env
 
 # Secrets
+
+# SQLite Instances
+instance/
 credentials.json
