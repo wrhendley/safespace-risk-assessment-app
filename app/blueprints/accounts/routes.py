@@ -19,10 +19,7 @@ def create_account():
     except ValidationError as e:
         return jsonify(e.messages), 400
     
-    new_account = Account(  email=account_data['email'],
-                            firebase_uid=account_data['uid'],
-                            role=account_data['role'],
-                            is_active=account_data['is_active'])
+    new_account = Account(**account_data)
     db.session.add(new_account)
     db.session.commit()
     
@@ -52,6 +49,27 @@ def get_account():
         account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
         if not account:
             return jsonify({"message": "Account not found"}), 404
+        return account_schema.jsonify(account)
+    except:
+        return jsonify({'message': 'There was an error'}), 400
+    
+@accounts_bp.route('/', methods=['PUT'])
+@auth_required
+def update_account():
+    try:
+        account_data = account_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    try:
+        account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
+        if not account:
+            return jsonify({"message": "Account not found"}), 404
+        
+        account.email = account_data['email']
+        
+        db.session.commit()
+        
         return account_schema.jsonify(account)
     except:
         return jsonify({'message': 'There was an error'}), 400
