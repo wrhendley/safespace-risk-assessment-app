@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from app.utils.util import auth_required
 from app.blueprints.accounts import accounts_bp
-from app.blueprints.accounts.schemas import account_schema, accounts_schema
+from app.blueprints.accounts.schemas import account_schema, accounts_schema, account_login_schema
 from app.extensions import limiter
 from marshmallow import ValidationError
 from app.models import Account, db
@@ -19,7 +19,10 @@ def create_account():
     except ValidationError as e:
         return jsonify(e.messages), 400
     
-    new_account = Account(**account_data)
+    new_account = Account(  email=account_data['email'],
+                            firebase_uid=account_data['uid'],
+                            role=account_data['role'],
+                            is_active=account_data['is_active'])
     db.session.add(new_account)
     db.session.commit()
     
@@ -39,5 +42,16 @@ def get_accounts():
         if not accounts:
             return jsonify({"message": "No accounts found"}), 404
         return accounts_schema.jsonify(accounts)
+    except:
+        return jsonify({'message': 'There was an error'}), 400
+    
+@accounts_bp.route('/me', methods=['GET'])
+@auth_required
+def get_account():
+    try:
+        account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
+        if not account:
+            return jsonify({"message": "Account not found"}), 404
+        return account_schema.jsonify(account)
     except:
         return jsonify({'message': 'There was an error'}), 400
