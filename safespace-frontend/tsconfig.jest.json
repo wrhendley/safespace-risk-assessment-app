@@ -1,0 +1,13 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "commonjs",              // Use commonjs for Jest
+        "jsx": "react-jsx",                // Enable React JSX syntax support
+        "esModuleInterop": true,
+        "types": ["jest", "node"]          // Add Jest and Node types to ensure proper typing
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ]
+}
