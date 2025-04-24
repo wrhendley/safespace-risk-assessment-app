@@ -30,7 +30,7 @@ class User(db.Model):
     first_name: Mapped[str] = mapped_column(nullable=False)
     last_name: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     # the code below is commented out for possible use in future implementations
     # street_address: Mapped[str] = mapped_column(nullable=False)
     # city: Mapped[str] = mapped_column(nullable=False)

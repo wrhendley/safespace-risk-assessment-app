@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from app.utils.util import auth_required
 from app.blueprints.users import users_bp
-from app.blueprints.users.schemas import user_schema, users_schema
+from app.blueprints.users.schemas import user_schema
 from app.extensions import limiter
 from marshmallow import ValidationError
 from app.models import User, db
@@ -14,6 +14,7 @@ MAX_PER_PAGE = 100
 
 # Create User
 @users_bp.route('/', methods=['POST'])
+@auth_required # applying token verification wrapper to route
 @limiter.limit("5 per minute")
 def create_account():
     try:
@@ -28,7 +29,7 @@ def create_account():
     return user_schema.jsonify(new_user), 201
 
 # Get User by ID, auth required
-@users_bp.route('/<int:user_id>', methods=['GET'])
+@users_bp.route('/', methods=['GET'])
 @auth_required # applying token verification wrapper to route
 def get_user(user_id):
     query = select(User).where(User.id == user_id)
@@ -40,7 +41,7 @@ def get_user(user_id):
     return user_schema.jsonify(user), 200
 
 # Update User by ID, auth required
-@users_bp.route('/<int:user_id>', methods=['PUT'])
+@users_bp.route('/', methods=['PUT'])
 @auth_required # applying token verification wrapper to route
 def update_user(user_id):
     query = select(User).where(User.id == user_id)
@@ -61,7 +62,7 @@ def update_user(user_id):
     return user_schema.jsonify(user), 200
 
 # Delete User by ID, auth required
-@users_bp.route('/<int:user_id>', methods=['DELETE'])
+@users_bp.route('/', methods=['DELETE'])
 @auth_required # applying token verification wrapper to route
 def delete_user(user_id):
     user = db.session.get(User, user_id)
