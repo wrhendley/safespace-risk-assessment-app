@@ -30,7 +30,7 @@ def create_account():
 # Get User by ID, auth required
 @users_bp.route('/<int:user_id>', methods=['GET'])
 @auth_required # applying token verification wrapper to route
-def update_user(user_id):
+def get_user(user_id):
     query = select(User).where(User.id == user_id)
     user = db.session.execute(query).scalars().first()
 
@@ -67,4 +67,4 @@ def delete_user(user_id):
     user = db.session.get(User, user_id)
     db.session.delete(user)
     db.session.commit()
-    return jsonify({"message": f"succesfully deleted customer {user_id}"}), 200
+    return jsonify({"message": f"succesfully deleted user {user_id}"}), 200
