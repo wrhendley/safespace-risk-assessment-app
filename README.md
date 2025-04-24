@@ -1,5 +1,5 @@
 # SafeSpace Risk Assessment App
-*Authors:*
+**Authors:**
 - Elizabeth Yates (Frontend Developer)
 - Kyle Jones (Backend Developer)
 - Wesley Hendley (Backend Developer)
@@ -40,7 +40,7 @@
 
 ---
 
-## Interaction with Financial Data & Testing Approach:
+### Interaction with Financial Data & Testing Approach:
 
 - **Interaction:** Data sourced from CSV files or API endpoints, processed and transformed using Pandas pipelines, served via Flask REST APIs.
 - **Testing:** Begin testing with CSV data, evolving toward integrating real-time data sources or mocked API data streams as the project progresses.
