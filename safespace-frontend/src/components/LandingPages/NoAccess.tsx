@@ -11,7 +11,7 @@ function NoAccess(){
 <>
         {/* SafeSpace Promo Banner*/ }
         <div className="text-center" style={{ backgroundColor: "black" }}>
-            <Image src="/safespace-business-card-750x300.jpeg" height="200px" alt="SafeSpace Promo" fluid/>
+            <Image src="/safespace-business-card-750x300.jpeg" width='550px' alt="SafeSpace Promo" fluid/>
         </div>
         
         <Container className="p-5 my-5 rounded">
