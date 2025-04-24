@@ -44,7 +44,7 @@ def get_accounts():
     
 @accounts_bp.route('/me', methods=['GET'])
 @auth_required
-def get_account():
+def get_account(firebase_uid):
     try:
         account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
         if not account:
@@ -55,7 +55,7 @@ def get_account():
     
 @accounts_bp.route('/', methods=['PUT'])
 @auth_required
-def update_account():
+def update_account(firebase_uid):
     try:
         account_data = account_schema.load(request.json)
     except ValidationError as e:
@@ -66,10 +66,26 @@ def update_account():
         if not account:
             return jsonify({"message": "Account not found"}), 404
         
-        account.email = account_data['email']
+        for field, value in account_data.items():
+            setattr(account, field, value)
         
         db.session.commit()
         
         return account_schema.jsonify(account)
+    except:
+        return jsonify({'message': 'There was an error'}), 400
+    
+@accounts_bp.route('/', methods=['DELETE'])
+@auth_required
+def delete_account(firebase_uid):
+    try:
+        account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
+        if not account:
+            return jsonify({"message": "Account not found"}), 404
+        
+        db.session.delete(account)
+        db.session.commit()
+        
+        return jsonify({"message": "Account deleted successfully"}), 200
     except:
         return jsonify({'message': 'There was an error'}), 400
