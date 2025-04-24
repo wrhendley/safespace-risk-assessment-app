@@ -12,7 +12,7 @@ class Account(db.Model):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    firebase_uid: Mapped[str] = mapped_column(unique=True)
+    firebase_uid: Mapped[str] = mapped_column(unique=True, nullable=False)
     role: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
@@ -26,7 +26,6 @@ class User(db.Model):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     account_id: Mapped[int] = mapped_column(db.ForeignKey('accounts.id'), nullable=False)
-    account: Mapped[Account] = db.relationship("Account", back_populates="user")
     phone_number: Mapped[str] = mapped_column(unique=True, nullable=False)
     first_name: Mapped[str] = mapped_column(nullable=False)
     last_name: Mapped[str] = mapped_column(nullable=False)
@@ -38,4 +37,4 @@ class User(db.Model):
     # state: Mapped[str] = mapped_column(nullable=False)
     # zip_code: Mapped[str] = mapped_column(nullable=False)
     
-    account: Mapped['Account'] = db.relationship(back_populates="user")
+    account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
