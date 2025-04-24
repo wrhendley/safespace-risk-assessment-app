@@ -34,7 +34,8 @@ venv/
 .env
 
 # Secrets
+credentials.json
 
 # SQLite Instances
 instance/
-credentials.json
+.pytest_cache/
