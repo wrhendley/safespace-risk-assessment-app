@@ -2,9 +2,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User, signOut} from "firebase/auth";
-import axios from "axios";
 import React from "react";
 import api from '../api'
+
 
 interface AuthContextType {
     user: User | null;
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     //         } else {
     //             // If user is signed out, set 'is_active' to false in your database
     //             try {
-    //                 await axios.post("/accounts/update", {
+    //                 await api.post("/accounts/update", {
     //                     firebase_uid: user?.uid,
     //                     is_active: false
     //                 });

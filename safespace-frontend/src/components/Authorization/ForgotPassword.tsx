@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
-import SuccessModal from '../Other/SuccessModal';
+import SuccessModal from '../Navigation/SuccessModal';
 import { Container, Row, Col, Form, Button, Image, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,7 +36,7 @@ const ForgotPassword = () => {
     };
 
     return (
-        <Container className="p-5 my-5 rounded">
+        <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
                 <Row className="align-items-center">
                     <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>Forgotten password? Let's reset it.</h1>

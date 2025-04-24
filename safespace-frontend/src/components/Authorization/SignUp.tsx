@@ -2,13 +2,13 @@ import React from "react";
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Row, Col, Image, Button, Alert } from "react-bootstrap";
-import SuccessModal from "../Other/SuccessModal";
+import SuccessModal from "../Navigation/SuccessModal";
 import { useAuth } from "../../context/AuthContext";
 import api from '../../api'
 import AlreadySignedIn from "./AlreadySignedIn";
 import { auth } from "../../firebaseConfig";
 import { sendEmailVerification } from "firebase/auth";
-import LoadingPage from "../Other/LoadingPage";
+import LoadingPage from "../LandingPages/LoadingPage";
 
 const SignUp = () => {
     const [email, setEmail] = useState<string>("");
@@ -19,7 +19,7 @@ const SignUp = () => {
     const [errorPage, setErrorPage] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const navigate = useNavigate();
-    const { user, loading, signUp, error } = useAuth();
+    const { user, loading, signUp, error, logOut } = useAuth();
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
@@ -65,10 +65,7 @@ const SignUp = () => {
             // const payload = {
             //     email: email,
             //     firebase_uid: currentUser.uid,
-            //     email_verified: currentUser.emailVerified,
-            //     role: role || "user",
-            //     created_at: new Date(),
-            //     is_active: true,
+            //     role: role || "user",                
             // };
 
             // const response = await api.post("/accounts", payload,
@@ -98,7 +95,7 @@ const SignUp = () => {
     }
 
     return (
-        <Container className="p-5 my-5 rounded">
+        <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
             <Row className="align-items-center">
                 <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                 <h1>Let's get started.</h1>
@@ -152,12 +149,13 @@ const SignUp = () => {
                 show={showSuccessModal}
                 onClose={() => {
                     setShowSuccessModal(false);
-                    navigate(`/users/${user?.uid}`);
+                    logOut();
+                    navigate(`/accounts/login`);
                     setJustLoggedIn(false);
                 }}
                 title="Account Created"
-                message="Please verify your email before creating your user profile."
-                buttonText="Create User Profile"
+                message="Please verify your email before signing in again."
+                buttonText="Ok"
                 />
                 </Col>
                 <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
