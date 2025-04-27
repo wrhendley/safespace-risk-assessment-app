@@ -2,10 +2,12 @@
 import { useState, FormEvent } from "react";
 import { Container, Row, Col, Button, Form, Image, Alert  } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import SuccessModal from "../Other/SuccessModal";
+import SuccessModal from "../Navigation/SuccessModal";
 import { useAuth } from "../../context/AuthContext";
 import AlreadySignedIn from "./AlreadySignedIn";
-import LoadingPage from "../Other/LoadingPage";
+import LoadingPage from "../LandingPages/LoadingPage";
+import { auth } from "../../firebaseConfig";
+import React from 'react';
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -14,14 +16,23 @@ const Login = () => {
     const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
     const navigate = useNavigate();
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
-    const { signIn, loading, user, error } = useAuth();
+    const { signIn, loading, user, error, logOut } = useAuth();
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
         try {
+            setErrorPage('');
             await signIn(email, password);
             setJustLoggedIn(true);
-            setShowSuccessModal(true);
+            const currentUser = auth.currentUser;
+            if (!currentUser) throw new Error("User not available after registration.");
+            if(currentUser.emailVerified){
+                setShowSuccessModal(true);
+            }else{
+                logOut();
+                setJustLoggedIn(false);
+                setErrorPage('Please verify your email before signing in. Remember to check your spam folder.')
+            }
         } catch (err: any) {
             setErrorPage(`Login failed: ${err.message}`);
         }
@@ -36,7 +47,7 @@ const Login = () => {
     }
 
     return (
-            <Container className="p-5 my-5 rounded">
+            <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
                 <Row className="align-items-center">
                     <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>Welcome back.</h1>
@@ -77,26 +88,23 @@ const Login = () => {
                             </Alert>
                         )}                </Form>
                         <SuccessModal 
-                        show={showSuccessModal}
-                        onClose={() => {
-                            setShowSuccessModal(false);
-                            navigate('/userdashboard');
-                            setJustLoggedIn(false);
-                        }}
-                        title="Login Successful!"
-                        message= {`Hey, ${user?.email}, let's get to work.`}
-                        buttonText="Go to Dashboard"
+                            show={showSuccessModal}
+                            onClose={() => {
+                                setShowSuccessModal(false);
+                                navigate(`/users/${user?.uid}`);
+                                setJustLoggedIn(false);
+                            }}
+                            title="Login Successful!"
+                            message= {`Hey, ${user?.email}, let's get to work.`}
+                            buttonText="View User Profile"
                         />
                     </Col>
-
                     <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
                         <Image src="/log-in-img.jpg" alt="" width="100%" fluid />
                     </Col>
-
                 </Row>
             </Container>
         );
-
 };
 
 export default Login;

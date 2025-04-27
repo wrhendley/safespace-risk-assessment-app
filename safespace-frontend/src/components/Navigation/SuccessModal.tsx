@@ -1,5 +1,7 @@
 // components/SuccessModal.tsx
 import { Modal, Button } from "react-bootstrap";
+import React from 'react';
+
 
 interface SuccessModalProps {
     show: boolean;
