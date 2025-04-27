@@ -28,6 +28,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.27.0",
     "@eslint/js": "^9.25.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -53,17 +54,14 @@
     "testEnvironment": "jest-environment-jsdom",
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom",
-      "./src/jest.setup.ts"
+      "./src/jest.setup.js"
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.jsx?$": "babel-jest",
+      "^.+\\.tsx?$": "babel-jest"
     },
     "moduleNameMapper": {
       "\\.css$": "identity-obj-proxy"
-    },
-    "globals": {
-      "TextEncoder": "TextEncoder",
-      "TextDecoder": "TextDecoder"
     }
   }
 }

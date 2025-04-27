@@ -5,7 +5,7 @@ import { faFacebook, faLinkedin, faGithub, faXTwitter } from '@fortawesome/free-
 
 function Footer() {
     return (
-        <footer className="mt-5 py-3">
+        <footer className="py-3">
             <Container>
                 <Row className="align-items-center text-center text-md-start">
                     <Col xs={12} md={6} className="mb-2 mb-md-0">
