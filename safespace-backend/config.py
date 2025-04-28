@@ -23,6 +23,7 @@ class DevelopmentConfig:
     SQLALCHEMY_DATABASE_URI = Env.POSTGRES_URI
     DEBUG = True
     CACHE_TYPE = 'SimpleCache'
+    CORS_ORIGINS = ["http://localhost:5173"]
     
 class TestingConfig:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
@@ -32,3 +33,4 @@ class TestingConfig:
 class ProductionConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('')
     CACHE_TYPE = 'SimpleCache'
+    CORS_ORIGINS = ["https://website.com"] # Replace this with the safespace static domain
