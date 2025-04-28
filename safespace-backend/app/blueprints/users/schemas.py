@@ -4,6 +4,7 @@ from app.extensions import ma
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User # basing schema on User Table Model
+        include_fk = True
     
 # instantiating schemas
 user_schema = UserSchema()
