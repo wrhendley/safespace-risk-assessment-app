@@ -17,7 +17,7 @@ class Account(db.Model):
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     last_login: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
-    email_verified: Mapped[bool] = mapped_column(default=True)
+    email_verified: Mapped[bool] = mapped_column(default=False)
     
     user: Mapped['User'] = db.relationship(back_populates="account", uselist=False)
 
