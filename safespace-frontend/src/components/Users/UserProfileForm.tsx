@@ -22,28 +22,28 @@ const UserProfileForm: React.FC = () => {
     const navigate = useNavigate();
 
 // Fetch user data when component mounts or when ID changes
-useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try{
-                const response = await api.get(`/users/${id}`);
-                const { first_name, last_name, phone_number } = response.data[0];
-                setFirstName(first_name);
-                setLastName(last_name);
-                setPhone(phone_number);
-            }catch(error){
-                const err = error as Error;
-                console.error("Error fetching user data:", err.message);
-                setError(err.message);
-            }finally{
-                setIsLoading(false);
-            }
-        }
-        if (id) {
-            fetchData();
-        }
+// useEffect(() => {
+//         const fetchData = async () => {
+//             setIsLoading(true);
+//             try{
+//                 const response = await api.get(`/users/${id}`);
+//                 const { first_name, last_name, phone_number } = response.data[0];
+//                 setFirstName(first_name);
+//                 setLastName(last_name);
+//                 setPhone(phone_number);
+//             }catch(error){
+//                 const err = error as Error;
+//                 console.error("Error fetching user data:", err.message);
+//                 setError(err.message);
+//             }finally{
+//                 setIsLoading(false);
+//             }
+//         }
+//         if (id) {
+//             fetchData();
+//         }
             
-    }, [id]);
+//     }, [id]);
 
         // Handle account deletion
         const handleDeleteAccount = async () => {
