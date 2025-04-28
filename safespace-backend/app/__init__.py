@@ -1,7 +1,8 @@
 from flask import Flask
 from app.models import db
-from app.extensions import ma, limiter, cache, migrate
+from app.extensions import ma, limiter, cache, migrate, cors
 from app.blueprints.accounts import accounts_bp
+from app.blueprints.users import users_bp
 from config import Env
 from firebase_admin import credentials, initialize_app, _apps as firebase_admin_apps
 import os
@@ -23,6 +24,7 @@ def create_app(config_name = 'DevelopmentConfig'):
     
     # Add extensions to app
     db.init_app(app)
+    cors.init_app(app, supports_credentials=True, origins=app.config.get('CORS_ORIGINS'))
     ma.init_app(app)
     limiter.init_app(app)
     cache.init_app(app)
@@ -30,5 +32,6 @@ def create_app(config_name = 'DevelopmentConfig'):
     
     # Register blueprints
     app.register_blueprint(accounts_bp, url_prefix='/accounts')
+    app.register_blueprint(users_bp, url_prefix='/users')
     
     return app
