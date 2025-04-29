@@ -62,23 +62,24 @@ const SignUp = () => {
             await sendEmailVerification(currentUser);
 
             // Send to backend
-            // const payload = {
-            //     email: email,
-            //     firebase_uid: currentUser.uid,
-            //     role: role || "user",                
-            // };
+            const payload = {
+                email: email,
+                firebase_uid: currentUser.uid,
+                role: role || "user",                
+            };
 
-            // const response = await api.post("/accounts", payload,
-            //     {
-            //         headers: {
-            //             Authorization: `Bearer ${idToken}`
-            //         }
-            //     }
-            // );
+            const response = await api.post("/accounts", payload,
+                {
+                    headers: {
+                        Authorization: `Bearer ${idToken}`
+                    },
+                    withCredentials: true
+                }
+            );
     
-            // if (response.status < 200 || response.status>=300) {
-            //     throw new Error("Failed to create account.");
-            // }
+            if (response.status < 200 || response.status>=300) {
+                throw new Error("Failed to create account.");
+            }
     
             setShowSuccessModal(true);
         } catch (err: any) {
