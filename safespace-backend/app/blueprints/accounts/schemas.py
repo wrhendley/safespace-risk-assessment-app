@@ -3,7 +3,7 @@ from app.extensions import ma
 from marshmallow import fields
 
 class AccountSchema(ma.SQLAlchemyAutoSchema):
-    firebase_uid = ma.auto_field(data_key='uid')
+    # firebase_uid = ma.auto_field(data_key='uid')
     
     class Meta:
         model = Account # basing schema on Account Table Model
