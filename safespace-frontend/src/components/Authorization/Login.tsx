@@ -26,6 +26,8 @@ const Login = () => {
             setJustLoggedIn(true);
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
+            const idToken = await currentUser.getIdToken(); 
+            console.log(idToken);
             if(currentUser.emailVerified){
                 setShowSuccessModal(true);
             }else{

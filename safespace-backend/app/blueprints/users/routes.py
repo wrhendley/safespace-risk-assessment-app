@@ -16,7 +16,7 @@ MAX_PER_PAGE = 100
 @users_bp.route('/', methods=['POST'])
 @auth_required # applying token verification wrapper to route
 @limiter.limit("5 per minute")
-def create_account():
+def create_user():
     try:
         user_data = user_schema.load(request.json)
     except ValidationError as e:
@@ -66,6 +66,8 @@ def update_user(user_id):
 @auth_required # applying token verification wrapper to route
 def delete_user(user_id):
     user = db.session.get(User, user_id)
+    if user == None: 
+        return jsonify({"message": "user not found"}), 404
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": f"succesfully deleted user {user_id}"}), 200

@@ -64,8 +64,9 @@ const SignUp = () => {
             // Send to backend
             const payload = {
                 email: email,
-                firebase_uid: currentUser.uid,
-                role: role || "user",                
+                uid: currentUser.uid,
+                role: role || "user",    
+                is_active: "true"
             };
 
             const response = await api.post("/accounts", payload,

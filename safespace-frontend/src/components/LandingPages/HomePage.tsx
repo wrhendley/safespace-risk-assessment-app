@@ -11,17 +11,6 @@ function HomePage(){
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    
-    useEffect(() => {
-        axios.get('http://localhost:5000/ping')
-            .then(response => {
-                console.log("Backend says:", response.data);
-            })
-            .catch(error => {
-                console.error("Ping failed:", error.message);
-            });
-        }, []);
-
     return (
         <>
         {/* SafeSpace Promo Banner*/ }
