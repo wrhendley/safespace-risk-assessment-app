@@ -3,16 +3,16 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Form, Row, Col, Image, Button, Alert } from "react-bootstrap";
-import SuccessModal from "../Other/SuccessModal";
+import SuccessModal from "../Navigation/SuccessModal";
 import { useAuth } from '../../context/AuthContext';
 import api from "../../api";
-import NoAccess from "../Other/NoAccess";
+import NoAccess from "../LandingPages/NoAccess";
 import React from "react";
 import { deleteUser } from "firebase/auth";
 
 const UserProfileForm: React.FC = () => {
     const { id } = useParams();
-    const { user, logOut } = useAuth();
+    const { user } = useAuth();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
@@ -85,30 +85,18 @@ useEffect(() => {
         try {
             // Put/Post the User Info
             // let response;
-            // let userData;
+            // const userData = {
+            //     firebase_uid: user?.uid,
+            //     first_name: firstName,
+            //     last_name: lastName,
+            //     phone_number: phone,
+            // };
             // if(id){
-            //     userData = {
-            //         account_id: user?.uid,
-            //         first_name: firstName,
-            //         last_name: lastName,
-            //         phone_number: phone,
-            //         updated_at: new Date()
-            //     };
             //     response = await api.put(`/users/${id}`, userData,
             //         {headers:{'Content-Type': 'application/json'}}
             //     );
             // }else{
-            //     userData = {
-            //         account_id: user?.uid,
-            //         first_name: firstName,
-            //         last_name: lastName,
-            //         phone_number: phone,
-            //         created_at: new Date(),
-            //         updated_at: new Date()
-            //     };
-            //     response = await api.post(
-            //         `/customers/`, 
-            //         userData, 
+            //     response = await api.post(`/users/${id}`, userData, 
             //         {headers:{'Content-Type': 'application/json'}}
             //     );
             // }
@@ -125,7 +113,7 @@ useEffect(() => {
     };
     if(user){
         return (
-            <Container className="p-5 my-5 rounded">
+            <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
                 <Row className="align-items-center">
                     <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>Your personal info's safe with us.</h1>

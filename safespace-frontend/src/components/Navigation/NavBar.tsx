@@ -2,7 +2,7 @@ import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import SignOutButton from './SignOutButton';
+import SignOutButton from '../Authorization/SignOutButton';
 
 function NavBar(){
     const {user, logOut} = useAuth();

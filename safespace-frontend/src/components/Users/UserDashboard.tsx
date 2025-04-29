@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
-import Sidebar from '../Other/Sidebar';
-import NoAccess from '../Other/NoAccess';
-import BottomNav from '../Other/BottomNav';
+import Sidebar from './Sidebar';
+import NoAccess from '../LandingPages/NoAccess';
+import BottomNav from './BottomNav';
 const financeData = [
     { label: "Account Balance", value: "$12,340.75" },
     { label: "Credit Score", value: "742" },
@@ -22,7 +22,7 @@ export default function UserDashboard() {
 
     if(user){
     return (
-        <Container className="my-5 rounded">
+        <Container className="my-5 rounded flex-grow-1 d-flex align-items-center">
             <Row>
                 {/* Sidebar for desktop */}
                 <Col xs={12} md={3} className="d-none d-md-block p-0">
