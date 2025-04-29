@@ -1,22 +1,23 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { Routes, Route} from 'react-router-dom';
-import HomePage from './components/Other/HomePage';
-import NavBar from './components/Other/NavBar';
-import Footer from './components/Other/Footer';
+import HomePage from './components/LandingPages/HomePage';
+import NavBar from './components/Navigation/NavBar';
+import Footer from './components/Navigation/Footer';
 import SignUp from './components/Authorization/SignUp';
 import Login from './components/Authorization/Login';
 import UserProfileForm from './components/Users/UserProfileForm';
 import UserDashboard from './components/Users/UserDashboard';
-import NotFound from './components/Other/NotFound';
+import NotFound from './components/LandingPages/NotFound';
 import ForgotPassword from './components/Authorization/ForgotPassword';
+import LoadingPage from './components/LandingPages/LoadingPage';
 
 function App() {
 
   return (
-    <div className="d-flex flex-column min-vh-100">
-        <main className="flex-grow-1">
+    <main className="d-flex flex-column min-vh-100">
       <NavBar/>
+      <div className="flex-grow-1 d-flex flex-column">
         <Routes>
           <Route path='/' element={<HomePage/>}/>
           <Route path='/accounts/signup' element={<SignUp/>}/>
@@ -24,11 +25,12 @@ function App() {
           <Route path='/users/:id' element={<UserProfileForm />}/>
           <Route path='/userdashboard' element={<UserDashboard/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
-          <Route path='*' element={<NotFound/>}/>          
+          <Route path='/spinner' element={<LoadingPage/>}/>
+          <Route path='*' element={<NotFound/>}/>
         </Routes>
-      </main>
+      </div>
       <Footer/>
-    </div>
+    </main>
   );
 };
 
