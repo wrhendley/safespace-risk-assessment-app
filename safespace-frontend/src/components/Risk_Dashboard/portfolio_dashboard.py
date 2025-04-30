@@ -234,3 +234,5 @@ with tab[1]:
 
 with tab[2]:
     investment_risk_assessment()
+
+    hello
