@@ -36,3 +36,18 @@ def auth_required(f):
 
         return f(*args, **kwargs)
     return decorated
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        account = getattr(g, 'account', None)
+        print(account.role)
+        
+        if not account:
+            return jsonify({'message': 'Authentication required'}), 401
+        
+        if account.role.lower() != 'admin':
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        return f(*args, **kwargs)
+    return decorated
