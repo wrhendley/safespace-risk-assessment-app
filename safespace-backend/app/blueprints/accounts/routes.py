@@ -1,7 +1,7 @@
 from flask import request, jsonify, g
 from app.utils.util import auth_required
 from app.blueprints.accounts import accounts_bp
-from app.blueprints.accounts.schemas import account_schema, accounts_schema, account_login_schema
+from app.blueprints.accounts.schemas import account_schema, accounts_schema, account_login_schema, account_update_schema
 from app.extensions import limiter
 from marshmallow import ValidationError
 from app.models import Account, db
@@ -52,31 +52,33 @@ def get_account():
     
 @accounts_bp.route('/', methods=['PUT'])
 @auth_required
-def update_account(firebase_uid):
+def update_account():
+    account = g.account
+    
+    if not account:
+        return jsonify({"message": "Account not found"}), 404
+    
     try:
-        account_data = account_schema.load(request.json)
+        account_data = account_update_schema.load(request.json)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
     try:
-        account = Account.query.filter_by(firebase_uid=request.user['firebase_uid']).first()
-        if not account:
-            return jsonify({"message": "Account not found"}), 404
-        
         for field, value in account_data.items():
             setattr(account, field, value)
         
         db.session.commit()
         
         return account_schema.jsonify(account)
-    except:
-        return jsonify({'message': 'There was an error'}), 400
+    
+    except Exception as e:
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
 @accounts_bp.route('/', methods=['DELETE'])
 @auth_required
-def delete_account(firebase_uid):
+def delete_account():
     try:
-        account = Account.query.filter_by(firebase_uid=request.user['firebase_uid']).first()
+        account = g.account
         if not account:
             return jsonify({"message": "Account not found"}), 404
         
@@ -84,5 +86,5 @@ def delete_account(firebase_uid):
         db.session.commit()
         
         return jsonify({"message": "Account deleted successfully"}), 200
-    except:
-        return jsonify({'message': 'There was an error'}), 400
+    except Exception as e:
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
