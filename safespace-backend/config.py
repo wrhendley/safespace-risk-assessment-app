@@ -29,6 +29,7 @@ class TestingConfig:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
     DEBUG = True
     CACHE_TYPE = 'SimpleCache'
+    CORS_ORIGINS = ["http://localhost:5173"]
 
 class ProductionConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('')
