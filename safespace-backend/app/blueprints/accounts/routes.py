@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, g
 from app.utils.util import auth_required
 from app.blueprints.accounts import accounts_bp
 from app.blueprints.accounts.schemas import account_schema, accounts_schema, account_login_schema
@@ -39,19 +39,16 @@ def get_accounts():
         if not accounts:
             return jsonify({"message": "No accounts found"}), 404
         return accounts_schema.jsonify(accounts)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
     except:
         return jsonify({'message': 'There was an error'}), 400
     
 @accounts_bp.route('/me', methods=['GET'])
 @auth_required
-def get_account(firebase_uid):
-    try:
-        account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
-        if not account:
-            return jsonify({"message": "Account not found"}), 404
-        return account_schema.jsonify(account)
-    except:
-        return jsonify({'message': 'There was an error'}), 400
+def get_account():
+    account = g.account
+    return account_schema.jsonify(account)
     
 @accounts_bp.route('/', methods=['PUT'])
 @auth_required
@@ -62,7 +59,7 @@ def update_account(firebase_uid):
         return jsonify(e.messages), 400
     
     try:
-        account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
+        account = Account.query.filter_by(firebase_uid=request.user['firebase_uid']).first()
         if not account:
             return jsonify({"message": "Account not found"}), 404
         
@@ -79,7 +76,7 @@ def update_account(firebase_uid):
 @auth_required
 def delete_account(firebase_uid):
     try:
-        account = Account.query.filter_by(firebase_uid=request.user['uid']).first()
+        account = Account.query.filter_by(firebase_uid=request.user['firebase_uid']).first()
         if not account:
             return jsonify({"message": "Account not found"}), 404
         
