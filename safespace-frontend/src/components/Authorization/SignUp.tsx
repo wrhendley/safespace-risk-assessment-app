@@ -69,12 +69,7 @@ const SignUp = () => {
             };
 
             const response = await api.post("/accounts/", payload,
-                {
-                    headers: {
-                        Authorization: `Bearer ${idToken}`
-                    }
-                }
-            );
+                {headers: {Authorization: `Bearer ${idToken}`}});
     
             if (response.status < 200 || response.status>=300) {
                 throw new Error("Failed to create account.");

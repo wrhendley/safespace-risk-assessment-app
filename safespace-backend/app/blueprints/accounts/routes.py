@@ -53,7 +53,7 @@ def get_account(firebase_uid):
     except:
         return jsonify({'message': 'There was an error'}), 400
     
-@accounts_bp.route('/', methods=['PUT'])
+@accounts_bp.route('/update', methods=['PUT'])
 @auth_required
 def update_account(firebase_uid):
     try:

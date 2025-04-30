@@ -1,26 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Button, Row, Col, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import SignOutButton from "../Authorization/SignOutButton";
-import { useEffect } from "react";
-import api from "../../api";
-import axios from "axios";
 
 function HomePage(){
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    
-    useEffect(() => {
-        axios.get('http://localhost:5000/ping')
-            .then(response => {
-                console.log("Backend says:", response.data);
-            })
-            .catch(error => {
-                console.error("Ping failed:", error.message);
-            });
-        }, []);
+    useEffect(()=>{
+        if (user){
+            const idToken = user?.getIdToken();
+            console.log(idToken);
+        }
+    },[user]);
 
     return (
         <>
