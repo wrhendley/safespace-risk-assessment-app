@@ -1,5 +1,5 @@
 // Login.tsx
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { Container, Row, Col, Button, Form, Image, Alert  } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import SuccessModal from "../Navigation/SuccessModal";
@@ -8,6 +8,7 @@ import AlreadySignedIn from "./AlreadySignedIn";
 import LoadingPage from "../LandingPages/LoadingPage";
 import { auth } from "../../firebaseConfig";
 import React from 'react';
+import api from "../../api";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -17,6 +18,12 @@ const Login = () => {
     const navigate = useNavigate();
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const { signIn, loading, user, error, logOut } = useAuth();
+
+    useEffect(()=>{
+        if (user){
+            api.get(`/accounts/${user.uid}`)
+        }
+    }, [user]);
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
@@ -77,7 +84,7 @@ const Login = () => {
                                 onChange={(e) => setPassword(e.target.value)}/>
                         </Form.Group>
 
-                        <div className='text-center'>
+                        <div className='text-center mb-3'>
                             <Button variant='primary' type='submit'>Log In</Button>
                             <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
                             <br/><a className='small' href='/forgot-password'>Forgot password?</a>

@@ -11,6 +11,8 @@ import UserDashboard from './components/Users/UserDashboard';
 import NotFound from './components/LandingPages/NotFound';
 import ForgotPassword from './components/Authorization/ForgotPassword';
 import LoadingPage from './components/LandingPages/LoadingPage';
+import UserProfile from './components/Users/UserProfile';
+import AboutUs from './components/AboutUs/AboutUs';
 
 function App() {
 
@@ -23,7 +25,9 @@ function App() {
           <Route path='/accounts/signup' element={<SignUp/>}/>
           <Route path='/accounts/login' element={<Login/>}/>
           <Route path='/users/:id' element={<UserProfileForm />}/>
-          <Route path='/userdashboard' element={<UserDashboard/>}/>
+          <Route path='/userprofile/:id' element={<UserProfileForm />}/>
+          <Route path='/userdashboard/:id' element={<UserDashboard/>}/>
+          <Route path='/about-us/' element={<AboutUs/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/spinner' element={<LoadingPage/>}/>
           <Route path='*' element={<NotFound/>}/>
