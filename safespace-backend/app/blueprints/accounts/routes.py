@@ -11,11 +11,15 @@ DEFAULT_PAGE = 1
 DEFAULT_PER_PAGE = 10
 MAX_PER_PAGE = 100
 
-@accounts_bp.route('/signup', methods=['POST'], strict_slashes=False)
+@accounts_bp.route('/', methods=['POST'], strict_slashes=False)
 @limiter.limit("5 per minute")
 def create_account():
     try:
         account_data = account_schema.load(request.json)
+        query = select(Account).filter_by(email=account_data['email'])
+        existing_account = db.session.execute(query).scalar_one_or_none()
+        if existing_account:
+            return jsonify({"message": "Account with this email already exists"}), 400
     except ValidationError as e:
         return jsonify(e.messages), 400
     
