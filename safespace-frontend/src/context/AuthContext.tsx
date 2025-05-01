@@ -37,37 +37,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }};
     }, []);
 
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-    //         setLoading(true);
-    //         setUser(currentUser);
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setLoading(true);
+            setUser(currentUser);
 
-    //         if (currentUser) {
-    //             // If user is signed in, set 'is_active' to true in your database
-    //             try {
-    //                 await api.post("/accounts/update", {
-    //                     firebase_uid: currentUser.uid,
-    //                     is_active: true
-    //                 });
-    //             } catch (err) {
-    //                 setError("Failed to update user status.");
-    //             }
-    //         } else {
-    //             // If user is signed out, set 'is_active' to false in your database
-    //             try {
-    //                 await api.post("/accounts/update", {
-    //                     firebase_uid: user?.uid,
-    //                     is_active: false
-    //                 });
-    //             } catch (err) {
-    //                 setError("Failed to update user status.");
-    //             }
-    //         }
-    //         setLoading(false);
-    //     });
+            if (currentUser) {
+                // If user is signed in, set 'is_active' to true in your database
+                try {
+                    await api.put("/accounts/update", 
+                        {is_active: true}, 
+                        {headers: {Authorization: `Bearer ${currentUser.getIdToken}`}});
+                } catch (err) {
+                    setError("Failed to update user status.");
+                }
+            } else {
+                // If user is signed out, set 'is_active' to false in your database
+                try {
+                    await api.put("/accounts/update", {
+                        is_active: false
+                    });
+                } catch (err) {
+                    setError("Failed to update user status.");
+                }
+            }
+            setLoading(false);
+        });
 
-    //     return unsubscribe;
-    // }, [user]);
+        return unsubscribe;
+    }, [user]);
 
     const signUp = async (email: string, password: string) => {
         try {
