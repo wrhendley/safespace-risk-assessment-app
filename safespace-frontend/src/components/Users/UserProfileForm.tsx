@@ -19,6 +19,7 @@ const UserProfileForm: React.FC = () => {
     const [phone, setPhone] = useState<string>("");
     const [formError, setError] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+    const [newUser, setNewUser] = useState<boolean>(true);
     const navigate = useNavigate();
 
 
@@ -33,10 +34,16 @@ const UserProfileForm: React.FC = () => {
                 setFirstName(first_name);
                 setLastName(last_name);
                 setPhone(phone_number);
+                setNewUser(false);
             }catch(error){
-                const err = error as Error;
-                console.error("Error fetching user data:", err.message);
-                setError(err.message);
+                if (error.response && error.response.status === 404) {
+                    setNewUser(true);
+                    setFirstName('');
+                    setLastName('');
+                    setPhone('');
+                } else {
+                    setError(error.message);
+                }
             }finally{
                 setIsLoading(false);
             }
@@ -93,7 +100,13 @@ const UserProfileForm: React.FC = () => {
                 phone_number: phone,
             };
             const idToken = await user.getIdToken(true);
-            const response = await api.put('/users/', userData, {headers: {Authorization: `Bearer ${idToken}`}});
+            let response;
+            if(newUser){
+                response = await api.post('/users/', userData, {headers: {Authorization: `Bearer ${idToken}`}});
+                setNewUser(false);
+            }else{
+                response = await api.put('/users/', userData, {headers: {Authorization: `Bearer ${idToken}`}});
+            }
 
             if (response.status < 200 || response.status >= 300) {
                 throw new Error("Failed to save user info.");
