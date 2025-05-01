@@ -57,6 +57,7 @@ const SignUp = () => {
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
             const idToken = await currentUser.getIdToken(true);
+            console.log(idToken);
 
             // Send the email verification link to the user
             await sendEmailVerification(currentUser);
