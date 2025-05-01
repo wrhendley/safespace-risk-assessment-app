@@ -1,9 +1,14 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from './Sidebar';
 import NoAccess from '../LandingPages/NoAccess';
 import BottomNav from './BottomNav';
+import LoadingPage from '../LandingPages/LoadingPage';
+import { useEffect } from 'react';
+import api from '../../api';
+import { useState } from 'react';
+
 const financeData = [
     { label: "Account Balance", value: "$12,340.75" },
     { label: "Credit Score", value: "742" },
@@ -17,10 +22,40 @@ const recentActivity = [
 ];
 
 export default function UserDashboard() {
-    const { user } = useAuth(); 
-    const userName = user?.displayName || user?.email?.split('@')[0] || 'User';
+    const { user, error, loading } = useAuth(); 
+    const [userName, setUserName] = useState<string>(user?.email?.split('@')[0] || 'User');
+    const [errorPage, setErrorPage] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    if(user){
+    useEffect(() => {
+        const fetchUserName = async () => {
+            setIsLoading(true);
+            try {
+                const idToken = await user?.getIdToken(true);
+                console.log(idToken);
+                const response = await api.get(`/users/`, {headers: {Authorization: `Bearer ${idToken}`}});
+                console.log(response.data);
+                setUserName(response.data.first_name);
+            } catch (err) {
+                setUserName(user?.email?.split('@')[0] || 'User');
+                setErrorPage(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchUserName();
+        }
+    }, [user]);
+
+    if (!user && !isLoading && !loading) {
+        return <NoAccess />;
+    }
+
+    if (isLoading || loading) {
+        return <LoadingPage />;
+    }
     return (
         <Container className="my-5 rounded flex-grow-1 d-flex align-items-center">
             <Row>
@@ -31,6 +66,8 @@ export default function UserDashboard() {
                 {/* Main content area */}
                 <Col xs={12} md={9} className="p-4">
                 <h2 className="mb-4">Welcome back, {userName}!</h2>
+                {error &&<Alert variant='danger'>{error}</Alert>}
+                {errorPage &&<Alert variant='danger'>{errorPage}</Alert>}
                 {/* Financial Overview */}
                 <Row className="mb-4">
                     {financeData.map((item, idx) => (
@@ -72,9 +109,4 @@ export default function UserDashboard() {
             <BottomNav/>
         </Container>
     );
-}else{
-    return(
-        <NoAccess/>
-    )
-}
 }

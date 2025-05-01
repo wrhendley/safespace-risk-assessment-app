@@ -33,7 +33,7 @@ function NavBar(){
 
                         {user ? (
                             <>
-                                <Nav.Link href={`/users`}>USER PROFILE</Nav.Link>
+                                <Nav.Link href={`/user-profile`}>USER PROFILE</Nav.Link>
                                 <SignOutButton/>
                                 {/* <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link> */}
                             </>

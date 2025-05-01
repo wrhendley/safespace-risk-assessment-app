@@ -8,28 +8,32 @@ import AlreadySignedIn from "./AlreadySignedIn";
 import LoadingPage from "../LandingPages/LoadingPage";
 import { auth } from "../../firebaseConfig";
 import React from 'react';
+import { useRef } from "react";
+import { useEffect } from "react";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [errorPage, setErrorPage] = useState<string | null>(null);
-    const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
     const navigate = useNavigate();
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const { signIn, loading, user, error, logOut } = useAuth();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const justLoggedIn = useRef(false);
 
-    // useEffect(()=>{
-    //     if (user){
-    //         api.get(`/accounts/${user.uid}`)
-    //     }
-    // }, [user]);
+    useEffect(() => {
+        if (!showSuccessModal && justLoggedIn.current) {
+            justLoggedIn.current = false;
+        }
+    }, [showSuccessModal]);
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
         try {
+            setIsLoading(true);
             setErrorPage('');
             await signIn(email, password);
-            setJustLoggedIn(true);
+            justLoggedIn.current = true;
             // Get IdToken
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
@@ -40,21 +44,17 @@ const Login = () => {
                 setShowSuccessModal(true);
             }else{
                 logOut();
-                setJustLoggedIn(false);
                 setErrorPage('Please verify your email before signing in. Remember to check your spam folder.')
             }
         } catch (err: any) {
             setErrorPage(`Login failed: ${err.message}`);
+        }finally{
+            setIsLoading(false);
         }
     };
 
-    if (loading) {
-        return <LoadingPage />;
-    }
-
-    if (user && !justLoggedIn) {
-    return <AlreadySignedIn />;
-    }
+    if (loading || isLoading) return <LoadingPage />;
+    if (user && !justLoggedIn.current && !loading && !isLoading) return <AlreadySignedIn />;
 
     return (
             <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
@@ -94,8 +94,7 @@ const Login = () => {
                             show={showSuccessModal}
                             onClose={() => {
                                 setShowSuccessModal(false);
-                                navigate(`/users`);
-                                setJustLoggedIn(false);
+                                navigate(`/user-profile`);
                             }}
                             title="Login Successful!"
                             message= {`Hey, ${user?.email}, let's get to work.`}
