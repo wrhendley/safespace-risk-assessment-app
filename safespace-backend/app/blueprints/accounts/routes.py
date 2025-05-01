@@ -11,7 +11,7 @@ DEFAULT_PAGE = 1
 DEFAULT_PER_PAGE = 10
 MAX_PER_PAGE = 100
 
-@accounts_bp.route('/', methods=['POST'])
+@accounts_bp.route('/signup', methods=['POST'], strict_slashes=False)
 @limiter.limit("5 per minute")
 def create_account():
     try:
