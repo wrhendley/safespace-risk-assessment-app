@@ -38,6 +38,7 @@ def auth_required(f):
     return decorated
 
 def admin_required(f):
+    @auth_required
     @wraps(f)
     def decorated(*args, **kwargs):
         account = getattr(g, 'account', None)
