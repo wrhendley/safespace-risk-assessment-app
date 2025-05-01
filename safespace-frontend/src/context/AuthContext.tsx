@@ -22,51 +22,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(()=>{
-        const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
-            setUser(currentUser);
-            setLoading(false);
-            setError(null);
-        });
-
-        return ()=>{
-            try{
-                unsubscribe();
-            }catch(err:any){
-                setError(err.message);
-            }};
-    }, []);
-
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-    //         setLoading(true);
+    // useEffect(()=>{
+    //     const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
     //         setUser(currentUser);
-
-<<<<<<< Updated upstream
-    //         if (currentUser) {
-    //             // If user is signed in, set 'is_active' to true in your database
-    //             try {
-    //                 await api.post("/accounts/update", {
-    //                     firebase_uid: currentUser.uid,
-    //                     is_active: true
-    //                 });
-    //             } catch (err) {
-    //                 setError("Failed to update user status.");
-    //             }
-    //         } else {
-    //             // If user is signed out, set 'is_active' to false in your database
-    //             try {
-    //                 await api.post("/accounts/update", {
-    //                     firebase_uid: user?.uid,
-    //                     is_active: false
-    //                 });
-    //             } catch (err) {
-    //                 setError("Failed to update user status.");
-    //             }
-    //         }
     //         setLoading(false);
+    //         setError(null);
     //     });
-=======
+
+    //     return ()=>{
+    //         try{
+    //             unsubscribe();
+    //         }catch(err:any){
+    //             setError(err.message);
+    //         }};
+    // }, []);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setLoading(true);
+            setUser(currentUser);
+
             if (currentUser) {
                 // If user is signed in, set 'is_active' to true in your database
                 try {
@@ -89,10 +64,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
             setLoading(false);
         });
->>>>>>> Stashed changes
 
-    //     return unsubscribe;
-    // }, [user]);
+        return unsubscribe;
+    }, [user]);
 
     const signUp = async (email: string, password: string) => {
         try {
