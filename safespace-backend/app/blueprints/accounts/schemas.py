@@ -27,4 +27,4 @@ accounts_schema = AccountSchema(many=True)
 
 # Creating a login schema that excludes details name, phone for account authentication
 account_login_schema = AccountSchema(only=['id', 'firebase_uid'])
-account_update_schema = AccountSchema(only=['email'])
+account_update_schema = AccountSchema(only=['is_active'])

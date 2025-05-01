@@ -24,6 +24,9 @@ body {
   background-attachment: fixed;
   font-family: 'Poppins', serif;
   font-size: 1.5rem;
+  /* padding-top: 20px;
+  padding-bottom: 20px; */
+  
 }
 
 h3 {
@@ -164,14 +167,14 @@ h1, h2, h3 {
 p {
   text-align: start;
 }
-
+/* 
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
   background-color: var(--bs-primary);
   border-radius: 4px;
-}
+} */
 
 .bg-primary {
   background-color: var(--bs-primary) !important;
@@ -297,4 +300,36 @@ a:hover {
 @keyframes rotate{ 
   from {transform: rotate(0deg);} 
   to {transform: rotate(360deg);}
+}
+
+.aboutus-scroll-container {
+  /* background-color: rgba(0,0,0, 0.85); */
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  height: 100vh;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-margin-top: 40px; /* Adjust based on your navbar height */
+}
+
+.scroll-down-arrow {
+  animation: bounce 2s infinite;
+  display: inline-block;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
 }

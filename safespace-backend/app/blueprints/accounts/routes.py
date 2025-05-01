@@ -54,7 +54,7 @@ def get_account():
     account = g.account
     return account_schema.jsonify(account)
     
-@accounts_bp.route('/', methods=['PUT'])
+@accounts_bp.route('/update', methods=['PUT'])
 @auth_required
 def update_account():
     account = g.account
