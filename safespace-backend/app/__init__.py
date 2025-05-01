@@ -1,13 +1,8 @@
 from flask import Flask
 from app.models import db
-<<<<<<< HEAD
 from app.extensions import ma, limiter, cache, migrate, cors
 from app.blueprints.accounts import accounts_bp
 from app.blueprints.users import users_bp
-=======
-from app.extensions import ma, limiter, cache, migrate
-from app.blueprints.accounts import accounts_bp
->>>>>>> d7cffb71987f3f402f7e1e495e3e98700b5f5d56
 from config import Env
 from firebase_admin import credentials, initialize_app, _apps as firebase_admin_apps
 import os
