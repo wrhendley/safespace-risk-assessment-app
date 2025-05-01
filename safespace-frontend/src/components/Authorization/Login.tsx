@@ -18,15 +18,12 @@ const Login = () => {
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const { signIn, loading, user, error, logOut } = useAuth();
 
-<<<<<<< Updated upstream
-=======
     // useEffect(()=>{
     //     if (user){
     //         api.get(`/accounts/${user.uid}`)
     //     }
     // }, [user]);
 
->>>>>>> Stashed changes
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
         try {
