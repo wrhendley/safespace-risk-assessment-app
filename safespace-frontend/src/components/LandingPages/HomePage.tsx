@@ -1,19 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Container, Button, Row, Col, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import SignOutButton from "../Authorization/SignOutButton";
+import { useEffect } from "react";
+import api from "../../api";
+import axios from "axios";
 
 function HomePage(){
     const navigate = useNavigate();
     const { user } = useAuth();
-
-    useEffect(()=>{
-        if (user){
-            const idToken = user?.getIdToken();
-            console.log(idToken);
-        }
-    },[user]);
 
     return (
         <>

@@ -1,5 +1,5 @@
 // Login.tsx
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { Container, Row, Col, Button, Form, Image, Alert  } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import SuccessModal from "../Navigation/SuccessModal";
@@ -8,7 +8,6 @@ import AlreadySignedIn from "./AlreadySignedIn";
 import LoadingPage from "../LandingPages/LoadingPage";
 import { auth } from "../../firebaseConfig";
 import React from 'react';
-import api from "../../api";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -62,13 +61,6 @@ const Login = () => {
                 <Row className="align-items-center">
                     <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>Welcome back.</h1>
-                    {loading&&<>
-                            <div className="text-center">
-                                <div className="spinner" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                    </>}
                     <Form onSubmit={handleLogin}>
                         <Form.Group className="mb-3" controlId="loginEmail">
                             <Form.Label>Email address</Form.Label>
@@ -102,7 +94,7 @@ const Login = () => {
                             show={showSuccessModal}
                             onClose={() => {
                                 setShowSuccessModal(false);
-                                navigate(`/users/${user?.uid}`);
+                                navigate(`/users`);
                                 setJustLoggedIn(false);
                             }}
                             title="Login Successful!"
