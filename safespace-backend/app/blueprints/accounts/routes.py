@@ -31,7 +31,6 @@ def create_account():
 
 @accounts_bp.route('/', methods=['GET'])
 @limiter.limit("5 per minute")
-@auth_required
 @admin_required
 def get_accounts():
     try:
