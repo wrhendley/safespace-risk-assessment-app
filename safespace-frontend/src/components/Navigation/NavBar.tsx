@@ -9,7 +9,7 @@ function NavBar(){
 
     return (
         <>
-        <Navbar collapseOnSelect expand="lg">
+        <Navbar collapseOnSelect expand="lg" style={{ zIndex: 1040 }}>
             <Container>
                 <Navbar.Brand href="/">
                     <img src='/safespace-logo-80x80.jpeg' width='60px' alt="SafeSpace Logo" /> <b>SAFESPACE</b>
@@ -26,14 +26,14 @@ function NavBar(){
                         </NavDropdown>
 
                         <NavDropdown title="ABOUT US" id="aboutus-dropdown">
-                            <NavDropdown.Item href="/our-mission">Our Mission</NavDropdown.Item>
-                            <NavDropdown.Item href="/team">Team</NavDropdown.Item>
-                            <NavDropdown.Item href="/contact">Contact</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#our-mission">Our Mission</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#team">Team</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#contact-us">Contact</NavDropdown.Item>
                         </NavDropdown>
 
                         {user ? (
                             <>
-                                <Nav.Link href={`/users/${user.uid}`}>USER PROFILE</Nav.Link>
+                                <Nav.Link href={`/userprofile/${user.uid}`}>USER PROFILE</Nav.Link>
                                 <SignOutButton/>
                                 {/* <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link> */}
                             </>
