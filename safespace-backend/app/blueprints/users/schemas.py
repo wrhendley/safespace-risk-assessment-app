@@ -9,3 +9,5 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 # instantiating schemas
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+user_create_schema = UserSchema(exclude=['account_id'])

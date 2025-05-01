@@ -21,8 +21,9 @@ const UserProfileForm: React.FC = () => {
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const navigate = useNavigate();
 
-// Fetch user data when component mounts or when ID changes
-useEffect(() => {
+
+    // Fetch user data when component mounts or when ID changes
+    useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             try{
