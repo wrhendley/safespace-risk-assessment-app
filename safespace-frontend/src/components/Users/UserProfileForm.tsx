@@ -7,6 +7,7 @@ import SuccessModal from "../Navigation/SuccessModal";
 import { useAuth } from '../../context/AuthContext';
 import api from "../../api";
 import NoAccess from "../LandingPages/NoAccess";
+import LoadingPage from "../LandingPages/LoadingPage";
 import React from "react";
 import { deleteUser } from "firebase/auth";
 
@@ -87,7 +88,6 @@ const UserProfileForm: React.FC = () => {
             // Put/Post the User Info
             // let response;
             // const userData = {
-            //     firebase_uid: user?.uid,
             //     first_name: firstName,
             //     last_name: lastName,
             //     phone_number: phone,
@@ -112,8 +112,16 @@ const UserProfileForm: React.FC = () => {
         }
 
     };
-    if(user){
-        return (
+
+    if (isLoading) {
+        return <LoadingPage />;
+    }
+
+    if (!user) {
+        return <NoAccess />;
+    }
+
+    return (
             <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
                 <Row className="align-items-center">
                     <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
@@ -175,10 +183,6 @@ const UserProfileForm: React.FC = () => {
                 </Row>
             </Container>
         );
-    }else{
-        if (isLoading) return null;
-        return <NoAccess />;
-    }
 };
 
 export default UserProfileForm;
