@@ -18,7 +18,8 @@ const UserProfileForm: React.FC = () => {
     const [lastName, setLastName] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [formError, setError] = useState<string | null>(null);
-    const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+    const [showSuccessUpdateModal, setShowSuccessUpdateModal] = useState<boolean>(false);
+    const [showSuccessDeleteModal, setShowSuccessDeleteModal] = useState<boolean>(false);
     const [newUser, setNewUser] = useState<boolean>(true);
     const navigate = useNavigate();
 
@@ -65,7 +66,7 @@ const UserProfileForm: React.FC = () => {
                     if (response.status === 200) {
                         // Successfully deleted the account
                         await deleteUser(user);
-                        navigate("/"); // Redirect home
+                        setShowSuccessDeleteModal(true);
                     } else {
                         setError("An error occurred while deleting your account. Please try again later.");
                     }
@@ -111,7 +112,7 @@ const UserProfileForm: React.FC = () => {
             if (response.status < 200 || response.status >= 300) {
                 throw new Error("Failed to save user info.");
             }
-            setShowSuccessModal(true);           
+            setShowSuccessUpdateModal(true);           
         }catch(error){
             const err = error as Error;
             console.error("Error submitting form:", err.message);
@@ -120,7 +121,7 @@ const UserProfileForm: React.FC = () => {
     };
 
     if(loading || isLoading)return(<LoadingPage/>);
-    if(!user)return(<NoAccess/>);
+    if(!user && !loading && !isLoading)return(<NoAccess/>);
 
     return (
         <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
@@ -161,14 +162,24 @@ const UserProfileForm: React.FC = () => {
 
                 </Form>
                 <SuccessModal 
-                show={showSuccessModal}
-                onClose={() => {
-                    setShowSuccessModal(false);
-                    navigate('/userdashboard');
-                }}
-                title="Success!"
-                message="Your user profile has been successfully updated."
-                buttonText="Go to Your Dashboard"
+                    show={showSuccessUpdateModal}
+                    onClose={() => {
+                        setShowSuccessUpdateModal(false);
+                        navigate('/userdashboard');
+                    }}
+                    title="Success!"
+                    message="Your user profile has been successfully updated."
+                    buttonText="Go to Your Dashboard"
+                />
+                <SuccessModal 
+                    show={showSuccessDeleteModal}
+                    onClose={() => {
+                        setShowSuccessDeleteModal(false);
+                        navigate('/');
+                    }}
+                    title="Sorry to see you go."
+                    message="Your account has been successfully deleted."
+                    buttonText="Home"
                 />
                 </Col>
                 <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
