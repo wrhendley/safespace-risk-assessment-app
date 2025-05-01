@@ -1,5 +1,5 @@
 from flask import request, jsonify, g
-from app.utils.util import auth_required
+from app.utils.util import auth_required, admin_required
 from app.blueprints.accounts import accounts_bp
 from app.blueprints.accounts.schemas import account_schema, accounts_schema, account_login_schema, account_update_schema
 from app.extensions import limiter
@@ -31,6 +31,7 @@ def create_account():
 
 @accounts_bp.route('/', methods=['GET'])
 @limiter.limit("5 per minute")
+@admin_required
 def get_accounts():
     try:
         page = request.args.get('page', DEFAULT_PAGE, type=int)
