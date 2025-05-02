@@ -32,7 +32,7 @@ class TestAccount(unittest.TestCase):
             'Origin': 'http://localhost',
             'Content-Type': 'application/json'
         }
-        response = self.client.post('/accounts/signup', headers=headers, json=mock_firebase_token.return_value)
+        response = self.client.post('/accounts', headers=headers, json=mock_firebase_token.return_value)
         self.assertEqual(response.status_code, 201) # 201 Successful Signup
         account = Account.query.filter_by(firebase_uid='mock_uid-456').first()
         self.assertIsNotNone(account)
