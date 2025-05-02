@@ -63,7 +63,7 @@ class TestAccount(unittest.TestCase):
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_account_login(self, mock_firebase_token):
     #     mock_firebase_token.return_value = {
-    #         'uid': 'valid_firebase_uid_123',
+    #         'user_id': 'valid_firebase_uid_123',
     #         'email': 'user@example.com',
     #         'email_verified': True
     #     }
@@ -104,7 +104,7 @@ class TestAccount(unittest.TestCase):
     # def test_account_login_no_account(self, mock_firebase_token):
     #     # Firebase returns a valid user
     #     mock_firebase_token.return_value = {
-    #         'uid': 'nonexistent_uid',
+    #         'user_id': 'nonexistent_uid',
     #         'email': 'ghost@example.com',
     #         'email_verified': True
     #     }
@@ -118,7 +118,7 @@ class TestAccount(unittest.TestCase):
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_account_login_email_not_verified(self, mock_firebase_token):
     #     mock_firebase_token.return_value = {
-    #         'uid': 'uid_unverified',
+    #         'user_id': 'uid_unverified',
     #         'email': 'unverified@example.com',
     #         'email_verified': False
     #     }
@@ -192,7 +192,7 @@ class TestAccount(unittest.TestCase):
     @patch('firebase_admin.auth.verify_id_token')
     def test_delete_own_account_success(self, mock_firebase_token):
         mock_firebase_token.return_value = {
-            'uid': 'delete_me_uid',
+            'user_id': 'delete_me_uid',
             'email': 'deleteme@example.com',
             'email_verified': True
         }
@@ -204,7 +204,7 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 200) # 200 Successfully Deleted Account
         self.assertIn(b'Account deleted', response.data)
         # Confirm deletion
-        self.assertIsNone(Account.query.get(account.id))
+        self.assertIsNone(db.session.get(Account, account.id))
 
     # def test_delete_account_unauthorized(self):
     #     response = self.client.delete('/accounts/1')  # No auth header
@@ -222,7 +222,7 @@ class TestAccount(unittest.TestCase):
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_delete_account_not_found(self, mock_firebase_token):
     #     mock_firebase_token.return_value = {
-    #         'uid': 'any_uid',
+    #         'user_id': 'any_uid',
     #         'email': 'user@example.com',
     #         'email_verified': True
     #     }
@@ -236,7 +236,7 @@ class TestAccount(unittest.TestCase):
     # # @patch('firebase_admin.auth.verify_id_token')
     # # def test_admin_access_as_user(self, mock_firebase_token):
     # #     mock_firebase_token.return_value = {
-    # #         'uid': 'user_uid',
+    # #         'user_id': 'user_uid',
     # #         'email': 'user@example.com',
     # #         'email_verified': True
     # #     }
@@ -258,7 +258,7 @@ class TestAccount(unittest.TestCase):
     # # def test_delete_other_user_forbidden(self, mock_firebase_token):
     # #     # Authenticated user (not admin)
     # #     mock_firebase_token.return_value = {
-    # #         'uid': 'uid_user1',
+    # #         'user_id': 'uid_user1',
     # #         'email': 'user1@example.com',
     # #         'email_verified': True
     # #     }
@@ -274,7 +274,7 @@ class TestAccount(unittest.TestCase):
     # # @patch('firebase_admin.auth.verify_id_token')
     # # def test_admin_can_delete_any_account(self, mock_firebase_token):
     # #     mock_firebase_token.return_value = {
-    # #         'uid': 'admin_uid',
+    # #         'user_id': 'admin_uid',
     # #         'email': 'admin@example.com',
     # #         'email_verified': True
     # #     }
