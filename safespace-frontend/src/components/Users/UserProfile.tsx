@@ -1,15 +1,14 @@
 // UserProfile.tsx
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Spinner, Alert, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card, Alert, Button } from "react-bootstrap";
 import { useAuth } from '../../context/AuthContext';
 import api from "../../api";
 import NoAccess from "../LandingPages/NoAccess";
 import LoadingPage from "../LandingPages/LoadingPage";
 
 const UserProfile: React.FC = () => {
-    const { id } = useParams();
-    const { user } = useAuth();
+    const { user, loading, error } = useAuth();
     const navigate = useNavigate();
 
     const [profile, setProfile] = useState<null | {
@@ -18,53 +17,58 @@ const UserProfile: React.FC = () => {
         phone_number: string;
     }>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [errorPage, setErrorPage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
+            setIsLoading(true);
             try {
-                const response = await api.get(`/users/${id}`);
-                if (response.data.length === 0) {
-                    // No profile exists, redirect to form
-                    navigate(`/userprofileform/${id}`, {
-                        state: { message: "You still need to create a User Profile." }
-                    });
-                } else {
-                    setProfile(response.data[0]);
-                }
+                const idToken = await user?.getIdToken(true);
+                console.log(idToken);
+                const response = await api.get(`/users/`, {headers: {Authorization: `Bearer ${idToken}`}});
+                console.log(response.data);
+                setProfile(response.data);
             } catch (err) {
-                console.error("Error fetching profile:", err);
-                setError("Failed to load profile. Please try again.");
+                if (err.response && err.response.status === 404) {
+                    setProfile(null);
+                    navigate('/users');
+                } else {
+                    setErrorPage(err.message);
+                }
             } finally {
                 setIsLoading(false);
             }
         };
 
-        if (id) {
+        if (user) {
             fetchUserProfile();
         }
-    }, [id, navigate]);
+    }, [user]);
 
-    if (!user) {
+    if (!user && !isLoading && !loading) {
         return <NoAccess />;
     }
 
-    if (isLoading) {
+    if (isLoading || loading) {
         return <LoadingPage />;
     }
 
     return profile ? (
-        <Container className="p-5 my-5">
+        <Container className="p-5 my-5 rounded">
             <Row className="justify-content-center">
                 <Col md={8}>
                     <Card>
+                        <Card.Header className='text-center'><strong>User Profile</strong></Card.Header>
                         <Card.Body>
-                            <Card.Title>User Profile</Card.Title>
                             {error && <Alert variant="danger">{error}</Alert>}
-                            <Card.Text><strong>First Name:</strong> {profile.first_name}</Card.Text>
-                            <Card.Text><strong>Last Name:</strong> {profile.last_name}</Card.Text>
-                            <Card.Text><strong>Phone Number:</strong> {profile.phone_number}</Card.Text>
-                            <Button variant="primary" onClick={() => navigate(`/users/${id}`)}>Edit Profile</Button>
+                            {errorPage && <Alert variant="danger">{errorPage}</Alert>}
+                            <Card.Text><strong>First Name</strong>:  {profile.first_name}</Card.Text>
+                            <Card.Text><strong>Last Name</strong>:  {profile.last_name}</Card.Text>
+                            <Card.Text><strong>Phone Number</strong>:  {profile.phone_number}</Card.Text>
+                            <div className='text-center'>
+                                <Button variant="primary" onClick={() => navigate(`/users`)}>Edit Profile</Button>
+                                <Button variant="secondary" onClick={() => navigate(`/userdashboard`)}>Back to Dashboard</Button>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
