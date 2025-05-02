@@ -253,6 +253,28 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 403) # 403 Email Not Verified
         self.assertIn(b'Admin access required', response.data)
 
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_admin_access_as_admin(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
+            'user_id': 'admin_uid',
+            'email': 'admin@example.com',
+            'email_verified': True,
+            'role': 'admin'
+        }
+        # Create account with role 'admin'
+        account = Account(
+            firebase_uid='admin_uid',
+            email='admin@example.com',
+            email_verified=True,
+            role='admin'
+        )
+        db.session.add(account)
+        db.session.commit()
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = self.client.get('/accounts', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('admin_uid', response.data.decode())
+
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_delete_other_user_forbidden(self, mock_firebase_token):
     #     # Authenticated user (not admin)
