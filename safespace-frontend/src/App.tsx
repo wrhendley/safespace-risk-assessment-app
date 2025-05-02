@@ -12,6 +12,7 @@ import UserDashboard from './components/Users/UserDashboard';
 import NotFound from './components/LandingPages/NotFound';
 import ForgotPassword from './components/Authorization/ForgotPassword';
 import LoadingPage from './components/LandingPages/LoadingPage';
+import AboutUs from './components/AboutUs/AboutUs';
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
           <Route path='/user-profile' element={<UserProfile/>}/>
           <Route path='/users' element={<UserProfileForm/>}/>
           <Route path='/userdashboard' element={<UserDashboard/>}/>
+          <Route path='/about-us' element={<AboutUs/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/spinner' element={<LoadingPage/>}/>
           <Route path='*' element={<NotFound/>}/>
