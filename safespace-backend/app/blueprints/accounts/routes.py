@@ -19,7 +19,7 @@ def create_account():
         query = select(Account).filter_by(email=account_data['email'])
         existing_account = db.session.execute(query).scalar_one_or_none()
         if existing_account:
-            return jsonify({"message": "Account with this email already exists"}), 400
+            return jsonify({"message": "Account with this email already exists"}), 409
     except ValidationError as e:
         return jsonify(e.messages), 400
     

@@ -19,81 +19,45 @@ class TestAccount(unittest.TestCase):
         self.app_context.pop() # clean up after each test
 
     # Sign Up/Create New Account
-    @patch('firebase_admin.auth.verify_id_token')
-    def test_account_signup(self, mock_firebase_token):
-        mock_firebase_token.return_value = {
+    def test_account_signup(self):
+        user = {
             "email": "testaccount@email.com",
             "firebase_uid": "mock_uid-456",
-            "role": "user",
-            "is_active": True
+            "role": "user"
         }
         headers = {
-            'Authorization': 'Bearer fake_valid_token',
             'Origin': 'http://localhost',
             'Content-Type': 'application/json'
         }
-        response = self.client.post('/accounts', headers=headers, json=mock_firebase_token.return_value)
+        response = self.client.post('/accounts', headers=headers, json=user)
         self.assertEqual(response.status_code, 201) # 201 Successful Signup
         account = Account.query.filter_by(firebase_uid='mock_uid-456').first()
         self.assertIsNotNone(account)
         self.assertEqual(account.email, 'testaccount@email.com')
         self.assertFalse(account.email_verified)
 
-    # def test_signup_without_token(self):
-    #     response = self.client.post('/signup')  # no headers
-    #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
-    #     self.assertIn(b'Unauthorized', response.data)
-
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_signup_with_invalid_token(self, mock_firebase_token):
-    #     mock_firebase_token.side_effect = Exception("Invalid token")
-    #     headers = {
-    #         'Authorization': 'Bearer invalid_token'
-    #     }
-    #     response = self.client.post('/signup', headers=headers)
-    #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
-    #     self.assertIn(b'Invalid or expired token', response.data)
-
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_signup_with_unverified_email(self, mock_firebase_token):
-    #     mock_firebase_token.return_value = {
-    #         'uid': 'unverified_uid',
-    #         'email': 'notverified@example.com',
-    #         'email_verified': False
-    #     }
-    #     headers = {
-    #         'Authorization': 'Bearer some_token'
-    #     }
-    #     response = self.client.post('/signup', headers=headers)
-    #     self.assertEqual(response.status_code, 403) # 403 Email Not Verified
-    #     self.assertIn(b'Email not verified', response.data)
-
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_signup_existing_account(self, mock_firebase_token):
-    #     # First create an account
-    #     account = Account(
-    #         email='duplicate@example.com',
-    #         firebase_uid='existing_uid',
-    #         role='user',
-    #         is_active=True,
-    #         created_at=datetime.now(),
-    #         last_login=datetime.now(),
-    #         email_verified=True
-    #     )
-    #     db.session.add(account)
-    #     db.session.commit()
-    #     # Mock the same Firebase user
-    #     mock_firebase_token.return_value = {
-    #         'uid': 'existing_uid',
-    #         'email': 'duplicate@example.com',
-    #         'email_verified': True
-    #     }
-    #     headers = {
-    #         'Authorization': 'Bearer repeat_token'
-    #     }
-    #     response = self.client.post('/signup', headers=headers)
-    #     self.assertEqual(response.status_code, 409) # 409 Account Already Exists
-    #     self.assertIn(b'Account already exists', response.data)
+    def test_signup_existing_account(self):
+        # First create an account
+        account = Account(
+            email='duplicate@example.com',
+            firebase_uid='existing_uid',
+            role='user'
+        )
+        db.session.add(account)
+        db.session.commit()
+        # Mock the same Firebase user
+        account2 = {
+            'firebase_uid': 'existing_uid',
+            'email': 'duplicate@example.com',
+            'role': 'user'
+        }
+        headers = {
+            'Authorization': 'Bearer repeat_token',
+            'Content-Type': 'application/json'
+        }
+        response = self.client.post('/accounts', headers=headers, json=account2)
+        self.assertEqual(response.status_code, 409) # 409 Account Already Exists
+        self.assertIn(b'Account with this email already exists', response.data)
 
     # # Account Login - NEED TO UPDATE PAYLOADS
     # @patch('firebase_admin.auth.verify_id_token')
@@ -118,12 +82,12 @@ class TestAccount(unittest.TestCase):
     #     headers = {
     #     'Authorization': 'Bearer valid_token'
     #     }
-    #     response = self.client.post('/login', headers=headers)
+    #     response = self.client.post('/accounts', headers=headers)
     #     self.assertEqual(response.status_code, 200) # 200 Successful Login
     #     self.assertIn(b'Login successful', response.data)
 
     # def test_account_login_no_token(self):
-    #     response = self.client.post('/login')  # no headers
+    #     response = self.client.post('/accounts')  # no headers
     #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
     #     self.assertIn(b'Unauthorized', response.data)
 
@@ -134,7 +98,7 @@ class TestAccount(unittest.TestCase):
     #     headers = {
     #         'Authorization': 'Bearer fake_invalid_token'
     #     }
-    #     response = self.client.post('/login', headers=headers)
+    #     response = self.client.post('/accounts', headers=headers)
     #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
     #     self.assertIn(b'Invalid or expired token', response.data)
 
@@ -149,7 +113,7 @@ class TestAccount(unittest.TestCase):
     #     headers = {
     #         'Authorization': 'Bearer valid_but_no_user'
     #     }
-    #     response = self.client.post('/login', headers=headers)
+    #     response = self.client.post('/accounts', headers=headers)
     #     self.assertEqual(response.status_code, 404) # 404 Account Not Found
     #     self.assertIn(b'Account not found', response.data)
 
@@ -175,7 +139,7 @@ class TestAccount(unittest.TestCase):
     #     headers = {
     #         'Authorization': 'Bearer token_unverified'
     #     }
-    #     response = self.client.post('/login', headers=headers)
+    #     response = self.client.post('/accounts', headers=headers)
     #     self.assertEqual(response.status_code, 403) # 403 Email Not Verified
     #     self.assertIn(b'Email not verified', response.data)
 
@@ -201,7 +165,7 @@ class TestAccount(unittest.TestCase):
     #     db.session.add(account)
     #     db.session.commit()
     #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.get(f'/account/{account.account_id}', headers=headers)
+    #     response = self.client.get(f'/account/me', headers=headers)
     #     self.assertEqual(response.status_code, 200) # Success
     #     self.assertIn(b'user@example.com', response.data)
 
@@ -213,7 +177,7 @@ class TestAccount(unittest.TestCase):
     #         'email_verified': True
     #     }
     #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.get('/account/99999', headers=headers)  # nonexistent ID
+    #     response = self.client.get('/account/me', headers=headers)  # nonexistent ID
     #     self.assertEqual(response.status_code, 404) # 404 Account Not Found
     #     self.assertIn(b'Account not found', response.data)
 
