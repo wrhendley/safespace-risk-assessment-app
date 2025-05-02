@@ -203,13 +203,12 @@ class TestAccount(unittest.TestCase):
         response = self.client.delete(f'/accounts', headers=headers)
         self.assertEqual(response.status_code, 200) # 200 Successfully Deleted Account
         self.assertIn(b'Account deleted', response.data)
-        # Confirm deletion
-        self.assertIsNone(db.session.get(Account, account.id))
+        self.assertIsNone(db.session.get(Account, account.id)) # Confirm deletion
 
-    # def test_delete_account_unauthorized(self):
-    #     response = self.client.delete('/accounts/1')  # No auth header
-    #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
-    #     self.assertIn(b'Unauthorized', response.data)
+    def test_delete_account_unauthorized(self):
+        response = self.client.delete('/accounts')  # No auth header
+        self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
+        self.assertIn(b'Missing token', response.data)
 
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_delete_account_invalid_token(self, mock_firebase_token):
