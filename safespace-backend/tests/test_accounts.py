@@ -188,23 +188,23 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
         self.assertIn(b'Invalid token', response.data)
 
-    # # Delete Account by ID, auth required
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_delete_own_account_success(self, mock_firebase_token):
-    #     mock_firebase_token.return_value = {
-    #         'uid': 'delete_me_uid',
-    #         'email': 'deleteme@example.com',
-    #         'email_verified': True
-    #     }
-    #     account = Account(firebase_uid='delete_me_uid', email='deleteme@example.com', email_verified=True, role='user')
-    #     db.session.add(account)
-    #     db.session.commit()
-    #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.delete(f'/accounts/{account.id}', headers=headers)
-    #     self.assertEqual(response.status_code, 200) # 200 Successfully Deleted Account
-    #     self.assertIn(b'Account deleted', response.data)
-    #     # Confirm deletion
-    #     self.assertIsNone(Account.query.get(account.id))
+    # Delete Account by ID, auth required
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_delete_own_account_success(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
+            'uid': 'delete_me_uid',
+            'email': 'deleteme@example.com',
+            'email_verified': True
+        }
+        account = Account(firebase_uid='delete_me_uid', email='deleteme@example.com', email_verified=True, role='user')
+        db.session.add(account)
+        db.session.commit()
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = self.client.delete(f'/accounts', headers=headers)
+        self.assertEqual(response.status_code, 200) # 200 Successfully Deleted Account
+        self.assertIn(b'Account deleted', response.data)
+        # Confirm deletion
+        self.assertIsNone(Account.query.get(account.id))
 
     # def test_delete_account_unauthorized(self):
     #     response = self.client.delete('/accounts/1')  # No auth header
