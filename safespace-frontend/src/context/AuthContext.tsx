@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthState
 import React from "react";
 import api from '../api'
 
-
 interface AuthContextType {
     user: User | null;
     loading: boolean;
@@ -22,51 +21,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    // useEffect(()=>{
-    //     const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
-    //         setUser(currentUser);
-    //         setLoading(false);
-    //         setError(null);
-    //     });
-
-    //     return ()=>{
-    //         try{
-    //             unsubscribe();
-    //         }catch(err:any){
-    //             setError(err.message);
-    //         }};
-    // }, []);
-
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            setLoading(true);
+    useEffect(()=>{
+        const authStateChange = onAuthStateChanged(auth, (currentUser)=>{
             setUser(currentUser);
-
-            if (currentUser) {
-                // If user is signed in, set 'is_active' to true in your database
-                try {
-                    const idToken = await currentUser.getIdToken(true);
-                    await api.put("/accounts/update", 
-                        {is_active: true}, 
-                        {headers: {Authorization: `Bearer ${idToken}`}});
-                } catch (err) {
-                    setError("Failed to update user status.");
-                }
-            } else {
-                // If user is signed out, set 'is_active' to false in your database
-                try {
-                    const idToken = await currentUser.getIdToken(true);
-                    await api.put("/accounts/update", {is_active: false}, 
-                    {headers: {Authorization: `Bearer ${idToken}`}});
-                } catch (err) {
-                    setError("Failed to update user status.");
-                }
-            }
             setLoading(false);
+            setError(null);
         });
 
-        return unsubscribe;
-    }, [user]);
+        return ()=>{
+            try{
+                authStateChange();
+            }catch(err:any){
+                setError(err.message);
+            }};
+    }, []);
 
     const signUp = async (email: string, password: string) => {
         try {
@@ -83,11 +51,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const signIn = async (email: string, password: string) => {
         try {
             setLoading(true);
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await userCredential.user.getIdToken(true);
+    
+            await api.put("/accounts/update", 
+                { is_active: true },
+                { headers: { Authorization: `Bearer ${idToken}` } }
+            );
         } catch (err: any) {
             setError(err.message);
             throw err;
-        }finally{
+        } finally {
             setLoading(false);
         }
     };
@@ -95,10 +69,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logOut = async () => {
         try {
             setLoading(true);
+            const currentUser = auth.currentUser;
+    
+            if (currentUser) {
+                const idToken = await currentUser.getIdToken(true);
+                await api.put("/accounts/update", 
+                    { is_active: false },
+                    { headers: { Authorization: `Bearer ${idToken}` } }
+                );
+            }
+    
             await signOut(auth);
         } catch (err: any) {
             setError(err.message);
-        }finally{
+        } finally {
             setLoading(false);
         }
     };
