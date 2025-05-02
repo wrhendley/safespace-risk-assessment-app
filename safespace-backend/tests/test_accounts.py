@@ -175,10 +175,10 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 404) # 404 Account Not Found
         self.assertIn(b'Account not found', response.data)
 
-    # def test_get_account_unauthorized_no_token(self):
-    #     response = self.client.get('/accounts/1')  # No auth header
-    #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
-    #     self.assertIn(b'Unauthorized', response.data)
+    def test_get_account_unauthorized_no_token(self):
+        response = self.client.get('/accounts/me')  # No auth header
+        self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
+        self.assertIn(b'Missing token', response.data)
 
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_get_account_invalid_token(self, mock_firebase_token):
