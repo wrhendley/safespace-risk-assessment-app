@@ -1,8 +1,8 @@
 import React from "react";
 import { Container, Image } from "react-bootstrap";
 import ContactUs from "./ContactUs";
-import OurMission from "./OurMission";
 import Team from "./Team";
+import OurMission from "./OurMission";
 
 function AboutUs(){
 

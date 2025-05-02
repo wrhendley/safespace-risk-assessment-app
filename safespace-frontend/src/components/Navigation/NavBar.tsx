@@ -9,7 +9,7 @@ function NavBar(){
 
     return (
         <>
-        <Navbar collapseOnSelect expand="lg" style={{ zIndex: 1040 }}>
+        <Navbar collapseOnSelect expand="lg">
             <Container>
                 <Navbar.Brand href="/">
                     <img src='/safespace-logo-80x80.jpeg' width='60px' alt="SafeSpace Logo" /> <b>SAFESPACE</b>
@@ -33,7 +33,7 @@ function NavBar(){
 
                         {user ? (
                             <>
-                                <Nav.Link href={`/userprofile/${user.uid}`}>USER PROFILE</Nav.Link>
+                                <Nav.Link href={`/user-profile`}>USER PROFILE</Nav.Link>
                                 <SignOutButton/>
                                 {/* <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link> */}
                             </>
