@@ -29,7 +29,7 @@ def create_account():
     
     return account_schema.jsonify(new_account), 201
 
-@accounts_bp.route('/', methods=['GET'])
+@accounts_bp.route('/', methods=['GET'], strict_slashes=False)
 @limiter.limit("5 per minute")
 @admin_required
 def get_accounts():
@@ -49,13 +49,13 @@ def get_accounts():
     except:
         return jsonify({'message': 'There was an error'}), 400
     
-@accounts_bp.route('/me', methods=['GET'])
+@accounts_bp.route('/me', methods=['GET'], strict_slashes=False)
 @auth_required
 def get_account():
     account = g.account
     return account_schema.jsonify(account)
     
-@accounts_bp.route('/update', methods=['PUT'])
+@accounts_bp.route('/update', methods=['PUT'], strict_slashes=False)
 @auth_required
 def update_account():
     account = g.account
@@ -79,7 +79,7 @@ def update_account():
     except Exception as e:
         return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
-@accounts_bp.route('/', methods=['DELETE'])
+@accounts_bp.route('/', methods=['DELETE'], strict_slashes=False)
 @auth_required
 def delete_account():
     try:
