@@ -10,12 +10,12 @@ class TestAccount(unittest.TestCase):
         self.app = create_app("TestingConfig")
         self.app_context = self.app.app_context()
         self.app_context.push()  # Keeps the context active during the whole test
+        db.create_all()
         self.client = self.app.test_client()
 
-        db.drop_all()
-        db.create_all()
-
     def tearDown(self):
+        db.session.remove()  # Clean up the database session
+        db.drop_all()  # Drop all tables after each test
         self.app_context.pop() # clean up after each test
 
     # Sign Up/Create New Account
@@ -180,13 +180,13 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
         self.assertIn(b'Missing token', response.data)
 
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_get_account_invalid_token(self, mock_firebase_token):
-    #     mock_firebase_token.side_effect = Exception("Invalid token")
-    #     headers = {'Authorization': 'Bearer fake_token'}
-    #     response = self.client.get('/accounts/1', headers=headers)
-    #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
-    #     self.assertIn(b'Invalid or expired token', response.data)
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_get_account_invalid_token(self, mock_firebase_token):
+        mock_firebase_token.side_effect = Exception("Invalid token")
+        headers = {'Authorization': 'Bearer fake_token'}
+        response = self.client.get('/accounts/me', headers=headers)
+        self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
+        self.assertIn(b'Invalid token', response.data)
 
     # # Delete Account by ID, auth required
     # @patch('firebase_admin.auth.verify_id_token')
