@@ -26,9 +26,9 @@ function NavBar(){
                         </NavDropdown>
 
                         <NavDropdown title="ABOUT US" id="aboutus-dropdown">
-                            <NavDropdown.Item href="/our-mission">Our Mission</NavDropdown.Item>
-                            <NavDropdown.Item href="/team">Team</NavDropdown.Item>
-                            <NavDropdown.Item href="/contact">Contact</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#our-mission">Our Mission</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#team">Team</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#contact-us">Contact</NavDropdown.Item>
                         </NavDropdown>
 
                         {user ? (
