@@ -73,14 +73,12 @@ class TestAccount(unittest.TestCase):
     #         firebase_uid='valid_firebase_uid_123',
     #         role='user',
     #         is_active=True,
-    #         created_at=datetime.now(),
-    #         last_login=datetime.now(),
     #         email_verified=True
     #     )
     #     db.session.add(account)
     #     db.session.commit()
     #     headers = {
-    #     'Authorization': 'Bearer valid_token'
+    #         'Authorization': 'Bearer valid_token'
     #     }
     #     response = self.client.post('/accounts', headers=headers)
     #     self.assertEqual(response.status_code, 200) # 200 Successful Login
@@ -143,31 +141,27 @@ class TestAccount(unittest.TestCase):
     #     self.assertEqual(response.status_code, 403) # 403 Email Not Verified
     #     self.assertIn(b'Email not verified', response.data)
 
-    # # Get Account by ID, auth required
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_get_account_success(self, mock_firebase_token):
-    #     # Mock Firebase token
-    #     mock_firebase_token.return_value = {
-    #         'uid': 'test_uid_123',
-    #         'email': 'user@example.com',
-    #         'email_verified': True
-    #     }
-    #     # Create account with that UID
-    #     account = Account(
-    #         email='user@example.com',
-    #         firebase_uid='test_uid_123',
-    #         role='user',
-    #         is_active=True,
-    #         created_at=datetime.now(),
-    #         last_login=datetime.now(),
-    #         email_verified=True
-    #     )
-    #     db.session.add(account)
-    #     db.session.commit()
-    #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.get(f'/account/me', headers=headers)
-    #     self.assertEqual(response.status_code, 200) # Success
-    #     self.assertIn(b'user@example.com', response.data)
+    # Get Account by ID, auth required
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_get_account_success(self, mock_firebase_token):
+        # Mock Firebase token
+        mock_firebase_token.return_value = {
+            'email': 'user@example.com',
+            'user_id': 'test_uid_123',
+            'role': 'user'
+        }
+        # Create account with that UID
+        account = Account(
+            email='user@example.com',
+            firebase_uid='test_uid_123',
+            role='user',
+        )
+        db.session.add(account)
+        db.session.commit()
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = self.client.get(f'/accounts/me', headers=headers)
+        self.assertEqual(response.status_code, 200) # Success
+        self.assertIn(b'user@example.com', response.data)
 
     # @patch('firebase_admin.auth.verify_id_token')
     # def test_get_account_not_found(self, mock_firebase_token):
