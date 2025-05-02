@@ -163,20 +163,20 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 200) # Success
         self.assertIn(b'user@example.com', response.data)
 
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_get_account_not_found(self, mock_firebase_token):
-    #     mock_firebase_token.return_value = {
-    #         'uid': 'irrelevant_uid',
-    #         'email': 'ghost@example.com',
-    #         'email_verified': True
-    #     }
-    #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.get('/account/me', headers=headers)  # nonexistent ID
-    #     self.assertEqual(response.status_code, 404) # 404 Account Not Found
-    #     self.assertIn(b'Account not found', response.data)
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_get_account_not_found(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
+            'user_id': 'irrelevant_uid',
+            'email': 'ghost@example.com',
+            'email_verified': True
+        }
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = self.client.get('/accounts/me', headers=headers)  # nonexistent ID
+        self.assertEqual(response.status_code, 404) # 404 Account Not Found
+        self.assertIn(b'Account not found', response.data)
 
     # def test_get_account_unauthorized_no_token(self):
-    #     response = self.client.get('/account/1')  # No auth header
+    #     response = self.client.get('/accounts/1')  # No auth header
     #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
     #     self.assertIn(b'Unauthorized', response.data)
 
@@ -184,7 +184,7 @@ class TestAccount(unittest.TestCase):
     # def test_get_account_invalid_token(self, mock_firebase_token):
     #     mock_firebase_token.side_effect = Exception("Invalid token")
     #     headers = {'Authorization': 'Bearer fake_token'}
-    #     response = self.client.get('/account/1', headers=headers)
+    #     response = self.client.get('/accounts/1', headers=headers)
     #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
     #     self.assertIn(b'Invalid or expired token', response.data)
 
@@ -200,14 +200,14 @@ class TestAccount(unittest.TestCase):
     #     db.session.add(account)
     #     db.session.commit()
     #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.delete(f'/account/{account.id}', headers=headers)
+    #     response = self.client.delete(f'/accounts/{account.id}', headers=headers)
     #     self.assertEqual(response.status_code, 200) # 200 Successfully Deleted Account
     #     self.assertIn(b'Account deleted', response.data)
     #     # Confirm deletion
     #     self.assertIsNone(Account.query.get(account.id))
 
     # def test_delete_account_unauthorized(self):
-    #     response = self.client.delete('/account/1')  # No auth header
+    #     response = self.client.delete('/accounts/1')  # No auth header
     #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
     #     self.assertIn(b'Unauthorized', response.data)
 
@@ -215,7 +215,7 @@ class TestAccount(unittest.TestCase):
     # def test_delete_account_invalid_token(self, mock_firebase_token):
     #     mock_firebase_token.side_effect = Exception("Invalid token")
     #     headers = {'Authorization': 'Bearer invalid_token'}
-    #     response = self.client.delete('/account/1', headers=headers)
+    #     response = self.client.delete('/accounts/1', headers=headers)
     #     self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
     #     self.assertIn(b'Invalid or expired token', response.data)
 
@@ -227,7 +227,7 @@ class TestAccount(unittest.TestCase):
     #         'email_verified': True
     #     }
     #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.delete('/account/99999', headers=headers)
+    #     response = self.client.delete('/accounts/99999', headers=headers)
     #     self.assertEqual(response.status_code, 404) # 404 Account Not Found
     #     self.assertIn(b'Account not found', response.data)
 
@@ -267,7 +267,7 @@ class TestAccount(unittest.TestCase):
     # #     db.session.add_all([user1, user2])
     # #     db.session.commit()
     # #     headers = {'Authorization': 'Bearer valid_token'}
-    # #     response = self.client.delete(f'/account/{user2.id}', headers=headers)
+    # #     response = self.client.delete(f'/accounts/{user2.id}', headers=headers)
     # #     self.assertEqual(response.status_code, 403) # 403 Forbidden, unable to access
     # #     self.assertIn(b'Forbidden', response.data)
 
@@ -283,6 +283,6 @@ class TestAccount(unittest.TestCase):
     # #     db.session.add_all([admin, user])
     # #     db.session.commit()
     # #     headers = {'Authorization': 'Bearer admin_token'}
-    # #     response = self.client.delete(f'/account/{user.id}', headers=headers)
+    # #     response = self.client.delete(f'/accounts/{user.id}', headers=headers)
     # #     self.assertEqual(response.status_code, 200) # 200 Succesfully Deleted Account by Admin
     # #     self.assertIn(b'Account deleted', response.data)
