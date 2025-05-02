@@ -231,57 +231,57 @@ class TestAccount(unittest.TestCase):
         self.assertIn(b'Account not found', response.data)
 
 
-    # # RBAC Tests
-    # # @patch('firebase_admin.auth.verify_id_token')
-    # # def test_admin_access_as_user(self, mock_firebase_token):
-    # #     mock_firebase_token.return_value = {
-    # #         'user_id': 'user_uid',
-    # #         'email': 'user@example.com',
-    # #         'email_verified': True
-    # #     }
-    # #     # Create account with role 'user'
-    # #     account = Account(
-    # #         firebase_uid='user_uid',
-    # #         email='user@example.com',
-    # #         email_verified=True,
-    # #         role='user'
-    # #     )
-    # #     db.session.add(account)
-    # #     db.session.commit()
-    # #     headers = {'Authorization': 'Bearer valid_token'}
-    # #     response = self.client.get('/admin/dashboard', headers=headers)
-    # #     self.assertEqual(response.status_code, 403) # 403 Email Not Verified
-    # #     self.assertIn(b'insufficient role', response.data)
+    # RBAC Tests
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_admin_access_as_user(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
+            'user_id': 'user_uid',
+            'email': 'user@example.com',
+            'email_verified': True
+        }
+        # Create account with role 'user'
+        account = Account(
+            firebase_uid='user_uid',
+            email='user@example.com',
+            email_verified=True,
+            role='user'
+        )
+        db.session.add(account)
+        db.session.commit()
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = self.client.get('/accounts', headers=headers)
+        self.assertEqual(response.status_code, 403) # 403 Email Not Verified
+        self.assertIn(b'Admin access required', response.data)
 
-    # # @patch('firebase_admin.auth.verify_id_token')
-    # # def test_delete_other_user_forbidden(self, mock_firebase_token):
-    # #     # Authenticated user (not admin)
-    # #     mock_firebase_token.return_value = {
-    # #         'user_id': 'uid_user1',
-    # #         'email': 'user1@example.com',
-    # #         'email_verified': True
-    # #     }
-    # #     user1 = Account(firebase_uid='uid_user1', email='user1@example.com', email_verified=True, role='user')
-    # #     user2 = Account(firebase_uid='uid_user2', email='user2@example.com', email_verified=True, role='user')
-    # #     db.session.add_all([user1, user2])
-    # #     db.session.commit()
-    # #     headers = {'Authorization': 'Bearer valid_token'}
-    # #     response = self.client.delete(f'/accounts/{user2.id}', headers=headers)
-    # #     self.assertEqual(response.status_code, 403) # 403 Forbidden, unable to access
-    # #     self.assertIn(b'Forbidden', response.data)
+    # @patch('firebase_admin.auth.verify_id_token')
+    # def test_delete_other_user_forbidden(self, mock_firebase_token):
+    #     # Authenticated user (not admin)
+    #     mock_firebase_token.return_value = {
+    #         'user_id': 'uid_user1',
+    #         'email': 'user1@example.com',
+    #         'email_verified': True
+    #     }
+    #     user1 = Account(firebase_uid='uid_user1', email='user1@example.com', email_verified=True, role='user')
+    #     user2 = Account(firebase_uid='uid_user2', email='user2@example.com', email_verified=True, role='user')
+    #     db.session.add_all([user1, user2])
+    #     db.session.commit()
+    #     headers = {'Authorization': 'Bearer valid_token'}
+    #     response = self.client.delete(f'/accounts/{user2.id}', headers=headers)
+    #     self.assertEqual(response.status_code, 403) # 403 Forbidden, unable to access
+    #     self.assertIn(b'Forbidden', response.data)
 
-    # # @patch('firebase_admin.auth.verify_id_token')
-    # # def test_admin_can_delete_any_account(self, mock_firebase_token):
-    # #     mock_firebase_token.return_value = {
-    # #         'user_id': 'admin_uid',
-    # #         'email': 'admin@example.com',
-    # #         'email_verified': True
-    # #     }
-    # #     admin = Account(firebase_uid='admin_uid', email='admin@example.com', email_verified=True, role='admin')
-    # #     user = Account(firebase_uid='user_uid', email='user@example.com', email_verified=True, role='user')
-    # #     db.session.add_all([admin, user])
-    # #     db.session.commit()
-    # #     headers = {'Authorization': 'Bearer admin_token'}
-    # #     response = self.client.delete(f'/accounts/{user.id}', headers=headers)
-    # #     self.assertEqual(response.status_code, 200) # 200 Succesfully Deleted Account by Admin
-    # #     self.assertIn(b'Account deleted', response.data)
+    # @patch('firebase_admin.auth.verify_id_token')
+    # def test_admin_can_delete_any_account(self, mock_firebase_token):
+    #     mock_firebase_token.return_value = {
+    #         'user_id': 'admin_uid',
+    #         'email': 'admin@example.com',
+    #         'email_verified': True
+    #     }
+    #     admin = Account(firebase_uid='admin_uid', email='admin@example.com', email_verified=True, role='admin')
+    #     user = Account(firebase_uid='user_uid', email='user@example.com', email_verified=True, role='user')
+    #     db.session.add_all([admin, user])
+    #     db.session.commit()
+    #     headers = {'Authorization': 'Bearer admin_token'}
+    #     response = self.client.delete(f'/accounts/{user.id}', headers=headers)
+    #     self.assertEqual(response.status_code, 200) # 200 Succesfully Deleted Account by Admin
+    #     self.assertIn(b'Account deleted', response.data)
