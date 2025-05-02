@@ -218,17 +218,17 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(response.status_code, 401) # 401 Unauthorized, Invalid or Expired Token
         self.assertIn(b'Invalid token', response.data)
 
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_delete_account_not_found(self, mock_firebase_token):
-    #     mock_firebase_token.return_value = {
-    #         'user_id': 'any_uid',
-    #         'email': 'user@example.com',
-    #         'email_verified': True
-    #     }
-    #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.delete('/accounts/99999', headers=headers)
-    #     self.assertEqual(response.status_code, 404) # 404 Account Not Found
-    #     self.assertIn(b'Account not found', response.data)
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_delete_account_not_found(self, mock_firebase_token):
+        mock_firebase_token.return_value = {
+            'user_id': 'any_uid',
+            'email': 'user@example.com',
+            'email_verified': True
+        }
+        headers = {'Authorization': 'Bearer valid_token'}
+        response = self.client.delete('/accounts', headers=headers)
+        self.assertEqual(response.status_code, 404) # 404 Account Not Found
+        self.assertIn(b'Account not found', response.data)
 
 
     # # RBAC Tests
