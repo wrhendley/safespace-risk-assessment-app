@@ -1,7 +1,7 @@
-from flask import request, jsonify
+from flask import request, jsonify, g
 from app.utils.util import auth_required
 from app.blueprints.users import users_bp
-from app.blueprints.users.schemas import user_schema
+from app.blueprints.users.schemas import user_schema, user_create_schema
 from app.extensions import limiter
 from marshmallow import ValidationError
 from app.models import User, db
@@ -16,9 +16,11 @@ MAX_PER_PAGE = 100
 @users_bp.route('/', methods=['POST'])
 @auth_required # applying token verification wrapper to route
 @limiter.limit("5 per minute")
-def create_account():
+def create_user():
     try:
-        user_data = user_schema.load(request.json)
+        account = g.account
+        user_data = user_create_schema.load(request.json)
+        user_data["account_id"] = account.id
     except ValidationError as e:
         return jsonify(e.messages), 400
     
@@ -31,8 +33,9 @@ def create_account():
 # Get User by ID, auth required
 @users_bp.route('/', methods=['GET'])
 @auth_required # applying token verification wrapper to route
-def get_user(user_id):
-    query = select(User).where(User.id == user_id)
+def get_user():
+    account = g.account
+    query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()
 
     if user == None:
@@ -43,15 +46,16 @@ def get_user(user_id):
 # Update User by ID, auth required
 @users_bp.route('/', methods=['PUT'])
 @auth_required # applying token verification wrapper to route
-def update_user(user_id):
-    query = select(User).where(User.id == user_id)
+def update_user():
+    account = g.account
+    query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()
     
     if user == None:
         return jsonify({"message": "user not found"}), 404
 
     try: 
-        user_data = user_schema.load(request.json)
+        user_data = user_create_schema.load(request.json)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
@@ -64,8 +68,10 @@ def update_user(user_id):
 # Delete User by ID, auth required
 @users_bp.route('/', methods=['DELETE'])
 @auth_required # applying token verification wrapper to route
-def delete_user(user_id):
-    user = db.session.get(User, user_id)
+def delete_user():
+    account = g.account
+    query = select(User).where(User.account_id == account.id)
+    user = db.session.execute(query).scalars().first()
     db.session.delete(user)
     db.session.commit()
-    return jsonify({"message": f"succesfully deleted user {user_id}"}), 200
+    return jsonify({"message": f"succesfully deleted user {user.id}"}), 200

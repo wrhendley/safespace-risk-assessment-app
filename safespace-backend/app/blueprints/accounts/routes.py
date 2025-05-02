@@ -19,7 +19,7 @@ def create_account():
         query = select(Account).filter_by(email=account_data['email'])
         existing_account = db.session.execute(query).scalar_one_or_none()
         if existing_account:
-            return jsonify({"message": "Account with this email already exists"}), 400
+            return jsonify({"message": "Account with this email already exists"}), 409
     except ValidationError as e:
         return jsonify(e.messages), 400
     
@@ -29,14 +29,13 @@ def create_account():
     
     return account_schema.jsonify(new_account), 201
 
-@accounts_bp.route('/', methods=['GET'])
+@accounts_bp.route('/', methods=['GET'], strict_slashes=False)
 @limiter.limit("5 per minute")
 @admin_required
 def get_accounts():
     try:
         page = request.args.get('page', DEFAULT_PAGE, type=int)
         per_page = min(request.args.get('per_page', DEFAULT_PER_PAGE, type=int), MAX_PER_PAGE)
-        print(f"Page: {page}, Per Page: {per_page}")
         if page < 1 or per_page < 1:
             return jsonify({"message": "Invalid page or per_page parameter"}), 400
         query = select(Account).order_by(Account.created_at.desc())
@@ -49,13 +48,13 @@ def get_accounts():
     except:
         return jsonify({'message': 'There was an error'}), 400
     
-@accounts_bp.route('/me', methods=['GET'])
+@accounts_bp.route('/me', methods=['GET'], strict_slashes=False)
 @auth_required
 def get_account():
     account = g.account
     return account_schema.jsonify(account)
     
-@accounts_bp.route('/update', methods=['PUT'])
+@accounts_bp.route('/update', methods=['PUT'], strict_slashes=False)
 @auth_required
 def update_account():
     account = g.account
@@ -79,7 +78,7 @@ def update_account():
     except Exception as e:
         return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
-@accounts_bp.route('/', methods=['DELETE'])
+@accounts_bp.route('/', methods=['DELETE'], strict_slashes=False)
 @auth_required
 def delete_account():
     try:

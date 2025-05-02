@@ -26,7 +26,7 @@ class DevelopmentConfig:
     CORS_ORIGINS = ["http://localhost:5173"]
     
 class TestingConfig:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use an in-memory SQLite database for testing
     DEBUG = True
     CACHE_TYPE = 'SimpleCache'
     CORS_ORIGINS = ["http://localhost:5173"]

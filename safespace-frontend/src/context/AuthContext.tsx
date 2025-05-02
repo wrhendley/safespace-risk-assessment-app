@@ -22,20 +22,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(()=>{
-        const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
-            setUser(currentUser);
-            setLoading(false);
-            setError(null);
-        });
+    // useEffect(()=>{
+    //     const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
+    //         setUser(currentUser);
+    //         setLoading(false);
+    //         setError(null);
+    //     });
 
-        return ()=>{
-            try{
-                unsubscribe();
-            }catch(err:any){
-                setError(err.message);
-            }};
-    }, []);
+    //     return ()=>{
+    //         try{
+    //             unsubscribe();
+    //         }catch(err:any){
+    //             setError(err.message);
+    //         }};
+    // }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -45,18 +45,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (currentUser) {
                 // If user is signed in, set 'is_active' to true in your database
                 try {
+                    const idToken = await currentUser.getIdToken(true);
                     await api.put("/accounts/update", 
                         {is_active: true}, 
-                        {headers: {Authorization: `Bearer ${currentUser.getIdToken}`}});
+                        {headers: {Authorization: `Bearer ${idToken}`}});
                 } catch (err) {
                     setError("Failed to update user status.");
                 }
             } else {
                 // If user is signed out, set 'is_active' to false in your database
                 try {
-                    await api.put("/accounts/update", {
-                        is_active: false
-                    });
+                    const idToken = await currentUser.getIdToken(true);
+                    await api.put("/accounts/update", {is_active: false}, 
+                    {headers: {Authorization: `Bearer ${idToken}`}});
                 } catch (err) {
                     setError("Failed to update user status.");
                 }

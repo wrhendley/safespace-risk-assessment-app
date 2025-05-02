@@ -19,11 +19,11 @@ const Login = () => {
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const { signIn, loading, user, error, logOut } = useAuth();
 
-    useEffect(()=>{
-        if (user){
-            api.get(`/accounts/${user.uid}`)
-        }
-    }, [user]);
+    // useEffect(()=>{
+    //     if (user){
+    //         api.get(`/accounts/${user.uid}`)
+    //     }
+    // }, [user]);
 
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
@@ -31,8 +31,12 @@ const Login = () => {
             setErrorPage('');
             await signIn(email, password);
             setJustLoggedIn(true);
+            // Get IdToken
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
+            const idToken = await currentUser.getIdToken(true);
+            console.log(idToken);
+
             if(currentUser.emailVerified){
                 setShowSuccessModal(true);
             }else{
