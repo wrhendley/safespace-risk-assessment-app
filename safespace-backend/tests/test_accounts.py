@@ -266,7 +266,7 @@ class TestAccount(unittest.TestCase):
     #     db.session.add_all([user1, user2])
     #     db.session.commit()
     #     headers = {'Authorization': 'Bearer valid_token'}
-    #     response = self.client.delete(f'/accounts/{user2.id}', headers=headers)
+    #     response = self.client.delete(f'/accounts', headers=headers)
     #     self.assertEqual(response.status_code, 403) # 403 Forbidden, unable to access
     #     self.assertIn(b'Forbidden', response.data)
 
