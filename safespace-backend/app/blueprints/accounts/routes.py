@@ -36,7 +36,6 @@ def get_accounts():
     try:
         page = request.args.get('page', DEFAULT_PAGE, type=int)
         per_page = min(request.args.get('per_page', DEFAULT_PER_PAGE, type=int), MAX_PER_PAGE)
-        print(f"Page: {page}, Per Page: {per_page}")
         if page < 1 or per_page < 1:
             return jsonify({"message": "Invalid page or per_page parameter"}), 400
         query = select(Account).order_by(Account.created_at.desc())
