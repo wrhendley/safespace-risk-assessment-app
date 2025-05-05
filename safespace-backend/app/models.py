@@ -46,7 +46,7 @@ class User(db.Model):
     # zip_code: Mapped[str] = mapped_column(nullable=False)
     
     account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
-    risk_assessments: Mapped[List['RiskAssessment']] = db.relationship(back_populates="user")
+    risk_assessments: Mapped[List['RiskAssessment']] = db.relationship(secondary=user_risk_assessment, back_populates="users")
 
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessments'
@@ -58,4 +58,4 @@ class RiskAssessment(db.Model):
     comments: Mapped[str] = mapped_column(nullable=True)
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     
-    users: Mapped[List['User']] = db.relationship(back_populates="risk_assessments")
+    users: Mapped[List['User']] = db.relationship(secondary=user_risk_assessment, back_populates="risk_assessments")
