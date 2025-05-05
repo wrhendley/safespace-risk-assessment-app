@@ -52,7 +52,6 @@ class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessments'
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(db.ForeignKey('users.id'), nullable=False)
     assessment_date: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     risk_score: Mapped[float] = mapped_column(nullable=False)
     risk_level: Mapped[str] = mapped_column(nullable=False)
