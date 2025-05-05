@@ -38,3 +38,17 @@ class User(db.Model):
     # zip_code: Mapped[str] = mapped_column(nullable=False)
     
     account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
+    risk_assessment: Mapped['Risk_Assessment'] = db.relationship(back_populates="user")
+
+class Risk_Assessment(db.Model):
+    __tablename__ = 'risk_assessments'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(db.ForeignKey('users.id'), nullable=False)
+    assessment_date: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
+    risk_score: Mapped[float] = mapped_column(nullable=False)
+    risk_level: Mapped[str] = mapped_column(nullable=False)
+    comments: Mapped[str] = mapped_column(nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
+    
+    user: Mapped['User'] = db.relationship(back_populates="risk_assessments")
