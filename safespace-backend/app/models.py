@@ -38,9 +38,9 @@ class User(db.Model):
     # zip_code: Mapped[str] = mapped_column(nullable=False)
     
     account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
-    risk_assessment: Mapped['Risk_Assessment'] = db.relationship(back_populates="user")
+    risk_assessment: Mapped['RiskAssessment'] = db.relationship(back_populates="user")
 
-class Risk_Assessment(db.Model):
+class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessments'
     
     id: Mapped[int] = mapped_column(primary_key=True)
