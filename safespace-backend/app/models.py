@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
 
@@ -6,6 +7,13 @@ class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
+
+user_risk_assessment = db.Table(
+    'user_risk_assessment',
+    Base.metadata,
+    db.Column('user_id', db.ForeignKey('users.id')),
+    db.Column('risk_assessment_id', db.ForeignKey('risk_assessments.id'))
+)
 
 class Account(db.Model):
     __tablename__ = 'accounts'
@@ -38,7 +46,7 @@ class User(db.Model):
     # zip_code: Mapped[str] = mapped_column(nullable=False)
     
     account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
-    risk_assessment: Mapped['RiskAssessment'] = db.relationship(back_populates="user")
+    risk_assessments: Mapped[List['RiskAssessment']] = db.relationship(back_populates="user")
 
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessments'
@@ -51,4 +59,4 @@ class RiskAssessment(db.Model):
     comments: Mapped[str] = mapped_column(nullable=True)
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     
-    user: Mapped['User'] = db.relationship(back_populates="risk_assessments")
+    users: Mapped[List['User']] = db.relationship(back_populates="risk_assessments")
