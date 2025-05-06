@@ -61,7 +61,7 @@ describe("ForgotPassword Component", () => {
         expect(screen.getByText(/Forgotten password?/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/Enter your email/i)).toBeInTheDocument();   
     });
-    // Simulating filling out the form and clicking log in
+    // Simulating filling out email and clicking submit
     test("calls sendPasswordResetEmail on submit", async () => {
         render(
             <MemoryRouter>

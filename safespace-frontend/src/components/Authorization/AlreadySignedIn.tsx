@@ -8,7 +8,7 @@ function AlreadySignedIn(){
     const navigate = useNavigate();
 
     return(
-<>
+    <>
         {/* SafeSpace Promo Banner*/ }
         <div className="text-center" style={{ backgroundColor: "black" }}>
             <Image src="/safespace-business-card-750x300.jpeg" height="200px" alt="SafeSpace Promo" fluid/>
@@ -26,7 +26,7 @@ function AlreadySignedIn(){
                     
                 </Col>
                 
-                {/*Home Page Image is on the right on Desktop and underneath on Mobile*/}
+                {/*Image is on the right on Desktop and underneath on Mobile*/}
                 <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
                     <Image src="/already-signed-in-img.jpg" alt="" width="100%" fluid />
                 </Col>
