@@ -1,7 +1,7 @@
 // AuthContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User, signOut} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, User, signOut, getIdToken} from "firebase/auth";
 import React from "react";
 import api from '../api'
 
@@ -20,21 +20,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [idToken, setIdToken] = useState<string>('');
 
-    useEffect(()=>{
-        const authStateChange = onAuthStateChanged(auth, (currentUser)=>{
+    useEffect(() => {
+        setLoading(true);
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
             setLoading(false);
             setError(null);
         });
-
-        return ()=>{
-            try{
-                authStateChange();
-            }catch(err:any){
-                setError(err.message);
-            }};
+    
+        return () => unsubscribe();
     }, []);
+    
 
     const signUp = async (email: string, password: string) => {
         try {
@@ -52,11 +50,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const idToken = await userCredential.user.getIdToken(true);
-    
+            const token = await userCredential.user.getIdToken(true);
+
             await api.put("/accounts/update", 
                 { is_active: true },
-                { headers: { Authorization: `Bearer ${idToken}` } }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
         } catch (err: any) {
             setError(err.message);
@@ -70,12 +68,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
             const currentUser = auth.currentUser;
-    
+            const token = await currentUser.getIdToken(true);
+
             if (currentUser) {
-                const idToken = await currentUser.getIdToken(true);
                 await api.put("/accounts/update", 
                     { is_active: false },
-                    { headers: { Authorization: `Bearer ${idToken}` } }
+                    { headers: { Authorization: `Bearer ${token}` } }
                 );
             }
     

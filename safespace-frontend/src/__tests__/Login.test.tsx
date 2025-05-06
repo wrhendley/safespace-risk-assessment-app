@@ -20,7 +20,7 @@ jest.mock("firebase/auth", () => {
         ...actualAuth,
         getAuth: jest.fn(() => ({ currentUser: null })), // Ensure auth instance is valid
         signInWithEmailAndPassword: jest.fn(() => 
-            Promise.resolve({ user: { uid: "9w9o6dc27uOfVt989cOgoKjVNGc2" } })
+            Promise.resolve({ user: { uid: "UXXv1D1ldRd3NVwQjMbRpMRyxzi2" } })
         ),
         createUserWithEmailAndPassword: jest.fn(() => 
             Promise.resolve({ user: { uid: "test-user-uid" } }) // Ensures a resolved promise
@@ -38,6 +38,16 @@ jest.mock('../context/AuthContext', ()=>({
 describe("Login Component", () => {
     beforeEach(() => {
         window.alert = jest.fn();
+    
+        (useAuth as jest.Mock).mockReturnValue({
+            user: null,
+            loading: false,
+            error: null,
+            signIn: jest.fn((email: string, password: string) =>
+                signInWithEmailAndPassword(getAuth(), email, password)
+            ),
+            logOut: jest.fn(),
+        });
     });
 
     // simulate no user being signed in
@@ -59,6 +69,26 @@ describe("Login Component", () => {
         expect(screen.getByPlaceholderText(/Enter email/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/Enter password/i)).toBeInTheDocument();    
     });
+
+    // Simulating filling out the form and clicking log in
+    test("calls signInWithEmailAndPassword on login", async () => {
+        render(
+            <MemoryRouter>
+                <Login />
+            </MemoryRouter>
+        );
+    
+        fireEvent.change(screen.getByPlaceholderText(/Enter email/i), { target: { value: "hola.lizbeth@gmail.com" } });
+        fireEvent.change(screen.getByPlaceholderText(/Enter password/i), { target: { value: "Password1!" } });
+    
+        await act(async () => {
+            fireEvent.click(screen.getByText(/Log In/i));
+        });
+
+        expect(signInWithEmailAndPassword).toHaveBeenCalledWith(expect.anything(), "hola.lizbeth@gmail.com", "Password1!");
+    });
+});
+
 
     // // Simulating filling out the form and clicking log in
     // test("calls signInWithEmailAndPassword on login", async () => {
@@ -117,7 +147,6 @@ describe("Login Component", () => {
 
     //     expect(signOut).toHaveBeenCalled();
     // });
-});
 
 
 
