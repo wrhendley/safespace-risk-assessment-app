@@ -134,7 +134,7 @@ const SignUp = () => {
                         <Form.Label>Confirm password*</Form.Label>
                         <Form.Control 
                             type="password" 
-                            placeholder="Re-enter password" 
+                            placeholder="Repeat password" 
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}/>
                     </Form.Group>

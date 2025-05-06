@@ -57,19 +57,36 @@ export default function UserDashboard() {
         return <LoadingPage />;
     }
     return (
-        <Container className="my-5 rounded flex-grow-1 d-flex align-items-center">
-            <Row>
-                {/* Sidebar for desktop */}
-                <Col xs={12} md={3} className="d-none d-md-block p-0">
-                    <Sidebar />
-                </Col>
-                {/* Main content area */}
-                <Col xs={12} md={9} className="p-4">
-                <h2 className="mb-4">Welcome back, {userName}!</h2>
+        <Container className="p-5 my-5 rounded text-center">
+            <h1 className='text-center mb-3'>{userName || user.displayName}'s Dashboard!</h1>
+                <iframe
+                    src="https://30days.streamlit.app?embed=true"
+                    style={{height: "1200px", width: "1200px"}}
+                ></iframe>
+        </Container>
+);
+}
+
+
+
+
+        // <Container className="my-5 rounded flex-grow-1 d-flex align-items-center">
+        //     <Row>
+        //         {/* Sidebar for desktop */}
+        //         <Col xs={12} md={3} className="d-none d-md-block p-0">
+        //             <Sidebar />
+        //         </Col>
+        //         {/* Main content area */}
+        //         <Col xs={12} md={8} className="p-4">
+        //         <iframe
+        //             src="https://30days.streamlit.app?embed=true"
+        //             style={{height: "100%", width: "800px"}}
+        //         ></iframe>
+                {/* <h2 className="mb-4">Welcome back, {userName}!</h2>
                 {error &&<Alert variant='danger'>{error}</Alert>}
                 {errorPage &&<Alert variant='danger'>{errorPage}</Alert>}
                 {/* Financial Overview */}
-                <Row className="mb-4">
+                {/* <Row className="mb-4">
                     {financeData.map((item, idx) => (
                     <Col key={idx} md={4} className="mb-3">
                         <Card className="h-100 shadow-sm">
@@ -80,10 +97,10 @@ export default function UserDashboard() {
                         </Card>
                     </Col>
                     ))}
-                </Row>
+                </Row> */} 
 
                 {/* Recent Activity */}
-                <h4 className="mb-3">Recent Activity</h4>
+                {/* <h4 className="mb-3">Recent Activity</h4>
                 <Card className="shadow-sm">
                     <Card.Body className="p-0">
                     {recentActivity.map((activity, idx) => (
@@ -102,11 +119,10 @@ export default function UserDashboard() {
                         </div>
                     ))}
                     </Card.Body>
-                </Card>
-                </Col>
-            </Row>
+                </Card> */}
+        //         </Col>
+        //     </Row>
             
-            <BottomNav/>
-        </Container>
-    );
-}
+        //     <BottomNav/>
+        // </Container>
+
