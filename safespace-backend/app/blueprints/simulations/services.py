@@ -63,3 +63,32 @@ def simulate_portfolio_logic(data, df):
         "portfolio_std": portfolio_std,
         "portfolio_sharpe": portfolio_sharpe
     }, 200
+
+def assess_loan_risk_logic(data):
+    loan_amount = data.get("loan_amount")
+    loan_term = data.get("loan_term")
+    interest_rate = data.get("interest_rate")
+    credit_score = data.get("credit_score")
+    annual_income = data.get("annual_income")
+    monthly_debt = data.get("monthly_debt")
+
+    if not all(v is not None for v in [loan_amount, loan_term, interest_rate, credit_score, annual_income, monthly_debt]):
+        return {"error": "Missing required fields"}, 400
+
+    dti = (monthly_debt * 12) / (annual_income + 1e-9)  # Avoid div by zero
+
+    if credit_score < 580 or dti > 0.5:
+        risk = "High Risk"
+    elif 580 <= credit_score <= 700 or 0.3 <= dti <= 0.5:
+        risk = "Medium Risk"
+    else:
+        risk = "Low Risk"
+
+    return {
+        "loan_amount": loan_amount,
+        "loan_term": loan_term,
+        "interest_rate": interest_rate,
+        "credit_score": credit_score,
+        "debt_to_income_ratio": dti,
+        "loan_risk": risk
+    }, 200
