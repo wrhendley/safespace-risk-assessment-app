@@ -3,6 +3,7 @@ from app.models import db
 from app.extensions import ma, limiter, cache, migrate, cors
 from app.blueprints.accounts import accounts_bp
 from app.blueprints.users import users_bp
+from app.blueprints.risk_assessments import risk_assessments_bp
 from config import Env
 from firebase_admin import credentials, initialize_app, _apps as firebase_admin_apps
 import os
@@ -33,5 +34,6 @@ def create_app(config_name = 'DevelopmentConfig'):
     # Register blueprints
     app.register_blueprint(accounts_bp, url_prefix='/accounts')
     app.register_blueprint(users_bp, url_prefix='/users')
+    app.register_blueprint(risk_assessments_bp, url_prefix='/users/risk-assessments')
     
     return app
