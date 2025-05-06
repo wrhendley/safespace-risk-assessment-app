@@ -31,7 +31,7 @@ function HomePage(){
                         <SignOutButton/></>
                     ):(
                         <>
-                        <Button variant="primary">Continue as Guest</Button>
+                        <Button variant="primary" onClick={()=>navigate('/about-us#our-features')}>Explore Our Features</Button>
                         <Button variant="secondary" onClick={() => navigate('/accounts/signup')}>Get Started</Button></>
                     )}
                     </div>

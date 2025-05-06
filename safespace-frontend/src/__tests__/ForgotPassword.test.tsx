@@ -2,7 +2,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { act } from "react";
 import { useAuth } from "../context/AuthContext";
 import ForgotPassword from "../components/Authorization/ForgotPassword";
@@ -24,6 +24,9 @@ jest.mock("firebase/auth", () => {
         ),
         createUserWithEmailAndPassword: jest.fn(() => 
             Promise.resolve({ user: { uid: "test-user-uid" } }) // Ensures a resolved promise
+        ),
+        sendPasswordResetEmail: jest.fn(()=>
+            Promise.resolve({user: { uid: 'test-user-uid'}})
         ),
         signOut: jest.fn(),
     };
@@ -58,6 +61,24 @@ describe("ForgotPassword Component", () => {
         expect(screen.getByText(/Forgotten password?/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/Enter your email/i)).toBeInTheDocument();   
     });
+    // Simulating filling out email and clicking submit
+    test("calls sendPasswordResetEmail on submit", async () => {
+        render(
+            <MemoryRouter>
+                <ForgotPassword />
+            </MemoryRouter>
+        );
+    
+        fireEvent.change(screen.getByPlaceholderText(/Enter your email/i), { target: { value: "hola.lizbeth@gmail.com" } });
+    
+        await act(async () => {
+            fireEvent.click(screen.getByText(/Submit/i));
+        });
+
+        expect(sendPasswordResetEmail).toHaveBeenCalledWith(expect.anything(), "hola.lizbeth@gmail.com");
+    });
+
+    
 });
 
 // import { render, screen } from '@testing-library/react';
