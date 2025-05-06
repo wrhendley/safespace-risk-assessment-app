@@ -87,3 +87,29 @@ def get_risk_assessments():
     
     except Exception as e:
         return jsonify({"message": f'There was an error: {str(e)}'}), 400
+
+@risk_assessments_bp.route('/', methods=['DELETE'], strict_slashes=False)
+@limiter.limit("5 per minute")
+@auth_required
+def delete_risk_assessment():
+    account = g.account
+    user = User.query.filter_by(account_id=account.id).first()
+    
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    try:
+        risk_assessment = RiskAssessment.query.filter_by(id=request.json.get('id')).first()
+        if not risk_assessment:
+            return jsonify({"message": "Risk assessment not found"}), 404
+        
+        db.session.delete(risk_assessment)
+        db.session.commit()
+        
+        return jsonify({"message": "Risk assessment deleted successfully"}), 200
+    
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    except Exception as e:
+        return jsonify({"message": f'There was an error: {str(e)}'}), 400
+
