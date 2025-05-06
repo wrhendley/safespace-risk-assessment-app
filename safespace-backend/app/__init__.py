@@ -34,6 +34,6 @@ def create_app(config_name = 'DevelopmentConfig'):
     # Register blueprints
     app.register_blueprint(accounts_bp, url_prefix='/accounts')
     app.register_blueprint(users_bp, url_prefix='/users')
-    app.register_blueprint(risk_assessments_bp, url_prefix='/risk_assessments')
+    app.register_blueprint(risk_assessments_bp, url_prefix='/users/risk-assessments')
     
     return app

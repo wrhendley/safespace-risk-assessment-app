@@ -9,3 +9,4 @@ class RiskAssessmentSchema(ma.SQLAlchemyAutoSchema):
 # instantiating schemas
 risk_assessment_schema = RiskAssessmentSchema()
 risk_assessments_schema = RiskAssessmentSchema(many=True)
+delete_risk_assessment_schema = RiskAssessmentSchema(only=["id"])
