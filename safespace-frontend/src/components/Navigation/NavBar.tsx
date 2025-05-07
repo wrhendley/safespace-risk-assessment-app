@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import SignOutButton from '../Authorization/SignOutButton';
 
 function NavBar(){
-    const {user, logOut} = useAuth();
+    const {user} = useAuth();
 
     return (
         <>
@@ -17,22 +17,16 @@ function NavBar(){
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="ms-auto">
-                        <NavDropdown title="FEATURES" id="features-dropdown">
-                            <NavDropdown.Item href="/dashboard">Dashboard</NavDropdown.Item>
-                            <NavDropdown.Item href="/banking">Banking</NavDropdown.Item>
-                            <NavDropdown.Item href="/risk-dashboard">Risk Dashboard</NavDropdown.Item>
-                            <NavDropdown.Item href="/risk-forecast">Risk Forecast</NavDropdown.Item>
-                            <NavDropdown.Item href="/loan-calculator">Loan Calculator</NavDropdown.Item>
-                        </NavDropdown>
-
                         <NavDropdown title="ABOUT US" id="aboutus-dropdown">
                             <NavDropdown.Item href="/about-us#our-mission">Our Mission</NavDropdown.Item>
+                            <NavDropdown.Item href="/about-us#our-features">Our Features</NavDropdown.Item>
                             <NavDropdown.Item href="/about-us#team">Team</NavDropdown.Item>
                             <NavDropdown.Item href="/about-us#contact-us">Contact</NavDropdown.Item>
                         </NavDropdown>
 
                         {user ? (
                             <>
+                                <Nav.Link href='/userdashboard'>DASHBOARD</Nav.Link>
                                 <Nav.Link href={`/user-profile`}>USER PROFILE</Nav.Link>
                                 <SignOutButton/>
                                 {/* <Nav.Link onClick={() => logOut()}>SIGN OUT</Nav.Link> */}
@@ -47,8 +41,6 @@ function NavBar(){
                 </Navbar.Collapse>
             </Container>
         </Navbar>
-
-
         </>
     );
 }
