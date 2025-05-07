@@ -15,13 +15,6 @@ user_risk_assessment = db.Table(
     db.Column('risk_assessment_id', db.ForeignKey('risk_assessments.id'))
 )
 
-user_loan_risk_assessment = db.Table(
-    'user_loan_risk_assessment',
-    Base.metadata,
-    db.Column('user_id', db.ForeignKey('users.id')),
-    db.Column('loan_risk_assessment_id', db.ForeignKey('loan_risk_assessments.id'))
-)
-
 class Account(db.Model):
     __tablename__ = 'accounts'
     
@@ -54,7 +47,6 @@ class User(db.Model):
     
     account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
     risk_assessments: Mapped[List['RiskAssessment']] = db.relationship(secondary=user_risk_assessment, back_populates="users")
-    loan_risk_assessments: Mapped[List['LoanRiskAssessment']] = db.relationship(secondary=user_loan_risk_assessment, back_populates="users")
 
 class RiskAssessment(db.Model):
     __tablename__ = 'risk_assessments'
@@ -67,18 +59,3 @@ class RiskAssessment(db.Model):
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     
     users: Mapped[List['User']] = db.relationship(secondary=user_risk_assessment, back_populates="risk_assessments")
-
-class LoanRiskAssessment(db.Model):
-    __tablename__ = 'loan_risk_assessments'
-    
-    id: Mapped[int] = mapped_column(primary_key=True)
-    loan_amount: Mapped[float] = mapped_column(nullable=False)
-    loan_term: Mapped[int] = mapped_column(nullable=False)  # in months
-    interest_rate: Mapped[float] = mapped_column(nullable=False)  # annual interest rate
-    credit_score: Mapped[int] = mapped_column(nullable=False)
-    debt_to_income_ratio: Mapped[float] = mapped_column(nullable=False)
-    loan_risk: Mapped[str] = mapped_column(nullable=False)
-    comments: Mapped[str] = mapped_column(nullable=True)
-    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
-    
-    users: Mapped[List['User']] = db.relationship(secondary=user_loan_risk_assessment, back_populates="loan_risk_assessments")
