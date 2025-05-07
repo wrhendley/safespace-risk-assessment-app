@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def simulate_portfolio_logic(data, df):
+def simulate_portfolio_logic(data, datafile):
     amount = data.get("amount")
     tickers = data.get("tickers")
     allocations = data.get("allocations")
@@ -15,7 +15,7 @@ def simulate_portfolio_logic(data, df):
     weighted_returns = []
 
     for ticker in tickers:
-        ticker_data = df[(df['ticker'] == ticker) & (df['date'] >= start_date) & (df['date'] <= end_date)].copy()
+        ticker_data = datafile[(datafile['ticker'] == ticker) & (datafile['date'] >= start_date) & (datafile['date'] <= end_date)].copy()
         if ticker_data.shape[0] < 2:
             continue
         ticker_data.sort_values('date', inplace=True)
