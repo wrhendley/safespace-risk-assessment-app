@@ -59,7 +59,7 @@ tab = st.tabs(["Investment Simulator", "Loan Risk Assessment", "Investment Risk 
 def load_data():
     try:
         df = pd.read_csv(
-            r"C:\Users\James Wilson\OneDrive\Documents\Work\code\Jupyter\SafeSpace\safespace-risk-assessment-app\src\components\Risk_Dashboard\dummy_stock_prediction_data_50yrs.csv"
+            r"../dummy_stock_prediction_data_50yrs.csv"
         )
         df['date'] = pd.to_datetime(df['date'])
         return df
@@ -234,5 +234,3 @@ with tab[1]:
 
 with tab[2]:
     investment_risk_assessment()
-
-    hello
