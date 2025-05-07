@@ -331,3 +331,13 @@ a:hover {
     transform: translateY(8px);
   }
 }
+
+.navbar {
+  position: relative;
+  z-index: 1000;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1050;
+}

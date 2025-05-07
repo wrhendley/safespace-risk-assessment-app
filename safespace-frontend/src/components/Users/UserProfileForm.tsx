@@ -1,4 +1,3 @@
-
 // UserProfileForm.tsx
 import { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,118 +9,105 @@ import NoAccess from "../LandingPages/NoAccess";
 import React from "react";
 import { deleteUser } from "firebase/auth";
 import LoadingPage from "../LandingPages/LoadingPage";
+import { useUser } from "../../context/UserContext";
 
 const UserProfileForm: React.FC = () => {
-    const { user, loading, error } = useAuth();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [firstName, setFirstName] = useState<string>("");
-    const [lastName, setLastName] = useState<string>("");
-    const [phone, setPhone] = useState<string>("");
+    const { user, loading: authLoading, error } = useAuth();
+    const {userProfile, isLoading: profileLoading, refreshUserProfile} = useUser();
+    const [firstName, setFirstName] = useState(userProfile?.firstName || "");
+    const [lastName, setLastName] = useState(userProfile?.lastName || "");
+    const [phone, setPhone] = useState(userProfile?.phoneNumber || "");
     const [formError, setError] = useState<string | null>(null);
     const [showSuccessUpdateModal, setShowSuccessUpdateModal] = useState<boolean>(false);
     const [showSuccessDeleteModal, setShowSuccessDeleteModal] = useState<boolean>(false);
     const [newUser, setNewUser] = useState<boolean>(true);
     const navigate = useNavigate();
 
-
-    // Fetch user data when component mounts or when ID changes
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try{
-                const idToken = await user.getIdToken(true);
-                const response = await api.get(`/users/`, {headers: {Authorization: `Bearer ${idToken}`}});
-                const { first_name, last_name, phone_number } = response.data;
-                setFirstName(first_name);
-                setLastName(last_name);
-                setPhone(phone_number);
-                setNewUser(false);
-            }catch(error){
-                if (error.response && error.response.status === 404) {
-                    setNewUser(true);
-                    setFirstName('');
-                    setLastName('');
-                    setPhone('');
-                } else {
-                    setError(error.message);
-                }
-            }finally{
-                setIsLoading(false);
-            }
+        if (userProfile) {
+            setFirstName(userProfile.firstName);
+            setLastName(userProfile.lastName);
+            setPhone(userProfile.phoneNumber);
+            setNewUser(false);
+        } else {
+            setNewUser(true);
         }
+    }, [userProfile]);
+
+    // Handle account deletion
+    const handleDeleteAccount = async () => {
         if (user) {
-            fetchData();
-        }
-            
-    }, [user]);
+            try {
+                // Call API to delete the user account
+                // const idToken = await user.getIdToken(true);
+                const response = await api.delete(`/users/`, 
+                    // {headers: {Authorization: `Bearer ${idToken}`}}
+                );
 
-        // Handle account deletion
-        const handleDeleteAccount = async () => {
-            if (user) {
-                try {
-                    // Call your API to delete the user account
-                    const idToken = await user.getIdToken(true);
-                    const response = await api.delete(`/users/`, {headers: {Authorization: `Bearer ${idToken}`}});
-
-                    if (response.status === 200) {
-                        // Successfully deleted the account
-                        await deleteUser(user);
-                        setShowSuccessDeleteModal(true);
-                    } else {
-                        setError("An error occurred while deleting your account. Please try again later.");
-                    }
-                } catch (err) {
-                    console.error("Error deleting account:", err);
+                if (response.status === 200) {
+                    // Successfully deleted the account
+                    await deleteUser(user);
+                    setShowSuccessDeleteModal(true);
+                } else {
                     setError("An error occurred while deleting your account. Please try again later.");
                 }
-            } else {
-                setError("User ID not found.");
+            } catch (err) {
+                console.error("Error deleting account:", err);
+                setError("An error occurred while deleting your account. Please try again later.");
             }
-        };
+        } else {
+            setError("User ID not found.");
+        }
+    };
     
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-    
+
         if (!firstName || !lastName || !phone) {
             setError("Please fill out all required fields.");
             return;
         }
-    
+
         const phoneRegex = /^\d{10}$/;
         if (!phoneRegex.test(phone)) {
             setError("Phone number must be 10 digits.");
             return;
         }
-        
+
         try {
-            // Put/Post the User Info
             const userData = {
                 first_name: firstName,
                 last_name: lastName,
                 phone_number: phone,
             };
-            const idToken = await user.getIdToken(true);
+
             let response;
-            if(newUser){
-                response = await api.post('/users/', userData, {headers: {Authorization: `Bearer ${idToken}`}});
+            if (newUser) {
+                response = await api.post('/users/', userData, {
+                    // headers: { Authorization: `Bearer ${idToken}` }
+                });
                 setNewUser(false);
-            }else{
-                response = await api.put('/users/', userData, {headers: {Authorization: `Bearer ${idToken}`}});
+            } else {
+                response = await api.put('/users/', userData, {
+                    // headers: { Authorization: `Bearer ${idToken}` }
+                });
             }
 
             if (response.status < 200 || response.status >= 300) {
                 throw new Error("Failed to save user info.");
             }
-            setShowSuccessUpdateModal(true);           
-        }catch(error){
+
+            await refreshUserProfile(); 
+            setShowSuccessUpdateModal(true);
+        } catch (error) {
             const err = error as Error;
             console.error("Error submitting form:", err.message);
             setError(err.message);
         }
     };
 
-    if(loading || isLoading)return(<LoadingPage/>);
-    if(!user && !loading && !isLoading)return(<NoAccess/>);
+    if(authLoading || profileLoading)return(<LoadingPage/>);
+    if(!user && !authLoading && !profileLoading)return(<NoAccess/>);
 
     return (
         <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
