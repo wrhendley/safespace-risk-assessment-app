@@ -7,6 +7,9 @@ import { useAuth } from "../../context/AuthContext";
 import AlreadySignedIn from "./AlreadySignedIn";
 import LoadingPage from "../LandingPages/LoadingPage";
 import { auth } from "../../firebaseConfig";
+import React from 'react';
+import { useRef } from "react";
+import { useEffect } from "react";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -31,8 +34,11 @@ const Login = () => {
             setErrorPage('');
             await signIn(email, password);
             justLoggedIn.current = true;
+            // Get IdToken
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
+            const idToken = await currentUser.getIdToken(true);
+            console.log(idToken);
 
             if(currentUser.emailVerified){
                 setShowSuccessModal(true);

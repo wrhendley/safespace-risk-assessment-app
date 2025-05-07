@@ -22,17 +22,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [idToken, setIdToken] = useState<string>('');
 
-    useEffect(() => {
-        setLoading(true);
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    useEffect(()=>{
+        const authStateChange = onAuthStateChanged(auth, (currentUser)=>{
             setUser(currentUser);
             setLoading(false);
             setError(null);
         });
-    
-        return () => unsubscribe();
+
+        return ()=>{
+            try{
+                authStateChange();
+            }catch(err:any){
+                setError(err.message);
+            }};
     }, []);
-    
 
     const signUp = async (email: string, password: string) => {
         try {
@@ -50,11 +53,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const token = await userCredential.user.getIdToken(true);
-
+            const idToken = await userCredential.user.getIdToken(true);
+    
             await api.put("/accounts/update", 
                 { is_active: true },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { headers: { Authorization: `Bearer ${idToken}` } }
             );
         } catch (err: any) {
             setError(err.message);
@@ -68,12 +71,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
             const currentUser = auth.currentUser;
-            const token = await currentUser.getIdToken(true);
-
+    
             if (currentUser) {
+                const idToken = await currentUser.getIdToken(true);
                 await api.put("/accounts/update", 
                     { is_active: false },
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    { headers: { Authorization: `Bearer ${idToken}` } }
                 );
             }
     

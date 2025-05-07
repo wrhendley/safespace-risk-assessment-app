@@ -166,11 +166,13 @@ p {
 }
 
 /* ::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
   background-color: var(--bs-primary);
   border-radius: 4px;
+} */
 } */
 
 .bg-primary {
