@@ -18,9 +18,12 @@ def simulate_portfolio_logic(data, datafile):
         ticker_data = datafile[(datafile['ticker'] == ticker) & (datafile['date'] >= start_date) & (datafile['date'] <= end_date)].copy()
         if ticker_data.shape[0] < 2:
             continue
+        if ticker_data.empty or ticker_data.shape[0] < 2:
+            continue
         ticker_data.sort_values('date', inplace=True)
+        
         ticker_data['return'] = ticker_data['close_price'].pct_change()
-        ticker_data.dropna(inplace=True)
+        ticker_data['return'] = ticker_data['return'].fillna(0)
 
         initial = ticker_data.iloc[0]['close_price']
         final = ticker_data.iloc[-1]['close_price']
@@ -29,7 +32,7 @@ def simulate_portfolio_logic(data, datafile):
         result_amount = investment * (1 + percent_change)
 
         std_dev = np.std(ticker_data['return']) if not ticker_data['return'].empty else 0
-        sharpe = (ticker_data['return'].mean() / std_dev) * np.sqrt(252) if std_dev != 0 else 0
+        sharpe = (ticker_data['return'].mean() / std_dev) * np.sqrt(252) if std_dev != (0 or 'NaN') else 0
         max_drawdown = ((ticker_data['close_price'].cummax() - ticker_data['close_price']) / ticker_data['close_price'].cummax()).max()
 
         results.append({
@@ -50,7 +53,7 @@ def simulate_portfolio_logic(data, datafile):
         return {"error": "Not enough data for selected tickers."}, 400
 
     portfolio_returns = sum([r['result_amount'] for r in results])
-    combined_returns = sum(weighted_returns)
+    combined_returns = pd.concat(weighted_returns, axis=1).sum(axis=1)
     portfolio_std = np.std(combined_returns)
     portfolio_mean = np.mean(combined_returns)
     portfolio_sharpe = portfolio_mean / portfolio_std * np.sqrt(252) if portfolio_std != 0 else 0
