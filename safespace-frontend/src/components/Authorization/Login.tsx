@@ -7,9 +7,6 @@ import { useAuth } from "../../context/AuthContext";
 import AlreadySignedIn from "./AlreadySignedIn";
 import LoadingPage from "../LandingPages/LoadingPage";
 import { auth } from "../../firebaseConfig";
-import React from 'react';
-import { useRef } from "react";
-import { useEffect } from "react";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
