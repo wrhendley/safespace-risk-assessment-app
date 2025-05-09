@@ -112,7 +112,7 @@ export default function PortfolioSimulator() {
         try {
             // Save the Portfolio Simulation
             const idToken = await user.getIdToken(true);
-            const response = await api.put('/simulations/simulate-porfolio', formData, {headers: {Authorization: `Bearer ${idToken}`}});
+            const response = await api.put('/simulations/simulate-portfolio', formData, {headers: {Authorization: `Bearer ${idToken}`}});
             if (response.status < 200 || response.status >= 300) {
                 throw new Error("Failed to save user info.");
             }

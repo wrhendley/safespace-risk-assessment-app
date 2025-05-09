@@ -19,11 +19,22 @@ export default function UserDashboard() {
 
     return user?(
         <Container className="p-5 my-5 rounded text-center">
-            <h1 className='text-center mb-3'>{userProfile?.firstName || user?.email?.split('@')[0] || 'User'}'s Dashboard!</h1>
+            <h1 className='text-center mb-3'>
+                {userProfile?.firstName || user?.email?.split('@')[0] || 'User'}'s Dashboard!
+            </h1>
+            <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
                 <iframe
-                    src="https://30days.streamlit.app?embed=true"
-                    style={{height: "1200px", width: "1200px"}}
-                ></iframe>
+                    src="http://localhost:8501/"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        border: 'none',
+                    }}
+                />
+            </div>
         </Container>
 ):null;
 }

@@ -8,7 +8,7 @@ import SignUp from './components/Authorization/SignUp';
 import Login from './components/Authorization/Login';
 import UserProfileForm from './components/Users/UserProfileForm';
 import UserProfile from './components/Users/UserProfile';
-import UserDashboard from './components/Users/UserDashboard';
+import UserDashboard from './components/Features/UserDashboard';
 import NotFound from './components/LandingPages/NotFound';
 import ForgotPassword from './components/Authorization/ForgotPassword';
 import LoadingPage from './components/LandingPages/LoadingPage';
@@ -26,7 +26,7 @@ function App() {
           <Route path='/accounts/login' element={<Login/>}/>
           <Route path='/user-profile' element={<UserProfile/>}/>
           <Route path='/users' element={<UserProfileForm/>}/>
-          <Route path='/userdashboard' element={<UserDashboard/>}/>
+          <Route path='/user-dashboard' element={<UserDashboard/>}/>
           <Route path='/about-us' element={<AboutUs/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
           <Route path='/spinner' element={<LoadingPage/>}/>
