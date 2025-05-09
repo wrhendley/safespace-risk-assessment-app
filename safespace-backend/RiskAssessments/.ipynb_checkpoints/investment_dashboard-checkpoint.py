@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load historical stock prediction data (dummy or real)
-df = pd.read_csv(../dummy_stock_prediction_data_50yrs.csv)
+df = pd.read_csv('dummy_stock_prediction_data_50yrs_extended.csv')
 df['date'] = pd.to_datetime(df['date'])
 
 st.title("📈 Investment Return Simulator")

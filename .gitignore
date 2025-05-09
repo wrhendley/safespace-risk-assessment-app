@@ -39,3 +39,6 @@ credentials.json
 # SQLite Instances
 instance/
 .pytest_cache/
+
+# Large files
+dummy_stock_prediction_data_50yrs_extended.csv
