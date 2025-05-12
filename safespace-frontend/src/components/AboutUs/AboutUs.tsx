@@ -3,6 +3,7 @@ import { Container, Image } from "react-bootstrap";
 import ContactUs from "./ContactUs";
 import Team from "./Team";
 import OurMission from "./OurMission";
+import OurFeatures from "./OurFeatures";
 
 function AboutUs(){
 
@@ -14,6 +15,10 @@ function AboutUs(){
 
             <div className="snap-section">
                 <Team />
+            </div>
+
+            <div className="snap-section">
+                <OurFeatures />
             </div>
 
             <div className="snap-section">

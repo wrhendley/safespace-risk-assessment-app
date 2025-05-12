@@ -51,7 +51,6 @@ function ContactUs(){
             setError("Oops! Something went wrong. Please try again later.");
         }
     };
-    
 
     return (
         <Container className="p-5 my-5 rounded" id='contact-us'>
