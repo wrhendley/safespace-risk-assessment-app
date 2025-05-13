@@ -1,12 +1,16 @@
 import pandas as pd
 import numpy as np
+import yfinance as yf
 
-def simulate_portfolio_logic(data, datafile):
+def simulate_portfolio_logic(data):
     amount = data.get("amount")
     tickers = data.get("tickers")
     allocations = data.get("allocations")
     start_date = pd.to_datetime(data.get("start_date"))
     end_date = pd.to_datetime(data.get("end_date"))
+    
+    data = yf.download(tickers, start=start_date, end=end_date)
+    close_prices = data['Close']
 
     if sum(allocations.values()) != 100:
         return {"error": "Allocations must sum to 100"}, 400
@@ -14,26 +18,23 @@ def simulate_portfolio_logic(data, datafile):
     results = []
     weighted_returns = []
 
-    for ticker in tickers:
-        ticker_data = datafile[(datafile['ticker'] == ticker) & (datafile['date'] >= start_date) & (datafile['date'] <= end_date)].copy()
+    for ticker in tickers:        
+        ticker_data = close_prices[ticker]
+        ticker_data.dropna()
         if ticker_data.shape[0] < 2:
             continue
-        if ticker_data.empty or ticker_data.shape[0] < 2:
-            continue
-        ticker_data.sort_values('date', inplace=True)
         
-        ticker_data['return'] = ticker_data['close_price'].pct_change()
-        ticker_data['return'] = ticker_data['return'].fillna(0)
+        returns = ticker_data.pct_change().fillna(0)
 
-        initial = ticker_data.iloc[0]['close_price']
-        final = ticker_data.iloc[-1]['close_price']
+        initial = ticker_data.iloc[0]
+        final = ticker_data.iloc[-1]
         percent_change = (final - initial) / initial
         investment = amount * allocations[ticker] / 100
         result_amount = investment * (1 + percent_change)
 
-        std_dev = np.std(ticker_data['return']) if not ticker_data['return'].empty else 0
-        sharpe = (ticker_data['return'].mean() / std_dev) * np.sqrt(252) if std_dev != (0 or 'NaN') else 0
-        max_drawdown = ((ticker_data['close_price'].cummax() - ticker_data['close_price']) / ticker_data['close_price'].cummax()).max()
+        std_dev = np.std(returns) if not returns.empty else 0
+        sharpe = (returns.mean() / std_dev) * np.sqrt(252) if std_dev != (0 or 'NaN') else 0
+        max_drawdown = ((ticker_data.cummax() - ticker_data) / ticker_data.cummax()).max()
 
         results.append({
             "ticker": ticker,
@@ -47,7 +48,7 @@ def simulate_portfolio_logic(data, datafile):
             "max_drawdown": max_drawdown,
         })
 
-        weighted_returns.append(ticker_data['return'] * (allocations[ticker] / 100))
+        weighted_returns.append(returns * (allocations[ticker] / 100))
 
     if not results:
         return {"error": "Not enough data for selected tickers."}, 400
