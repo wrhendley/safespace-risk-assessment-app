@@ -3,18 +3,6 @@ from app.blueprints.simulations.services import simulate_portfolio_logic, assess
 from app.blueprints.simulations import simulations_bp
 from app.blueprints.simulations.schemas import loan_schema, portfolio_schema
 from marshmallow import ValidationError
-import pandas as pd
-import os
-
-
-
-
-# Load data once when the blueprint is imported
-# datafile = pd.read_csv("dummy_stock_prediction_data_50yrs.csv")
-current_dir = os.path.dirname(__file__)
-csv_path = os.path.join(current_dir, "dummy_stock_prediction_data_50yrs.csv")
-datafile = pd.read_csv(csv_path)
-datafile['date'] = pd.to_datetime(datafile['date'])
 
 @simulations_bp.route("/assess-loan-risk", methods=["POST"])
 def assess_loan_risk():
@@ -31,5 +19,5 @@ def simulate_portfolio():
         data = portfolio_schema.load(request.get_json())
     except ValidationError as err:
         return jsonify(err.messages), 400
-    result, status = simulate_portfolio_logic(data, datafile)
+    result, status = simulate_portfolio_logic(data)
     return jsonify(result), status
