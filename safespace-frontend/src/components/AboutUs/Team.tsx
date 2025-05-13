@@ -32,7 +32,7 @@ function Team() {
                 ))}
             </Row>
             <div className="text-center">
-                <a href="#contact-us">
+                <a href="#our-features">
                     <FontAwesomeIcon icon={faChevronCircleDown} size="3x" className="scroll-down-arrow" />
                 </a>
             </div>
