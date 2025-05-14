@@ -2,6 +2,10 @@ import React from 'react';
 import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import SignOutButton from '../Navigation/SignOutButton';
+import DashboardButton from '../Navigation/DashboardButton';
+import HomeButton from '../Navigation/HomeButton';
+import GetStartedButton from '../Navigation/GetStartedButton';
 
 function NotFound(){
     const navigate = useNavigate();
@@ -25,12 +29,13 @@ function NotFound(){
                         {/* If user is signed in, option to go to dashboard, 
                         otherwise, continue as guest or sign in*/}
                     {user?(
-                        <><Button variant="primary" onClick={()=>navigate('/userdashboard')}>Go to Dashboard</Button>
-                        <Button variant="secondary" onClick={()=>logOut()}>Sign Out</Button></>
+                        <>
+                        <DashboardButton/>
+                        <SignOutButton/></>
                     ):(
                         <>
-                        <Button variant="primary" onClick={()=>navigate('/')}>Go Back Home</Button>
-                        <Button variant="secondary" onClick={() => navigate('/register')}>Get Started</Button></>
+                        <HomeButton/>
+                        <GetStartedButton/></>
                     )}
                     </div>
                     

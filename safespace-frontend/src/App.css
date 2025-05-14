@@ -38,8 +38,23 @@ h1 {
   font-size: 3rem;
 }
 
-.navbar, footer {
+.navbar {
   background-color: var(--bs-dark) !important;
+  position: sticky;
+  top:0;
+  z-index: 1000;
+}
+
+footer {
+  background-color: var(--bs-dark) !important;
+  position: relative;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1050;
 }
 
 .navbar-brand{
@@ -299,24 +314,38 @@ a:hover {
   to {transform: rotate(360deg);}
 }
 
-
 .aboutus-scroll-container {
-  /* background-color: rgba(0,0,0, 0.85); */
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .aboutus-scroll-container {
   height: 100vh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-}
+} */
 
-.snap-section {
+/* .snap-section {
   scroll-snap-align: start;
   height: 100vh;
   padding: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  scroll-margin-top: 40px; /* Adjust based on your navbar height */
-}
+  scroll-margin-top: 40px; /* Adjust based on your navbar height 
+} */
 
 .scroll-down-arrow {
   animation: bounce 2s infinite;
@@ -332,12 +361,3 @@ a:hover {
   }
 }
 
-.navbar {
-  position: relative;
-  z-index: 1000;
-}
-
-.dropdown-menu {
-  position: absolute;
-  z-index: 1050;
-}
