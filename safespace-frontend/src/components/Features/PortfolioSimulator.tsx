@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import api from '../../api';
 import { useState } from 'react';
 import Sidebar from './Sidebar';
-import PortfolioChart from './PortfolioChart';
+// import PortfolioChart from './PortfolioChart';
 
 export default function PortfolioSimulator() {
     const { user, error, loading } = useAuth(); 
@@ -20,7 +20,7 @@ export default function PortfolioSimulator() {
     const [formData, setFormData] = useState({
         amount: 1000,
         tickers: ["AAPL", "MSFT"],
-        allocations: { "AAPL": 50, "MSFT": 50 },
+        allocations: { AAPL: 50, MSFT: 50 },
         start_date: "2010-01-01",
         end_date: "2025-01-01",
     });
@@ -40,22 +40,23 @@ export default function PortfolioSimulator() {
         fetchTickers();
     }, []);
 
-    console.log(portfolioData);
-    useEffect(() => {
-        const fetchPortfolio = async () => {
-            try {
-                const idToken = await user.getIdToken(true);
-                const response = await api.post(
-                    '/simulations/simulate-portfolio', 
-                    formData, 
-                    {headers: {Authorization: `Bearer ${idToken}`}});
-                setPortfolioData(response.data);
-            } catch (err) {
-                setPortfolioError("Could not load investment data.");
-            }
-        };
-        fetchPortfolio();
-    }, []);
+    // console.log(portfolioData);
+    // useEffect(() => {
+    //     const fetchPortfolio = async () => {
+    //         try {
+    //             console.log(formData);
+    //             const idToken = await user.getIdToken(true);
+    //             const response = await api.get(
+    //                 '/simulations/simulate-portfolio', 
+    //                 formData, 
+    //                 {headers: {Authorization: `Bearer ${idToken}`}});
+    //             setPortfolioData(response.data);
+    //         } catch (err) {
+    //             setPortfolioError("Could not load investment data.");
+    //         }
+    //     };
+    //     fetchPortfolio();
+    // }, []);
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -92,6 +93,7 @@ export default function PortfolioSimulator() {
     const handleSimulate = async () => {
         try {
             // Post 
+            console.log('Fetching: ', formData);
             const idToken = await user.getIdToken(true);
             const response = await api.post(
                 '/simulations/simulate-portfolio', 
