@@ -12,6 +12,8 @@ DEFAULT_PER_PAGE = 10
 MAX_PER_PAGE = 100
 
 
+# User Routes
+
 # Create User
 @users_bp.route('/', methods=['POST'])
 @auth_required # applying token verification wrapper to route
@@ -76,3 +78,12 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": f"succesfully deleted user {user.id}"}), 200
+
+
+# Admin Routes (RBAC)
+
+# Create New Admin
+# Update Own Admin
+# Update User by ID
+# Get All Users
+# Get User by ID

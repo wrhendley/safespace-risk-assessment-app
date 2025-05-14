@@ -241,24 +241,10 @@ class TestUser(unittest.TestCase):
         self.assertIn(b'Invalid token', response.data)
 
     # RBAC Logic Tests
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_admin_create_user_for_any_account(self, mock_firebase_token):
-    #     mock_firebase_token.return_value = {
-    #         'uid': 'admin_uid',
-    #         'email': 'admin@example.com',
-    #         'email_verified': True
-    #     }
-    #     admin = Account(firebase_uid='admin_uid', email='admin@example.com', email_verified=True, role='admin')
-    #     user_account = Account(firebase_uid='user_uid', email='user@example.com', email_verified=True, role='user')
-    #     db.session.add_all([admin, user_account])
-    #     db.session.commit()
-    #     payload = {
-    #         'account_id': user_account.id,
-    #         'first_name': 'AdminCreated',
-    #         'last_name': 'User',
-    #         'phone_number': '7777777777'
-    #     }
-    #     headers = {'Authorization': 'Bearer admin_token'}
-    #     response = self.client.post('/users', json=payload, headers=headers)
-    #     self.assertEqual(response.status_code, 201)
-    #     self.assertIn(b'User created', response.data)
+    # Admin Routes (RBAC)
+    
+    # Create New Admin
+    # Update Own Admin
+    # Update User by ID
+    # Get All Users
+    # Get User by ID
