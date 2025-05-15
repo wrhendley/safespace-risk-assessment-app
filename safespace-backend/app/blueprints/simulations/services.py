@@ -4,9 +4,11 @@ import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+from app.blueprints.simulations.routes import save_portfolio_simulation
+import requests
 
 # Function to download data from Yahoo Finance for a given list of tickers
-@st.cache_data
+# @st.cache_data
 def get_yahoo_data(tickers, start_date, end_date):
     try:
         data = yf.download(tickers, start=start_date, end=end_date)
@@ -34,7 +36,7 @@ with tabs[1]:
         st.title("📊 Investment Simulator")
         
         amount = st.number_input("💵 Total Investment Amount (USD)", value=10000)
-        ticker_input = st.text_input("Enter Yahoo Finance Tickers (comma-separated)", "AAPL, MSFT, GOOGL")
+        ticker_input = st.text_input("Enter Tickers Symbols (comma-separated)", "AAPL, MSFT")
         selected_tickers = [ticker.strip().upper() for ticker in ticker_input.split(",") if ticker.strip()]
         start_date = st.date_input("Select Start Date", min_value=pd.to_datetime('2010-01-01'))
         end_date = st.date_input("Select End Date", min_value=start_date, max_value=pd.to_datetime('today'))
@@ -162,6 +164,38 @@ with tabs[1]:
                     }
                 ))
                 st.plotly_chart(fig, use_container_width=True)
+                
+                st.session_state["risk_assessment_data"] = {
+                "tickers": selected_tickers,
+                "portfolio_risk_score": portfolio_risk_score,
+                "risk_level": risk_level,
+                "allocations": allocations,
+                "start_date": str(start_date),
+                "end_date": str(end_date),
+                "return_percent": total_percent_change,
+                "initial_investment": amount,
+                "final_value": total_return,
+                "portfolio_volatility": portfolio_std,
+                "portfolio_sharpe_ratio": portfolio_sharpe,
+                "assessment_date": pd.to_datetime('today').strftime('%Y-%m-%d')
+                }
+                st.write("DEBUG: Risk assessment data in session:", "risk_assessment_data" in st.session_state)
+
+
+                # save_button = st.button("Save Risk Assessment")
+                
+        if "risk_assessment_data" in st.session_state:
+            if st.button("Save Risk Assessment"):
+                print("DEBUG: Button clicked")
+
+                try:
+                    response = requests.post("http://localhost:5000/simulate-portfolio", json=st.session_state["risk_assessment_data"])
+                    if response.status_code == 200:
+                        st.success("Risk assessment saved successfully!")
+                    else:
+                        st.error(f"Failed to save risk assessment: {response.text}")
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
 
     portfolio_simulator()
 
