@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from app import create_app, db
-from app.models import RiskAssessment, User, Account
+from app.models import InvestmentRiskAssessment, User, Account
 from app.blueprints.risk_assessments.schemas import risk_assessment_schema
 
 class TestRiskAssessments(unittest.TestCase):
@@ -49,7 +49,7 @@ class TestRiskAssessments(unittest.TestCase):
         self.assertIn(b"risk_score", response.data)
 
         # Verify the risk assessment was created in the database
-        risk_assessment = RiskAssessment.query.first()
+        risk_assessment = InvestmentRiskAssessment.query.first()
         self.assertIsNotNone(risk_assessment)
         self.assertEqual(risk_assessment.risk_score, 85.5)
         self.assertEqual(risk_assessment.risk_level, "High")
@@ -60,7 +60,7 @@ class TestRiskAssessments(unittest.TestCase):
         mock_verify_id_token.return_value = {"user_id": "test_uid"}
 
         # Add a test risk assessment to the database
-        risk_assessment = RiskAssessment(
+        risk_assessment = InvestmentRiskAssessment(
             risk_score=85.5,
             risk_level="High",
             comments="Test risk assessment"
@@ -85,7 +85,7 @@ class TestRiskAssessments(unittest.TestCase):
         mock_verify_id_token.return_value = {"user_id": "test_uid"}
 
         # Add a test risk assessment to the database
-        risk_assessment = RiskAssessment(
+        risk_assessment = InvestmentRiskAssessment(
             risk_score=85.5,
             risk_level="High",
             comments="Test risk assessment"
@@ -107,7 +107,7 @@ class TestRiskAssessments(unittest.TestCase):
         self.assertIn(b"Risk assessment deleted", response.data)
 
         # Verify the risk assessment was deleted from the database
-        deleted_risk_assessment = RiskAssessment.query.get(risk_assessment.id)
+        deleted_risk_assessment = InvestmentRiskAssessment.query.get(risk_assessment.id)
         self.assertIsNone(deleted_risk_assessment)
 
 if __name__ == "__main__":

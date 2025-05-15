@@ -17,12 +17,10 @@ class LoanRiskAssessmentSchema(Schema):
 loan_schema = LoanRiskAssessmentSchema()
 loans_schema = LoanRiskAssessmentSchema(many=True)
 
-class PortfolioSimulationSchema(Schema):
-    amount = fields.Float(required=True)
-    tickers = fields.List(fields.String(), required=True)
-    allocations = fields.Dict(keys=fields.String(), values=fields.Float(), required=True)
-    start_date = fields.Date(required=True)
-    end_date = fields.Date(required=True)
+class InvestmentSimulationSchema(Schema):
+    class Meta:
+        model = 'InvestmentRiskAssessment'
+        include_fk = True
 
-portfolio_schema = PortfolioSimulationSchema()
-portfolios_schema = PortfolioSimulationSchema(many=True)
+investment_schema = InvestmentSimulationSchema()
+investments_schema = InvestmentSimulationSchema(many=True)
