@@ -179,17 +179,12 @@ with tabs[1]:
                 "portfolio_sharpe_ratio": portfolio_sharpe,
                 "assessment_date": pd.to_datetime('today').strftime('%Y-%m-%d')
                 }
-                st.write("DEBUG: Risk assessment data in session:", "risk_assessment_data" in st.session_state)
-
-
-                # save_button = st.button("Save Risk Assessment")
                 
         if "risk_assessment_data" in st.session_state:
             if st.button("Save Risk Assessment"):
-                print("DEBUG: Button clicked")
 
                 try:
-                    response = requests.post("http://localhost:5000/simulate-portfolio", json=st.session_state["risk_assessment_data"])
+                    response = requests.post("http://localhost:5000/simulations/investments", json=st.session_state["risk_assessment_data"])
                     if response.status_code == 200:
                         st.success("Risk assessment saved successfully!")
                     else:
