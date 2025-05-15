@@ -239,12 +239,3 @@ class TestUser(unittest.TestCase):
         response = self.client.delete('/users/1', headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Invalid Token
         self.assertIn(b'Invalid token', response.data)
-
-    # RBAC Logic Tests
-    # Admin Routes (RBAC)
-    
-    # Create New Admin
-    # Update Own Admin
-    # Update User by ID
-    # Get All Users
-    # Get User by ID
