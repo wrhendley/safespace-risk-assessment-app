@@ -7,6 +7,7 @@ export interface UserProfile {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    role: string;
   // Add other fields as needed (e.g. riskProfile, income, etc.)
 }
 
@@ -42,7 +43,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUserProfile({
                 firstName: data.first_name, 
                 lastName: data.last_name, 
-                phoneNumber: data.phone_number});        
+                phoneNumber: data.phone_number,
+                role: data.role
+            });        
             } catch (err) {
             console.error("Failed to fetch user profile", err);
         } finally {
