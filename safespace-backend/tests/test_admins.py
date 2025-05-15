@@ -5,7 +5,7 @@ from unittest.mock import patch
 from datetime import datetime
 
  # Admin Routes (RBAC)
-class TestUser(unittest.TestCase):
+class TestAdmin(unittest.TestCase):
     def setUp(self):
         self.app = create_app("TestingConfig")
         self.app_context = self.app.app_context()
@@ -13,8 +13,8 @@ class TestUser(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client()
 
-        # Create a test user and account
-        self.account = Account(email="testuser@example.com", firebase_uid="test_uid", role="user")
+        # Create a test admin user and account
+        self.account = Account(email="testadmin@example.com", firebase_uid="test_uid", role="admin")
         db.session.add(self.account)
         db.session.commit()
 
@@ -109,6 +109,19 @@ class TestUser(unittest.TestCase):
         self.assertIn(b'Authentication error', response.data)
 
     # Get All Users
+    # @patch('firebase_admin.auth.verify_id_token')
+    # def test_get_users(self, mock_firebase_token):
+    #     # Mock Firebase token
+    #     mock_firebase_token.return_value = {
+    #         'user_id': 'test_uid',
+    #         'email': 'testuser@example.com',
+    #         'role': 'admin'
+    #     }
+    #     headers = {'Authorization': 'Bearer token'}
+    #     response = self.client.get('/admin/users/', headers=headers)
+    #     print(response)
+    #     self.assertEqual(response.status_code, 200)
+
     # Get User by ID
     @patch('firebase_admin.auth.verify_id_token')
     def test_get_user_by_id_success(self, mock_firebase_token):
