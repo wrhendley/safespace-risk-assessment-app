@@ -33,11 +33,11 @@ def create_user():
     return user_schema.jsonify(new_user), 201
 
 # Get User by ID, auth required
-@users_bp.route('/<int:user_id>', methods=['GET'])
+@users_bp.route('/', methods=['GET'], strict_slashes=False)
 @auth_required # applying token verification wrapper to route
-def get_user(user_id):
+def get_user():
     account = g.account
-    query = select(User).where(User.account_id == account.id, User.id == user_id)
+    query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()
 
     if user == None:
