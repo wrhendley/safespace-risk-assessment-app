@@ -118,7 +118,7 @@ class TestUser(unittest.TestCase):
             'role': 'user'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.get(f'/users/{self.user.id}', headers=headers)
+        response = self.client.get('/users/me', headers=headers)
         self.assertEqual(response.status_code, 200) # 200 Successfully Retrieved User Profile Data
         self.assertIn(b'Test', response.data)
 
@@ -126,17 +126,17 @@ class TestUser(unittest.TestCase):
     def test_get_user_by_id_not_found(self, mock_firebase_token):
         # Mock Firebase token
         mock_firebase_token.return_value = {
-            'user_id': 'test_uid',
-            'email': 'testuser@example.com',
+            'user_id': 'bad_uid',
+            'email': 'baduser@example.com',
             'role': 'user'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.get('/users/999', headers=headers)
+        response = self.client.get('/users/me', headers=headers)
         self.assertEqual(response.status_code, 404) # 404 User Not Found
-        self.assertIn(b'user not found', response.data)
+        self.assertIn(b'Account not found', response.data)
 
     def test_get_user_by_id_missing_token(self):
-        response = self.client.get('/users/1')
+        response = self.client.get('/users/me')
         self.assertEqual(response.status_code, 401) # 401 Missing Token
         self.assertIn(b'Missing token', response.data)
 
@@ -144,11 +144,11 @@ class TestUser(unittest.TestCase):
     def test_get_user_by_id_invalid_token(self, mock_firebase_token):
         mock_firebase_token.side_effect = Exception('Invalid token')
         headers = {'Authorization': 'Bearer invalid_token'}
-        response = self.client.get('/users/1', headers=headers)
+        response = self.client.get('/users/me', headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Invalid Token
         self.assertIn(b'Invalid token', response.data)
 
-    # # Update User by ID, auth required
+    # Update User by ID, auth required
     @patch('firebase_admin.auth.verify_id_token')
     def test_update_user_success(self, mock_firebase_token):
         # Mock Firebase token
@@ -163,7 +163,7 @@ class TestUser(unittest.TestCase):
             'phone_number': '5642310987'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.put(f'/users/{self.user.id}', json=update_payload, headers=headers)
+        response = self.client.put(f'/users/me', json=update_payload, headers=headers)
         self.assertEqual(response.status_code, 200) # 200 Successfully Updated User
         updated_user = User.query.get(self.user.id)
         self.assertEqual(updated_user.first_name, 'Updated')
@@ -174,19 +174,19 @@ class TestUser(unittest.TestCase):
     def test_update_user_not_found(self, mock_firebase_token):
         # Mock Firebase token
         mock_firebase_token.return_value = {
-            'user_id': 'test_uid',
-            'email': 'testuser@example.com',
+            'user_id': 'bad_uid',
+            'email': 'baduser@example.com',
             'role': 'user'
         }
         headers = {'Authorization': 'Bearer valid_token'}
         payload = {'first_name': 'Ghost'}
-        response = self.client.put('/users/99', json=payload, headers=headers)
+        response = self.client.put('/users/me', json=payload, headers=headers)
         self.assertEqual(response.status_code, 404) # 404 User Not Found
-        self.assertIn(b'user not found', response.data)
+        self.assertIn(b'Account not found', response.data)
 
     def test_update_user_missing_token(self):
         payload = {'first_name': 'NoToken'}
-        response = self.client.put('/users/1', json=payload)
+        response = self.client.put('/users/me', json=payload)
         self.assertEqual(response.status_code, 401) # 401 Missing Token
         self.assertIn(b'Missing token', response.data)
 
@@ -195,7 +195,7 @@ class TestUser(unittest.TestCase):
         mock_firebase_token.side_effect = Exception('Invalid token')
         headers = {'Authorization': 'Bearer invalid_token'}
         payload = {'first_name': 'InvalidToken'}
-        response = self.client.put('/users/1', json=payload, headers=headers)
+        response = self.client.put('/users/me', json=payload, headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Invalid Token
         self.assertIn(b'Invalid token', response.data)
 
@@ -209,7 +209,7 @@ class TestUser(unittest.TestCase):
             'role': 'user'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.delete(f'/users/{self.user.id}', headers=headers)
+        response = self.client.delete(f'/users/me', headers=headers)
         self.assertEqual(response.status_code, 200) # 200 Successfully Deleted User
         self.assertIn(b'succesfully deleted user', response.data)
         self.assertIsNone(User.query.get(self.user.id))
@@ -223,12 +223,12 @@ class TestUser(unittest.TestCase):
             'role': 'user'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.delete(f'/users/{self.user.id}', headers=headers)
+        response = self.client.delete(f'/users/me', headers=headers)
         self.assertEqual(response.status_code, 401)
         self.assertIn(b'Authentication error', response.data)
 
     def test_delete_user_missing_token(self):
-        response = self.client.delete('/users/1')
+        response = self.client.delete('/users/me')
         self.assertEqual(response.status_code, 401) # 401 Missing Token
         self.assertIn(b'Missing token', response.data)
 
@@ -236,6 +236,6 @@ class TestUser(unittest.TestCase):
     def test_delete_user_invalid_token(self, mock_firebase_token):
         mock_firebase_token.side_effect = Exception('Invalid token')
         headers = {'Authorization': 'Bearer invalid_token'}
-        response = self.client.delete('/users/1', headers=headers)
+        response = self.client.delete('/users/me', headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Invalid Token
         self.assertIn(b'Invalid token', response.data)
