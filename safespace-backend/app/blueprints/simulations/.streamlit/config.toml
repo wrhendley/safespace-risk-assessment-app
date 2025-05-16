@@ -1,0 +1,20 @@
+[browser]
+serverAddress = "0.0.0.0"
+serverPort = 8501
+gatherUsageStats = false
+enableXsrfProtection = false
+allowEmbedding = true
+
+[theme]
+base="light"
+primaryColor="#6fb3d4"
+backgroundColor="#000000"
+secondaryBackgroundColor="#1F516B"
+textColor="#A9B7BC"
+font="sans serif"
+linkColor="#6fb3d4"
+baseFontSize = 20
+
+[theme.sidebar]
+backgroundColor="#1F516B"
+textColor="#FFFFFF"

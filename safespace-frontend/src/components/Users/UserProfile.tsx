@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, Alert, Button } from "react-bootstrap";
 import { useAuth } from '../../context/AuthContext';
 import NoAccess from "../LandingPages/NoAccess";
 import LoadingPage from "../LandingPages/LoadingPage";
+import DashboardButton from "../Navigation/DashboardButton";
 import { useUser } from '../../context/UserContext';
 
 const UserProfile: React.FC = () => {
@@ -36,7 +37,7 @@ const UserProfile: React.FC = () => {
                             <Card.Text><strong>Phone Number</strong>:  {userProfile.phoneNumber}</Card.Text>
                             <div className='text-center'>
                                 <Button variant="primary" onClick={() => navigate(`/users`)}>Edit Profile</Button>
-                                <Button variant="secondary" onClick={() => navigate(`/userdashboard`)}>Back to Dashboard</Button>
+                                <DashboardButton/>
                             </div>
                         </Card.Body>
                     </Card>

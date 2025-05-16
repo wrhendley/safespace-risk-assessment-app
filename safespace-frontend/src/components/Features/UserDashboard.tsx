@@ -14,7 +14,6 @@ export default function UserDashboard() {
         const fetchIdToken = async () => {
         if (user) {
             const token = await user.getIdToken();
-            console.log(token);
             setIdToken(token);
         }
         };
@@ -39,7 +38,7 @@ export default function UserDashboard() {
             { idToken && (
                 <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
                     <iframe
-                    src={`http://localhost:8501/?token=FAKE_TOKEN`}
+                    src={`http://localhost:8501/?token=${idToken}`}
                     style={{
                         position: 'absolute',
                         top: 0,
