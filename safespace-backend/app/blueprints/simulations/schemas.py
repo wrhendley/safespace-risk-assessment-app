@@ -1,4 +1,6 @@
 from marshmallow import Schema, fields, validates_schema, ValidationError
+from app.models import InvestmentRiskAssessment
+from app.extensions import ma
 
 class LoanRiskAssessmentSchema(Schema):
     loan_amount = fields.Float(required=True)
@@ -18,8 +20,20 @@ loan_schema = LoanRiskAssessmentSchema()
 loans_schema = LoanRiskAssessmentSchema(many=True)
 
 class InvestmentSimulationSchema(Schema):
+    user_id = fields.Int(required=True)
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)
+    risk_score = fields.Float(required=True)
+    risk_level = fields.Str(required=True)
+    comments = fields.Str(required=False)
+    return_percent = fields.Float(required=True)
+    initial_investment = fields.Float(required=True)
+    final_value = fields.Float(required=True)
+    portfolio_volatility = fields.Float(required=True)
+    portfolio_sharpe_ratio = fields.Float(required=True)
+    
     class Meta:
-        model = 'InvestmentRiskAssessment'
+        model = InvestmentRiskAssessment
         include_fk = True
 
 investment_schema = InvestmentSimulationSchema()
