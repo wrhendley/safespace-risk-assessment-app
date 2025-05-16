@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields, validates_schema, ValidationError
-from app.models import InvestmentRiskAssessment
+from app.models import InvestmentRiskAssessment, Asset
 from app.extensions import ma
 
 class LoanRiskAssessmentSchema(ma.SQLAlchemyAutoSchema):
@@ -19,6 +19,25 @@ class LoanRiskAssessmentSchema(ma.SQLAlchemyAutoSchema):
 loan_schema = LoanRiskAssessmentSchema()
 loans_schema = LoanRiskAssessmentSchema(many=True)
 
+class AssetSchema(ma.SQLAlchemyAutoSchema):
+    investment_risk_assessment_id = fields.Int(required=True)
+    ticker = fields.Str(required=True)
+    allocation = fields.Float(required=True)
+    start_price = fields.Float(required=True)
+    end_price = fields.Float(required=True)
+    initial_investment = fields.Float(required=True)
+    final_value = fields.Float(required=True)
+    return_percent = fields.Float(required=True)
+    volatility = fields.Float(required=True)
+    sharpe_ratio = fields.Float(required=True)
+    
+    class Meta:
+        model = Asset
+        include_fk = True
+
+asset_schema = AssetSchema()
+assets_schema = AssetSchema(many=True)
+
 class InvestmentSimulationSchema(ma.SQLAlchemyAutoSchema):
     user_id = fields.Int(required=True)
     start_date = fields.Date(required=True)
@@ -37,3 +56,4 @@ class InvestmentSimulationSchema(ma.SQLAlchemyAutoSchema):
 
 investment_schema = InvestmentSimulationSchema()
 investments_schema = InvestmentSimulationSchema(many=True)
+

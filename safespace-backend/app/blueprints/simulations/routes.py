@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, g
 from app.blueprints.simulations import simulations_bp
-from app.blueprints.simulations.schemas import loan_schema, investment_schema
+from app.blueprints.simulations.schemas import loan_schema, investment_schema, asset_schema
 from app.utils.util import auth_required
-from app.models import User, db, InvestmentRiskAssessment
+from app.models import User, db, InvestmentRiskAssessment, Asset
 from marshmallow import ValidationError
 from sqlalchemy import select
 from datetime import datetime
@@ -11,6 +11,7 @@ from datetime import datetime
 @auth_required
 def save_portfolio_simulation():
     data = request.get_json()
+    ticker_data = data.pop("ticker_data", [])
     
     account = g.account
     user = db.session.execute(
@@ -29,6 +30,20 @@ def save_portfolio_simulation():
 
     new_investment_risk_assessment = InvestmentRiskAssessment(**validated_data)
     db.session.add(new_investment_risk_assessment)
+    db.session.flush()
+    
+    assets = []
+    for ticker in ticker_data:
+        ticker["investment_risk_assessment_id"] = new_investment_risk_assessment.id
+        try:
+            asset_data = asset_schema.load(ticker)
+            asset = Asset(**asset_data)
+            assets.append(asset)
+        except ValidationError as err:
+            return jsonify({"ticker": err.messages}), 400
+    
+    new_investment_risk_assessment.assets = assets
+    
     db.session.commit()
     
     return jsonify(investment_schema.dump(new_investment_risk_assessment)), 201

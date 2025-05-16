@@ -69,6 +69,7 @@ with tabs[1]:
 
             portfolio_returns = []
             weighted_returns = []
+            selected_ticker_details = []
             for ticker in selected_tickers:
                 ticker_data = data[ticker]
                 if ticker_data.empty:
@@ -85,6 +86,19 @@ with tabs[1]:
                 sharpe_ratio = (returns.mean() / std_dev) * np.sqrt(252) if std_dev != 0 else 0
                 max_drawdown = ((ticker_data.cummax() - ticker_data) / ticker_data.cummax()).max()
                 weighted_returns.append(returns * (allocations[ticker] / 100))
+                
+                selected_ticker_details.append({
+                    "ticker": ticker,
+                    "allocation": allocations[ticker],
+                    "start_price": initial_price,
+                    "end_price": final_price,
+                    "initial_investment": investment,
+                    "final_value": result_amount,
+                    "return_percent": percent_change * 100,
+                    "volatility": std_dev,
+                    "sharpe_ratio": sharpe_ratio,
+                    "max_drawdown": max_drawdown
+                })
 
                 st.subheader(f"📈 {ticker} Summary")
                 df_perf = pd.DataFrame({
@@ -126,6 +140,7 @@ with tabs[1]:
 
                 st.markdown("## :warning: Portfolio Risk Score")
                 risk_scores = []
+                
                 for ticker in selected_tickers:
                     returns = data[ticker].pct_change().dropna()
                     std_dev = np.std(returns) if not returns.empty else 0
@@ -181,7 +196,8 @@ with tabs[1]:
                     "initial_investment": amount,
                     "final_value": total_return,
                     "portfolio_volatility": portfolio_std,
-                    "portfolio_sharpe_ratio": portfolio_sharpe
+                    "portfolio_sharpe_ratio": portfolio_sharpe,
+                    "ticker_data": selected_ticker_details
                 }
                 
         if "risk_assessment_data" in st.session_state:
