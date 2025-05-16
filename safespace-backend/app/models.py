@@ -57,8 +57,6 @@ class InvestmentRiskAssessment(db.Model):
     end_date: Mapped[datetime] = mapped_column(nullable=False)
     risk_score: Mapped[float] = mapped_column(nullable=False)
     risk_level: Mapped[str] = mapped_column(nullable=False)
-    start_date: Mapped[datetime] = mapped_column(nullable=False)
-    end_date: Mapped[datetime] = mapped_column(nullable=False)
     return_percent: Mapped[float] = mapped_column(nullable=False)
     initial_investment: Mapped[float] = mapped_column(nullable=False)
     final_value: Mapped[float] = mapped_column(nullable=False)

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from app.blueprints.simulations import simulations_bp
 from app.blueprints.simulations.schemas import loan_schema, investment_schema
 from app.utils.util import auth_required
-from app.models import User, db
+from app.models import User, db, InvestmentRiskAssessment
 from marshmallow import ValidationError
 from sqlalchemy import select
 from datetime import datetime
@@ -17,20 +17,18 @@ def save_portfolio_simulation():
         select(User).where(User.account_id == account.id)
     ).scalar_one_or_none()
     
-    print("start_date", data["start_date"])
-    print("end_date", data["end_date"])
-    data["user_id"] = user.id
-    
-    print (g.account.id)
-    print("Received data:", data)
-    for field in investment_schema.fields:
-        print(field, data.get(field))
-    
     if not user:
         return jsonify({"error": "User not found"}), 404
     
+    data["user_id"] = user.id
+    
     try:
-        validated_data = investment_schema.load(request.get_json())
+        validated_data = investment_schema.load(data)
     except ValidationError as err:
         return jsonify(err.messages), 400
-    return jsonify(data), 200
+
+    new_investment_risk_assessment = InvestmentRiskAssessment(**validated_data)
+    db.session.add(new_investment_risk_assessment)
+    db.session.commit()
+    
+    return jsonify(investment_schema.dump(new_investment_risk_assessment)), 201

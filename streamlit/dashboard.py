@@ -10,7 +10,6 @@ token = st.query_params.get("token", [None])
 
 if token:
     st.session_state["idToken"] = token
-    st.write("Token: ", st.session_state["idToken"])
 else:
     st.error("🔒 You must be signed in to use the simulator.")
     st.stop()
@@ -191,7 +190,7 @@ with tabs[1]:
                 try:
                     headers = {"Authorization": f"Bearer {token}"}
                     response = requests.post("http://localhost:5000/simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
-                    if response.status_code == 200:
+                    if response.status_code == 201:
                         st.success("Risk assessment saved successfully!")
                     else:
                         st.error(f"Failed to save risk assessment: {response.text}")
