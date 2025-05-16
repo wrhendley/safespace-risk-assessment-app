@@ -11,6 +11,7 @@ const UserProfile: React.FC = () => {
     const { user, loading: authLoading, error } = useAuth();
     const { userProfile, isLoading: profileLoading } = useUser();
     const navigate = useNavigate();
+    console.log(userProfile);
 
     if (!user && !authLoading && !profileLoading) {
         return <NoAccess />;

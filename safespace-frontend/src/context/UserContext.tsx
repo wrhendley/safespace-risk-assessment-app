@@ -4,6 +4,7 @@ import api from "../api";
 import { useAuth } from './AuthContext';
 
 export interface UserProfile {
+    id: string;
     firstName: string;
     lastName: string;
     phoneNumber: string;
@@ -35,17 +36,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
         setIsLoading(true);
         try {
-            const idToken = await user.getIdToken(true);
-            const response = await api.get("/users/me", {
-                headers: { Authorization: `Bearer ${idToken}` },
-            });
+            const response = await api.get("/users/me");
             const data = response.data;
+            const accountResponse = await api.get("/accounts/me")
+            const accountData = accountResponse.data;
             setUserProfile({
+                id: data.id,
                 firstName: data.first_name, 
                 lastName: data.last_name, 
                 phoneNumber: data.phone_number,
-                role: data.role
-            });        
+                role: accountData.role
+            });       
             } catch (err) {
             console.error("Failed to fetch user profile", err);
         } finally {

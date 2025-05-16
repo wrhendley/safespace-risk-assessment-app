@@ -154,15 +154,16 @@ with tabs[1]:
                     weighted_score = total_score * (allocations[ticker] / 100)
                     risk_scores.append(weighted_score)
 
-                    if portfolio_risk_score < 3.5:
-                        risk_level = "Low Risk"
-                        color = "#367c74"  # success
-                    elif portfolio_risk_score < 6.5:
-                        risk_level = "Moderate Risk"
-                        color = "#c97a41"  # warning
-                    else:
-                        risk_level = "High Risk"
-                        color = "#a33f3f"  # danger
+                
+                if portfolio_risk_score < 3.5:
+                    risk_level = "Low Risk"
+                    color = "#367c74"  # success
+                elif portfolio_risk_score < 6.5:
+                    risk_level = "Moderate Risk"
+                    color = "#c97a41"  # warning
+                else:
+                    risk_level = "High Risk"
+                    color = "#a33f3f"  # danger
 
 
                 st.markdown(f"**Overall Risk Score:** {portfolio_risk_score:.2f}")
