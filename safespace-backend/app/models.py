@@ -53,9 +53,12 @@ class InvestmentRiskAssessment(db.Model):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(db.ForeignKey('users.id'), nullable=False)
+    start_date: Mapped[datetime] = mapped_column(nullable=False)
+    end_date: Mapped[datetime] = mapped_column(nullable=False)
     risk_score: Mapped[float] = mapped_column(nullable=False)
     risk_level: Mapped[str] = mapped_column(nullable=False)
-    comments: Mapped[str] = mapped_column(nullable=True)
+    start_date: Mapped[datetime] = mapped_column(nullable=False)
+    end_date: Mapped[datetime] = mapped_column(nullable=False)
     return_percent: Mapped[float] = mapped_column(nullable=False)
     initial_investment: Mapped[float] = mapped_column(nullable=False)
     final_value: Mapped[float] = mapped_column(nullable=False)
