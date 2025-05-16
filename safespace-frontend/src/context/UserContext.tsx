@@ -36,7 +36,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(true);
         try {
             const idToken = await user.getIdToken(true);
-            const response = await api.get("/users/", {
+            const response = await api.get("/users/me", {
                 headers: { Authorization: `Bearer ${idToken}` },
             });
             const data = response.data;
