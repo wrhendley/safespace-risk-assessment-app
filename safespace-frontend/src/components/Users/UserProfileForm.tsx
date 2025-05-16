@@ -151,7 +151,7 @@ const UserProfileForm: React.FC = () => {
                     show={showSuccessUpdateModal}
                     onClose={() => {
                         setShowSuccessUpdateModal(false);
-                        navigate('/userdashboard');
+                        navigate('/user-dashboard');
                     }}
                     title="Success!"
                     message="Your user profile has been successfully updated."
