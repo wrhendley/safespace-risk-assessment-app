@@ -268,5 +268,27 @@ with tabs[2]:
             st.write(f"Debt-to-Income Ratio: {debt_to_income_ratio:.2f}")
             st.write(f"Credit Score: {credit_score}")
             st.subheader(f"🔮 Predicted Loan Risk: **{loan_risk}**")
+            st.session_state["loan_risk_assessment_data"] = {
+                "loan_amount": loan_amount,
+                "loan_term": loan_term,
+                "interest_rate": interest_rate,
+                "credit_score": credit_score,
+                "annual_income": annual_income,
+                "monthly_debt": monthly_debt,
+                "debt_to_income_ratio": debt_to_income_ratio,
+                "loan_risk": loan_risk
+            }
+        
+        if "loan_risk_assessment_data" in st.session_state:
+            if st.button("Save Loan Risk Assessment"):
+                try:
+                    headers = {"Authorization": f"Bearer {token}"}
+                    response = requests.post("http://localhost:5000/simulations/loans", json=st.session_state["loan_risk_assessment_data"], headers=headers)
+                    if response.status_code == 201:
+                        st.success("Loan risk assessment saved successfully!")
+                    else:
+                        st.error(f"Failed to save loan risk assessment: {response.text}")
+                except Exception as e:
+                    st.error(f"An error occurred: {e}")
 
     loan_risk_assessment()
