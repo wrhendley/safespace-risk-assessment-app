@@ -14,7 +14,6 @@ export default function UserDashboard() {
         const fetchIdToken = async () => {
         if (user) {
             const token = await user.getIdToken();
-            console.log(token);
             setIdToken(token);
         }
         };

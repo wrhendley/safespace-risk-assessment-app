@@ -18,11 +18,34 @@ else:
 # @st.cache_data
 def get_yahoo_data(tickers, start_date, end_date):
     try:
-        data = yf.download(tickers, start=start_date, end=end_date)
-        return data['Close']  # Returning only close prices
+        data = yf.download(tickers, start=start_date, end=end_date)['Close']
+        # Ensure it's always a DataFrame
+        if isinstance(data, pd.Series):
+            data = data.to_frame()
+        return data
+        # data = yf.download(tickers, start=start_date, end=end_date)
+        # return data['Close']  # Returning only close prices
     except Exception as e:
         st.error(f"Error fetching data from Yahoo Finance: {e}")
         return None
+
+@st.cache_data
+def load_sp500_tickers():
+    url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+    table = pd.read_html(url)
+    df = table[0]
+    return sorted(df['Symbol'].tolist())
+
+ticker_list = load_sp500_tickers()
+
+
+# Retrieve idToken from the Frontend
+token = st.query_params.get("token", [None])[0]
+if token:
+    st.session_state["idToken"] = token
+else:
+    st.error("🔒 You must be signed in to use the simulator.")
+    st.stop()
 
 # Tabs for navigation
 tabs = st.tabs(["🏠 Welcome", "📊 Investment Simulator", "🤲 Loan Risk Assessment"])
@@ -43,14 +66,14 @@ with tabs[1]:
         st.title("📊 Investment Simulator")
         
         amount = st.number_input("💵 Total Investment Amount (USD)", value=10000)
-        ticker_input = st.text_input("Enter Tickers Symbols (comma-separated)", "AAPL, MSFT")
-        selected_tickers = [ticker.strip().upper() for ticker in ticker_input.split(",") if ticker.strip()]
+        selected_tickers = st.multiselect("Select tickers", ticker_list)
+        # ticker_input = st.text_input("Enter Tickers Symbols (comma-separated)", "AAPL, MSFT")
+        # selected_tickers = [ticker.strip().upper() for ticker in ticker_input.split(",") if ticker.strip()]
         start_date = st.date_input("Select Start Date", min_value=pd.to_datetime('2010-01-01'))
         end_date = st.date_input("Select End Date", min_value=start_date, max_value=pd.to_datetime('today'))
         if not selected_tickers:
             st.error("Please enter at least one valid ticker symbol.")
             return
-
 
         allocations = {}
         for ticker in selected_tickers:
@@ -61,7 +84,7 @@ with tabs[1]:
             st.error("Allocations must total 100%.")
             return
 
-        submit_button = st.button("Submit Changes")
+        submit_button = st.button("Simulate Portfolio")
         if submit_button:
             data = get_yahoo_data(selected_tickers, start_date, end_date)
             if data is None:
@@ -105,7 +128,8 @@ with tabs[1]:
                     "Performance Metrics": ["Start Price", "End Price", "Initial Investment", "Final Value", "Portfolio Return"],
                     "Values": [f"${initial_price:.2f}", f"${final_price:.2f}", f"${investment:,.2f}", f"${result_amount:,.2f}", f"{percent_change*100:.2f}%"]
                 })
-                st.dataframe(df_perf, use_container_width=True)
+                st.dataframe(df_perf.to_dict(orient="records"), use_container_width=True)
+                # st.dataframe(df_perf, use_container_width=True)
                 st.line_chart(ticker_data)
 
                 df_risk = pd.DataFrame({
@@ -174,9 +198,9 @@ with tabs[1]:
                         'axis': {'range': [0, 10], 'tickwidth': 1, 'tickcolor': "darkgray"},
                         'bar': {'color': color},
                         'steps': [
-                            {'range': [0, 3.5], 'color': "lightgreen"},
-                            {'range': [3.5, 6.5], 'color': "orange"},
-                            {'range': [6.5, 10], 'color': "red"}
+                            {'range': [0, 3.5], 'color': "#367c74"},  # success
+                            {'range': [3.5, 6.5], 'color': "#c97a41"},  # warning
+                            {'range': [6.5, 10], 'color': "#a33f3f"}   # danger
                         ],
                         'threshold': {
                             'line': {'color': "black", 'width': 4},

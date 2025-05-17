@@ -32,6 +32,19 @@ def create_user():
     
     return user_schema.jsonify(new_user), 201
 
+# Get Current User 
+@users_bp.route('/me', methods=['GET'])
+@auth_required
+def get_current_user():
+    account = g.account
+    query = select(User).where(User.account_id == account.id)
+    user = db.session.execute(query).scalars().first()
+
+    if user is None:
+        return jsonify({"message": "user not found"}), 404
+
+    return user_schema.jsonify(user), 200
+
 # Get User by ID, auth required
 @users_bp.route('/', methods=['GET'], strict_slashes=False)
 @auth_required # applying token verification wrapper to route
@@ -67,6 +80,39 @@ def update_user(user_id):
 
     db.session.commit()
     return user_schema.jsonify(user), 200
+
+# Update current User, auth required
+@users_bp.route('/me', methods=['PUT'])
+@auth_required # applying token verification wrapper to route
+def update_current_user():
+    account = g.account
+    query = select(User).where(User.account_id == account.id)
+    user = db.session.execute(query).scalars().first()
+    
+    if user == None:
+        return jsonify({"message": "user not found"}), 404
+
+    try: 
+        user_data = user_create_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    for field, value in user_data.items():
+        setattr(user, field, value)
+
+    db.session.commit()
+    return user_schema.jsonify(user), 200
+
+# Delete current User, auth required
+@users_bp.route('/me', methods=['DELETE'])
+@auth_required # applying token verification wrapper to route
+def delete_current_user():
+    account = g.account
+    query = select(User).where(User.account_id == account.id)
+    user = db.session.execute(query).scalars().first()
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": f"succesfully deleted user {user.id}"}), 200
 
 # Delete User by ID, auth required
 @users_bp.route('/<int:user_id>', methods=['DELETE'])
