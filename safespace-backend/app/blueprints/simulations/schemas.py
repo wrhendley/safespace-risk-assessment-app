@@ -9,11 +9,15 @@ class LoanRiskAssessmentSchema(ma.SQLAlchemyAutoSchema):
     credit_score = fields.Integer(required=True)
     annual_income = fields.Float(required=True)
     monthly_debt = fields.Float(required=True)
+    debt_to_income_ratio = fields.Float(required=True)
+    loan_risk = fields.Str(required=True)
 
     @validates_schema
     def validate_positive_numbers(self, data, **kwargs):
         for key, value in data.items():
-            if value < 0:
+            if isinstance(value, str):
+                continue
+            elif value < 0:
                 raise ValidationError(f"{key} must be a non-negative number.")
 
 loan_schema = LoanRiskAssessmentSchema()
