@@ -23,8 +23,7 @@ def get_yahoo_data(tickers, start_date, end_date):
         if isinstance(data, pd.Series):
             data = data.to_frame()
         return data
-        # data = yf.download(tickers, start=start_date, end=end_date)
-        # return data['Close']  # Returning only close prices
+    
     except Exception as e:
         st.error(f"Error fetching data from Yahoo Finance: {e}")
         return None
@@ -40,7 +39,7 @@ ticker_list = load_sp500_tickers()
 
 
 # Retrieve idToken from the Frontend
-token = st.query_params.get("token", [None])[0]
+token = st.query_params.get("token", [None])
 if token:
     st.session_state["idToken"] = token
 else:
