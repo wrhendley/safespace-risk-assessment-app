@@ -6,6 +6,14 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import requests
 
+token = st.query_params.get("token", [None])
+
+if token:
+    st.session_state["idToken"] = token
+else:
+    st.error("🔒 You must be signed in to use the simulator.")
+    st.stop()
+    
 # Function to download data from Yahoo Finance for a given list of tickers
 # @st.cache_data
 def get_yahoo_data(tickers, start_date, end_date):
@@ -15,8 +23,7 @@ def get_yahoo_data(tickers, start_date, end_date):
         if isinstance(data, pd.Series):
             data = data.to_frame()
         return data
-        # data = yf.download(tickers, start=start_date, end=end_date)
-        # return data['Close']  # Returning only close prices
+    
     except Exception as e:
         st.error(f"Error fetching data from Yahoo Finance: {e}")
         return None
@@ -32,7 +39,7 @@ ticker_list = load_sp500_tickers()
 
 
 # Retrieve idToken from the Frontend
-token = st.query_params.get("token", [None])[0]
+token = st.query_params.get("token", [None])
 if token:
     st.session_state["idToken"] = token
 else:
@@ -84,6 +91,7 @@ with tabs[1]:
 
             portfolio_returns = []
             weighted_returns = []
+            selected_ticker_details = []
             for ticker in selected_tickers:
                 ticker_data = data[ticker]
                 if ticker_data.empty:
@@ -100,6 +108,19 @@ with tabs[1]:
                 sharpe_ratio = (returns.mean() / std_dev) * np.sqrt(252) if std_dev != 0 else 0
                 max_drawdown = ((ticker_data.cummax() - ticker_data) / ticker_data.cummax()).max()
                 weighted_returns.append(returns * (allocations[ticker] / 100))
+                
+                selected_ticker_details.append({
+                    "ticker": ticker,
+                    "allocation": allocations[ticker],
+                    "start_price": initial_price,
+                    "end_price": final_price,
+                    "initial_investment": investment,
+                    "final_value": result_amount,
+                    "return_percent": percent_change * 100,
+                    "volatility": std_dev,
+                    "sharpe_ratio": sharpe_ratio,
+                    "max_drawdown": max_drawdown
+                })
 
                 st.subheader(f"📈 {ticker} Summary")
                 df_perf = pd.DataFrame({
@@ -142,6 +163,7 @@ with tabs[1]:
 
                 st.markdown("## :warning: Portfolio Risk Score")
                 risk_scores = []
+                
                 for ticker in selected_tickers:
                     returns = data[ticker].pct_change().dropna()
                     std_dev = np.std(returns) if not returns.empty else 0
@@ -154,21 +176,21 @@ with tabs[1]:
                     weighted_score = total_score * (allocations[ticker] / 100)
                     risk_scores.append(weighted_score)
 
-                    if portfolio_risk_score < 3.5:
-                        risk_level = "Low Risk"
-                        color = "#367c74"  # success
-                    elif portfolio_risk_score < 6.5:
-                        risk_level = "Moderate Risk"
-                        color = "#c97a41"  # warning
-                    else:
-                        risk_level = "High Risk"
-                        color = "#a33f3f"  # danger
+                risk_score = sum(risk_scores)
+                if risk_score < 3.5:
+                    risk_level = "Low Risk"
+                    color = "green"
+                elif risk_score < 6.5:
+                    risk_level = "Moderate Risk"
+                    color = "orange"
+                else:
+                    risk_level = "High Risk"
+                    color = "red"
 
-
-                st.markdown(f"**Overall Risk Score:** {portfolio_risk_score:.2f}")
+                st.markdown(f"**Overall Risk Score:** {risk_score:.2f}")
                 fig = go.Figure(go.Indicator(
                     mode="gauge+number+delta",
-                    value=portfolio_risk_score,
+                    value=risk_score,
                     domain={'x': [0, 1], 'y': [0, 1]},
                     title={'text': f"Portfolio Risk Level: {risk_level}", 'font': {'size': 24}},
                     gauge={
@@ -182,33 +204,32 @@ with tabs[1]:
                         'threshold': {
                             'line': {'color': "black", 'width': 4},
                             'thickness': 0.75,
-                            'value': portfolio_risk_score
+                            'value': risk_score
                         }
                     }
                 ))
                 st.plotly_chart(fig, use_container_width=True)
                 
                 st.session_state["risk_assessment_data"] = {
-                "tickers": selected_tickers,
-                "portfolio_risk_score": portfolio_risk_score,
-                "risk_level": risk_level,
-                "allocations": allocations,
-                "start_date": str(start_date),
-                "end_date": str(end_date),
-                "return_percent": total_percent_change,
-                "initial_investment": amount,
-                "final_value": total_return,
-                "portfolio_volatility": portfolio_std,
-                "portfolio_sharpe_ratio": portfolio_sharpe,
-                "assessment_date": pd.to_datetime('today').strftime('%Y-%m-%d')
+                    "risk_score": risk_score,
+                    "risk_level": risk_level,
+                    "start_date": str(start_date),
+                    "end_date": str(end_date),
+                    "return_percent": total_percent_change,
+                    "initial_investment": amount,
+                    "final_value": total_return,
+                    "portfolio_volatility": portfolio_std,
+                    "portfolio_sharpe_ratio": portfolio_sharpe,
+                    "ticker_data": selected_ticker_details
                 }
                 
         if "risk_assessment_data" in st.session_state:
             if st.button("Save Risk Assessment"):
 
                 try:
-                    response = requests.post("http://localhost:5000/simulations/investments", json=st.session_state["risk_assessment_data"])
-                    if response.status_code == 200:
+                    headers = {"Authorization": f"Bearer {token}"}
+                    response = requests.post("http://localhost:5000/simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
+                    if response.status_code == 201:
                         st.success("Risk assessment saved successfully!")
                     else:
                         st.error(f"Failed to save risk assessment: {response.text}")
