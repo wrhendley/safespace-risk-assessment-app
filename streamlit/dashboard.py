@@ -268,5 +268,15 @@ with tabs[2]:
             st.write(f"Debt-to-Income Ratio: {debt_to_income_ratio:.2f}")
             st.write(f"Credit Score: {credit_score}")
             st.subheader(f"🔮 Predicted Loan Risk: **{loan_risk}**")
+            st.session_state["loan_risk_assessment_data"] = {
+                "loan_amount": loan_amount,
+                "loan_term": loan_term,
+                "interest_rate": interest_rate,
+                "credit_score": credit_score,
+                "annual_income": annual_income,
+                "monthly_debt": monthly_debt,
+                "debt_to_income_ratio": debt_to_income_ratio,
+                "loan_risk": loan_risk
+            }
 
     loan_risk_assessment()

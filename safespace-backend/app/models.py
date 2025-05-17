@@ -8,11 +8,18 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-user_risk_assessment = db.Table(
-    'user_investment_risk_assessment',
+user_investment_risk_assessment = db.Table(
+    'user_investment_risk_assessments',
     Base.metadata,
     db.Column('user_id', db.ForeignKey('users.id')),
     db.Column('investment_risk_assessment_id', db.ForeignKey('investment_risk_assessments.id'))
+)
+
+user_loan_risk_assessment = db.Table(
+    'user_loan_risk_assessments',
+    Base.metadata,
+    db.Column('user_id', db.ForeignKey('users.id')),
+    db.Column('loan_risk_assessment_id', db.ForeignKey('loan_risk_assessments.id'))
 )
 
 class Account(db.Model):
@@ -46,7 +53,8 @@ class User(db.Model):
     # zip_code: Mapped[str] = mapped_column(nullable=False)
     
     account: Mapped['Account'] = db.relationship(back_populates="user", uselist=False)
-    investment_risk_assessments: Mapped[List['InvestmentRiskAssessment']] = db.relationship(secondary=user_risk_assessment, back_populates="users")
+    investment_risk_assessments: Mapped[List['InvestmentRiskAssessment']] = db.relationship(secondary=user_investment_risk_assessment, back_populates="users")
+    loan_risk_assessments: Mapped[List['LoanRiskAssessment']] = db.relationship(secondary=user_loan_risk_assessment, back_populates="users")
 
 class InvestmentRiskAssessment(db.Model):
     __tablename__ = 'investment_risk_assessments'
@@ -65,7 +73,7 @@ class InvestmentRiskAssessment(db.Model):
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     assessment_date: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     
-    users: Mapped[List['User']] = db.relationship(secondary=user_risk_assessment, back_populates="investment_risk_assessments")
+    users: Mapped[List['User']] = db.relationship(secondary=user_investment_risk_assessment, back_populates="investment_risk_assessments")
     assets: Mapped[List['Asset']] = db.relationship(back_populates="investment_risk_assessment", cascade="all, delete-orphan")
     
     @property
@@ -90,3 +98,19 @@ class Asset(db.Model):
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
     
     investment_risk_assessment: Mapped['InvestmentRiskAssessment'] = db.relationship(back_populates="assets")
+
+class LoanRiskAssessment(db.Model):
+    __tablename__ = 'loan_risk_assessments'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    loan_amount: Mapped[float] = mapped_column(nullable=False)
+    loan_term: Mapped[int] = mapped_column(nullable=False)
+    interest_rate: Mapped[float] = mapped_column(nullable=False)
+    credit_score: Mapped[int] = mapped_column(nullable=False)
+    annual_income: Mapped[int] = mapped_column(nullable=False)
+    monthly_debt: Mapped[int] = mapped_column(nullable=False)
+    debt_to_income_ratio: Mapped[float] = mapped_column(nullable=False)
+    loan_risk: Mapped[str] = mapped_column(nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
+    
+    users: Mapped[List['User']] = db.relationship(secondary=user_loan_risk_assessment, back_populates="loan_risk_assessments")
