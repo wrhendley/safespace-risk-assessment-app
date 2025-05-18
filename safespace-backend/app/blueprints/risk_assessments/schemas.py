@@ -1,9 +1,9 @@
-from app.models import RiskAssessment
+from app.models import InvestmentRiskAssessment
 from app.extensions import ma
 
 class RiskAssessmentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = RiskAssessment  # basing schema on RiskAssessment Table Model
+        model = InvestmentRiskAssessment  # basing schema on RiskAssessment Table Model
         include_fk = True
 
 # instantiating schemas
