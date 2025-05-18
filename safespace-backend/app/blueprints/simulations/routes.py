@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, g
+from flask import request, jsonify, g
 from app.blueprints.simulations import simulations_bp
 from app.blueprints.simulations.schemas import loan_schema, investment_schema, asset_schema
 from app.utils.util import auth_required
@@ -6,7 +6,6 @@ from app.extensions import limiter
 from app.models import User, db, InvestmentRiskAssessment, Asset, LoanRiskAssessment
 from marshmallow import ValidationError
 from sqlalchemy import select
-from datetime import datetime
 
 @simulations_bp.route("/investments", methods=["POST"], strict_slashes=False)
 @auth_required
