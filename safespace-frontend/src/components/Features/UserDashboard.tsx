@@ -29,7 +29,7 @@ export default function UserDashboard() {
     }
 
     return (
-        <Container className="p-5 my-5 rounded text-center">
+        <Container className="pt-5 my-5 rounded text-center">
             <h1 className='text-center mb-3'>
                 {userProfile?.firstName || user?.email?.split('@')[0] || 'User'}'s Dashboard!
             </h1>

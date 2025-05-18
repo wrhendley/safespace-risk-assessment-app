@@ -14,9 +14,11 @@ def save_portfolio_simulation():
     ticker_data = data.pop("ticker_data", [])
     
     account = g.account
+    print(account)
     user = db.session.execute(
         select(User).where(User.account_id == account.id)
-    ).scalar_one_or_none()
+    ).scalars().first()
+    print(user)
     
     if not user:
         return jsonify({"error": "User not found"}), 404
