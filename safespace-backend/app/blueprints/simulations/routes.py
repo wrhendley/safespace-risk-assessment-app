@@ -1,11 +1,12 @@
 from flask import request, jsonify, g
 from app.blueprints.simulations import simulations_bp
-from app.blueprints.simulations.schemas import loan_schema, investment_schema, asset_schema
+from app.blueprints.simulations.schemas import investment_schema_no_assets, investments_schema, loan_schema, asset_schema
 from app.utils.util import auth_required
 from app.extensions import limiter
 from app.models import User, db, InvestmentRiskAssessment, Asset, LoanRiskAssessment
 from marshmallow import ValidationError
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 @simulations_bp.route("/investments", methods=["POST"], strict_slashes=False)
 @auth_required
@@ -22,10 +23,13 @@ def save_portfolio_simulation():
     if not user:
         return jsonify({"error": "User not found"}), 404
     
-    data["user_id"] = user.id
+    if "users" not in data:
+        data["users"] = []
+    if user.id not in data["users"]:
+        data["users"].append(user.id)
     
     try:
-        validated_data = investment_schema.load(data)
+        validated_data = investment_schema_no_assets.load(data, session=db.session)
     except ValidationError as err:
         return jsonify(err.messages), 400
 
@@ -47,7 +51,31 @@ def save_portfolio_simulation():
     
     db.session.commit()
     
-    return jsonify(investment_schema.dump(new_investment_risk_assessment)), 201
+    return jsonify(investment_schema_no_assets.dump(new_investment_risk_assessment)), 201
+
+@simulations_bp.route("/investments", methods=["GET"], strict_slashes=False)
+@auth_required
+@limiter.limit("1 per 10 seconds")
+def get_portfolio_simulations():
+    account = g.account
+    user = db.session.execute(
+        select(User).where(User.account_id == account.id)
+    ).scalar_one_or_none()
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    print(user.id)
+    
+    investment_risk_assessments = db.session.execute(
+        select(InvestmentRiskAssessment)
+        .options(joinedload(InvestmentRiskAssessment.assets))
+        .where(User.id == user.id)
+    ).scalars().all()
+    
+    if not investment_risk_assessments:
+        return jsonify({"message": "No investment simulations found"}), 404
+    return jsonify(investments_schema.dump(investment_risk_assessments)), 200
 
 @simulations_bp.route("/loans", methods=["POST"], strict_slashes=False)
 @auth_required

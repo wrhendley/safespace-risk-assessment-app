@@ -1,16 +1,11 @@
 from marshmallow import Schema, fields, validates_schema, ValidationError
-from app.models import InvestmentRiskAssessment, Asset
+from app.models import InvestmentRiskAssessment, Asset, LoanRiskAssessment
 from app.extensions import ma
 
 class LoanRiskAssessmentSchema(ma.SQLAlchemyAutoSchema):
-    loan_amount = fields.Float(required=True)
-    loan_term = fields.Integer(required=True)
-    interest_rate = fields.Float(required=True)
-    credit_score = fields.Integer(required=True)
-    annual_income = fields.Float(required=True)
-    monthly_debt = fields.Float(required=True)
-    debt_to_income_ratio = fields.Float(required=True)
-    loan_risk = fields.Str(required=True)
+    
+    class Meta:
+        model = LoanRiskAssessment
 
     @validates_schema
     def validate_positive_numbers(self, data, **kwargs):
@@ -24,16 +19,6 @@ loan_schema = LoanRiskAssessmentSchema()
 loans_schema = LoanRiskAssessmentSchema(many=True)
 
 class AssetSchema(ma.SQLAlchemyAutoSchema):
-    investment_risk_assessment_id = fields.Int(required=True)
-    ticker = fields.Str(required=True)
-    allocation = fields.Float(required=True)
-    start_price = fields.Float(required=True)
-    end_price = fields.Float(required=True)
-    initial_investment = fields.Float(required=True)
-    final_value = fields.Float(required=True)
-    return_percent = fields.Float(required=True)
-    volatility = fields.Float(required=True)
-    sharpe_ratio = fields.Float(required=True)
     
     class Meta:
         model = Asset
@@ -43,21 +28,14 @@ asset_schema = AssetSchema()
 assets_schema = AssetSchema(many=True)
 
 class InvestmentSimulationSchema(ma.SQLAlchemyAutoSchema):
-    user_id = fields.Int(required=True)
-    start_date = fields.Date(required=True)
-    end_date = fields.Date(required=True)
-    risk_score = fields.Float(required=True)
-    risk_level = fields.Str(required=True)
-    return_percent = fields.Float(required=True)
-    initial_investment = fields.Float(required=True)
-    final_value = fields.Float(required=True)
-    portfolio_volatility = fields.Float(required=True)
-    portfolio_sharpe_ratio = fields.Float(required=True)
     
     class Meta:
         model = InvestmentRiskAssessment
-        include_fk = True
+        include_relationships = True
+    
+    assets = ma.Nested(AssetSchema, many=True)
 
 investment_schema = InvestmentSimulationSchema()
 investments_schema = InvestmentSimulationSchema(many=True)
-
+investment_schema_no_assets = InvestmentSimulationSchema(exclude=("assets",))
+investments_schema_no_assets = InvestmentSimulationSchema(exclude=("assets",), many=True)
