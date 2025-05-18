@@ -69,8 +69,7 @@ def get_portfolio_simulations():
     
     investment_risk_assessments = db.session.execute(
         select(InvestmentRiskAssessment)
-        .options(joinedload(InvestmentRiskAssessment.assets))
-        .where(User.id == user.id)
+        .where(InvestmentRiskAssessment.users.any(id=user.id))
     ).scalars().all()
     
     if not investment_risk_assessments:
