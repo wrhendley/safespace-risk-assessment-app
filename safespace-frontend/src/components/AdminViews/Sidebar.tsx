@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Nav } from 'react-bootstrap';
 import api from '../../api';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Sidebar() {
     const { user } = useAuth();
