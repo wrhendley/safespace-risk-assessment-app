@@ -49,13 +49,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const signIn = async (email: string, password: string) => {
         try {
             setLoading(true);
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const token = await userCredential.user.getIdToken(true);
+            await signInWithEmailAndPassword(auth, email, password);
 
-            await api.put("/accounts/update", 
-                { is_active: true },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await api.put("/accounts/update", { is_active: true });
         } catch (err: any) {
             setError(err.message);
             throw err;
@@ -67,15 +63,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logOut = async () => {
         try {
             setLoading(true);
-            const currentUser = auth.currentUser;
-            const token = await currentUser.getIdToken(true);
+            // const currentUser = auth.currentUser;
 
-            if (currentUser) {
-                await api.put("/accounts/update", 
-                    { is_active: false },
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-            }
+            // if (currentUser) {
+            //     await api.put("/accounts/update", { is_active: false });
+            // }
     
             await signOut(auth);
         } catch (err: any) {
