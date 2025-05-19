@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
@@ -60,9 +60,8 @@ class InvestmentRiskAssessment(db.Model):
     __tablename__ = 'investment_risk_assessments'
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(db.ForeignKey('users.id'), nullable=False)
-    start_date: Mapped[datetime] = mapped_column(nullable=False)
-    end_date: Mapped[datetime] = mapped_column(nullable=False)
+    start_date: Mapped[date] = mapped_column(nullable=False)
+    end_date: Mapped[date] = mapped_column(nullable=False)
     risk_score: Mapped[float] = mapped_column(nullable=False)
     risk_level: Mapped[str] = mapped_column(nullable=False)
     return_percent: Mapped[float] = mapped_column(nullable=False)
