@@ -1,6 +1,6 @@
 from flask import request, jsonify, g
 from app.blueprints.simulations import simulations_bp
-from app.blueprints.simulations.schemas import investment_schema_no_assets, investments_schema, loan_schema, asset_schema
+from app.blueprints.simulations.schemas import investment_schema_no_assets, investments_schema, loan_schema, loans_schema, asset_schema
 from app.utils.util import auth_required
 from app.extensions import limiter
 from app.models import User, db, InvestmentRiskAssessment, Asset, LoanRiskAssessment
@@ -97,3 +97,24 @@ def save_loan_simulation():
     db.session.commit()
     
     return jsonify(loan_schema.dump(new_loan_risk_assessment)), 201
+
+@simulations_bp.route("/loans", methods=["GET"], strict_slashes=False)
+@auth_required
+@limiter.limit("1 per 10 seconds")
+def get_loan_simulations():
+    account = g.account
+    user = db.session.execute(
+        select(User).where(User.account_id == account.id)
+    ).scalar_one_or_none()
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    loan_risk_assessments = db.session.execute(
+        select(LoanRiskAssessment)
+        .where(LoanRiskAssessment.users.any(id=user.id))
+    ).scalars().all()
+    
+    if not loan_risk_assessments:
+        return jsonify({"message": "No loan simulations found"}), 404
+    return jsonify(loans_schema.dump(loan_risk_assessments)), 200
