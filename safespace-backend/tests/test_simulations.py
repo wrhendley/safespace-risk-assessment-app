@@ -1,4 +1,4 @@
-from app.models import db, User, Account, InvestmentRiskAssessment, Asset
+from app.models import db, User, Account, InvestmentRiskAssessment, LoanRiskAssessment
 from app import create_app
 import unittest
 from unittest.mock import patch
@@ -153,3 +153,63 @@ class TestSimulations(unittest.TestCase):
             response = self.client.get('/simulations/investments', headers={'Authorization': 'Bearer test_token'})
             self.assertEqual(response.status_code, 404)
             self.assertIn('No investment simulations found', response.json.get('message'))
+
+# -----------------Loan Risk Assessment Tests-----------------
+    @patch('app.utils.util.auth.verify_id_token')
+    def test_create_loan_risk_assessment(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"user_id": "test_uid"}
+        
+        with self.client:
+            data = {
+                "loan_amount": 10000,
+                "loan_term": 12,
+                "interest_rate": 5.0,
+                "credit_score": 700,
+                "after_tax_income": 5000,
+                "monthly_debt": 1000,
+                "debt_to_income_ratio": 0.2,
+                "loan_to_income_ratio": 0.3,
+                "credit_utilization": 0.1,
+                "loan_risk": "Low Risk",
+                "num_dependents": 2,
+                "income_source_count": 1,
+                "credit_card_limit": 5000,
+                "has_real_estate": True,
+            }
+            headers = {
+                'Authorization': 'Bearer test_token',
+                'Content-Type': 'application/json'
+            }
+            response = self.client.post('/simulations/loans', json=data, headers=headers)
+            self.assertEqual(response.status_code, 201)
+            assessment = LoanRiskAssessment.query.first()
+            self.assertIsNotNone(assessment)
+            self.assertEqual(assessment.loan_amount, 10000)
+
+    @patch('app.utils.util.auth.verify_id_token')
+    def test_create_loan_risk_assessment_invalid_data(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"user_id": "test_uid"}
+        
+        with self.client:
+            data = {
+                "loan_amount": -10000,
+                "loan_term": 12,
+                "interest_rate": 5.0,
+                "credit_score": 700,
+                "after_tax_income": 5000,
+                "monthly_debt": 1000,
+                "debt_to_income_ratio": 0.2,
+                "loan_to_income_ratio": 0.3,
+                "credit_utilization": 0.1,
+                "loan_risk": "Low Risk",
+                "num_dependents": 2,
+                "income_source_count": 1,
+                "credit_card_limit": 5000,
+                "has_real_estate": True,
+            }
+            headers = {
+                'Authorization': 'Bearer test_token',
+                'Content-Type': 'application/json'
+            }
+            response = self.client.post('/simulations/loans', json=data, headers=headers)
+            self.assertEqual(response.status_code, 400)

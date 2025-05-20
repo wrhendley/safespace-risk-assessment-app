@@ -102,7 +102,7 @@ class LoanRiskAssessment(db.Model):
     __tablename__ = 'loan_risk_assessments'
     
     id: Mapped[int] = mapped_column(primary_key=True)
-    loan_amount: Mapped[float] = mapped_column(nullable=False)
+    loan_amount: Mapped[int] = mapped_column(nullable=False)
     loan_term: Mapped[int] = mapped_column(nullable=False)
     interest_rate: Mapped[float] = mapped_column(nullable=False)
     credit_score: Mapped[int] = mapped_column(nullable=False)

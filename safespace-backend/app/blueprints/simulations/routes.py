@@ -82,7 +82,10 @@ def get_portfolio_simulations():
 @auth_required
 @limiter.limit("1 per 10 seconds")
 def save_loan_simulation():
-    data = loan_schema.load(request.get_json())
+    try:
+        data = loan_schema.load(request.get_json())
+    except ValidationError as err:
+        return jsonify(err.messages), 400
     
     account = g.account
     user = db.session.execute(
