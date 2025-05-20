@@ -40,35 +40,35 @@ def create_admin():
     return admin_schema.jsonify(new_admin), 201
 
 # Get All Users
-# @admins_bp.route('/', methods=['GET'])
-# @admin_required
-# def get_all_users():
-#     try:
-#         page = request.args.get('page', 1, type=int)
-#         per_page = request.args.get('per_page', 10, type=int)
+@admins_bp.route('/', methods=['GET'])
+@admin_required
+def get_all_users():
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
 
-#         query = (
-#             select(User, Account)
-#             .join(Account, Account.id == User.account_id)
-#             .limit(per_page)
-#             .offset((page - 1) * per_page)
-#         )
+        query = (
+            select(User, Account)
+            .join(Account, Account.id == User.account_id)
+            .limit(per_page)
+            .offset((page - 1) * per_page)
+        )
 
-#         results = db.session.execute(query).all()
+        results = db.session.execute(query).all()
 
-#         response_data = []
-#         for user, account in results:
-#             user_data = user_schema.dump(user)
-#             user_data["account"] = {"id": account.id, "email": account.email, "role": account.role}
-#             response_data.append(user_data)
+        users_data = []
+        for user, account in results:
+            user_data = user_schema.dump(user)
+            user_data["account"] = {"id": account.id, "email": account.email, "role": account.role}
+            users_data.append(user_data)
 
-#         return jsonify(users_data), 200
+        return jsonify(users_data), 200
 
-#     except Exception as e:
-#         logging.error(f"Error fetching all users: {str(e)}")
-#         return jsonify({"error": "Internal server error"}), 500
+    except Exception as e:
+        logging.error(f"Error fetching all users: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
-# # Get User by ID, auth required
+# Get User by ID, auth required
 @admins_bp.route('/<int:user_id>', methods=['GET'])
 @admin_required # applying token verification wrapper to route
 def get_user(user_id):

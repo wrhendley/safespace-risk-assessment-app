@@ -109,18 +109,18 @@ class TestAdmin(unittest.TestCase):
         self.assertIn(b'Authentication error', response.data)
 
     # Get All Users
-    # @patch('firebase_admin.auth.verify_id_token')
-    # def test_get_users(self, mock_firebase_token):
-    #     # Mock Firebase token
-    #     mock_firebase_token.return_value = {
-    #         'user_id': 'test_uid',
-    #         'email': 'testuser@example.com',
-    #         'role': 'admin'
-    #     }
-    #     headers = {'Authorization': 'Bearer token'}
-    #     response = self.client.get('/admin/users/', headers=headers)
-    #     print(response)
-    #     self.assertEqual(response.status_code, 200)
+    @patch('firebase_admin.auth.verify_id_token')
+    def test_get_users(self, mock_firebase_token):
+        # Mock Firebase token
+        mock_firebase_token.return_value = {
+            'user_id': 'test_uid',
+            'email': 'testadmin@example.com',
+            'role': 'admin'
+        }
+        headers = {'Authorization': 'Bearer token'}
+        response = self.client.get('/admin/users/', headers=headers)
+        print(response.data)
+        self.assertEqual(response.status_code, 200)
 
     # Get User by ID
     @patch('firebase_admin.auth.verify_id_token')
@@ -128,7 +128,7 @@ class TestAdmin(unittest.TestCase):
         # Mock firebase token
         mock_firebase_token.return_value = {
             'user_id': 'test_uid',
-            'email': 'testuser@example.com',
+            'email': 'testadmin@example.com',
             'role': 'admin'
         }
         headers = {'Authorization': 'Bearer valid_token'}
@@ -141,7 +141,7 @@ class TestAdmin(unittest.TestCase):
         # Mock Firebase token
         mock_firebase_token.return_value = {
             'user_id': 'test_uid',
-            'email': 'testuser@example.com',
+            'email': 'testadmin@example.com',
             'role': 'admin'
         }
         headers = {'Authorization': 'Bearer valid_token'}
