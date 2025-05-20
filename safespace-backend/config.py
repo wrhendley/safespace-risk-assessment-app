@@ -34,4 +34,4 @@ class TestingConfig:
 class ProductionConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('')
     CACHE_TYPE = 'SimpleCache'
-    CORS_ORIGINS = ["https://website.com"] # Replace this with the safespace static domain
+    CORS_ORIGINS = ["https://develop.d28k1afihrvt34.amplifyapp.com/", "https://main.d28k1afihrvt34.amplifyapp.com"]
