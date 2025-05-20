@@ -56,7 +56,7 @@ const SignUp = () => {
             // wait until the user context is populated
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
-            // const idToken = await currentUser.getIdToken(true);
+            const idToken = await currentUser.getIdToken(true);
 
             // Send the email verification link to the user
             await sendEmailVerification(currentUser);
@@ -69,7 +69,7 @@ const SignUp = () => {
             };
 
             const response = await api.post("/accounts/", payload,
-                // {headers: {Authorization: `Bearer ${idToken}`}}
+                {headers: {Authorization: `Bearer ${idToken}`}}
             );
     
             if (response.status < 200 || response.status>=300) {

@@ -29,12 +29,11 @@ export default function UserDashboard() {
     }
 
     return (
-        <Container className="pt-5 my-5 rounded text-center">
-            <h1 className='text-center mb-3'>
+        <Container className="my-5 p-0">
+            {/* <h1 className='text-center mb-3'>
                 {userProfile?.firstName || user?.email?.split('@')[0] || 'User'}'s Dashboard!
-            </h1>
+            </h1> */}
 
-            {/* <PortfolioSimulator/> */}
             { idToken && (
                 <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
                     <iframe
@@ -46,6 +45,7 @@ export default function UserDashboard() {
                         width: '100%',
                         height: '100%',
                         border: 'none',
+                        padding: 0
                     }}
                     title="User Dashboard"
                     />
