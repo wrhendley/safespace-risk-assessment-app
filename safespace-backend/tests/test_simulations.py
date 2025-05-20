@@ -213,3 +213,46 @@ class TestSimulations(unittest.TestCase):
             }
             response = self.client.post('/simulations/loans', json=data, headers=headers)
             self.assertEqual(response.status_code, 400)
+
+    @patch('app.utils.util.auth.verify_id_token')
+    def test_get_loan_risk_assessment(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"user_id": "test_uid"}
+        
+        with self.client:
+            data = {
+                "loan_amount": 10000,
+                "loan_term": 12,
+                "interest_rate": 5.0,
+                "credit_score": 700,
+                "after_tax_income": 5000,
+                "monthly_debt": 1000,
+                "debt_to_income_ratio": 0.2,
+                "loan_to_income_ratio": 0.3,
+                "credit_utilization": 0.1,
+                "loan_risk": "Low Risk",
+                "num_dependents": 2,
+                "income_source_count": 1,
+                "credit_card_limit": 5000,
+                "has_real_estate": True,
+            }
+            headers = {
+                'Authorization': 'Bearer test_token',
+                'Content-Type': 'application/json'
+            }
+            response = self.client.post('/simulations/loans', json=data, headers=headers)
+            self.assertEqual(response.status_code, 201)
+            
+            assessment = LoanRiskAssessment.query.first()
+            response = self.client.get('/simulations/loans', headers=headers)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('loan_amount', response.json[0])
+            self.assertIn(assessment.loan_amount, response.json[0].values())
+
+    @patch('app.utils.util.auth.verify_id_token')
+    def test_get_loan_risk_assessment_not_found(self, mock_verify_id_token):
+        mock_verify_id_token.return_value = {"user_id": "test_uid"}
+        
+        with self.client:
+            response = self.client.get('/simulations/loans', headers={'Authorization': 'Bearer test_token'})
+            self.assertEqual(response.status_code, 404)
+            self.assertIn('No loan simulations found', response.json.get('message'))
