@@ -1,9 +1,13 @@
 import streamlit as st
 from components.investment_simulator import portfolio_simulator
 from components.loan_risk_assessment import loan_risk_assessment
+import requests
+# from components.investment_simulator import portfolio_simulator
+# from components.loan_risk_assessment import loan_risk_assessment
 
 # Authenticate user
 token = st.query_params.get("token", [None])
+name = st.query_params.get("name", [None])
 
 if token:
     st.session_state["idToken"] = token
@@ -16,7 +20,7 @@ tabs = st.tabs(["🏠 Welcome", "📊 Investment Simulator", "🤲 Loan Risk Ass
 
 # --- Welcome Tab ---
 with tabs[0]:
-    st.title("🏠 Welcome to SafeSpace")
+    st.title(f"{name}'s Dashboard")
     st.markdown("""
     Welcome to the SafeSpace Financial Risk Dashboard!  
     Use the tabs to explore:
@@ -24,46 +28,44 @@ with tabs[0]:
     - 🤲 Loan Risk Assessment: A loan calculator to determine your loan risk.
     """)
 
-st.markdown("## 📂 Your Saved Risk Assessments")
+    st.markdown("## 📂 Your Saved Risk Assessments")
 
-# Add buttons to fetch saved assessments
-if st.button("Load Investment Risk Assessments"):
-    try:
-        headers = {"Authorization": f"Bearer {token}"}
-        response = requests.get("http://localhost:5000/simulations/investments", headers=headers)
-        if response.status_code == 200:
-            investment_data = response.json()
-            if investment_data:
-                st.subheader("💼 Investment Risk Assessments")
-                for idx, assessment in enumerate(investment_data, 1):
-                    st.markdown(f"### Assessment #{idx}")
-                    st.json(assessment)
+    # Add buttons to fetch saved assessments
+    if st.button("Load Investment Risk Assessments"):
+        try:
+            headers = {"Authorization": f"Bearer {token}"}
+            response = requests.get("http://localhost:5000/simulations/investments", headers=headers)
+            if response.status_code == 200:
+                investment_data = response.json()
+                if investment_data:
+                    st.subheader("💼 Investment Risk Assessments")
+                    for idx, assessment in enumerate(investment_data, 1):
+                        st.markdown(f"### Assessment #{idx}")
+                        st.json(assessment)
+                else:
+                    st.info("No investment risk assessments found.")
             else:
-                st.info("No investment risk assessments found.")
-        else:
-            st.error(f"Failed to load investment assessments: {response.text}")
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
+                st.error(f"Failed to load investment assessments: {response.text}")
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
 
-if st.button("Load Loan Risk Assessments"):
-    try:
-        headers = {"Authorization": f"Bearer {token}"}
-        response = requests.get("http://localhost:5000/simulations/loans", headers=headers)
-        if response.status_code == 200:
-            loan_data = response.json()
-            if loan_data:
-                st.subheader("🏦 Loan Risk Assessments")
-                for idx, assessment in enumerate(loan_data, 1):
-                    st.markdown(f"### Assessment #{idx}")
-                    st.json(assessment)
+    if st.button("Load Loan Risk Assessments"):
+        try:
+            headers = {"Authorization": f"Bearer {token}"}
+            response = requests.get("http://localhost:5000/simulations/loans", headers=headers)
+            if response.status_code == 200:
+                loan_data = response.json()
+                if loan_data:
+                    st.subheader("🏦 Loan Risk Assessments")
+                    for idx, assessment in enumerate(loan_data, 1):
+                        st.markdown(f"### Assessment #{idx}")
+                        st.json(assessment)
+                else:
+                    st.info("No loan risk assessments found.")
             else:
-                st.info("No loan risk assessments found.")
-        else:
-            st.error(f"Failed to load loan assessments: {response.text}")
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-
-    st.write(token)
+                st.error(f"Failed to load loan assessments: {response.text}")
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
 
 # --- Investment Simulator Tab ---
 with tabs[1]:

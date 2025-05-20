@@ -20,7 +20,6 @@ def save_portfolio_simulation():
     user = db.session.execute(
         select(User).where(User.account_id == account.id)
     ).scalars().first()
-    print(user)
     
     if not user:
         return jsonify({"error": "User not found"}), 404

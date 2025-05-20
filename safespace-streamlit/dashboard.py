@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import requests
 
 token = st.query_params.get("token", [None])
+name = st.query_params.get("name", [None])
 
 if token:
     st.session_state["idToken"] = token
@@ -51,7 +52,8 @@ tabs = st.tabs(["🏠 Welcome", "📊 Investment Simulator", "🤲 Loan Risk Ass
 
 # --- Welcome Tab ---
 with tabs[0]:
-    st.title("🏠 Welcome to SafeSpace")
+    st.title(f"{name}'s Dashboard")
+    st.write(name)
     st.markdown("""
     Welcome to the SafeSpace Financial Risk Dashboard!  
     Use the tabs to explore:
