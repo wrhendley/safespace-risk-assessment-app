@@ -60,9 +60,6 @@ with tabs[0]:
     - 📊 Investment Simulator: A quick and easy way to make a stock portfolio and assess the risk.
     - 🤲 Loan Risk Assessment: A loan calculator to determine your loan risk.
     """)
-<<<<<<< HEAD
-    
-=======
 
 st.markdown("## 📂 Your Saved Risk Assessments")
 
@@ -103,7 +100,6 @@ if st.button("Load Loan Risk Assessments"):
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
->>>>>>> 5fc5ba972277baaebb187114d68f046206d943d0
 # --- Investment Simulator Tab ---
 with tabs[1]:
     def portfolio_simulator(token):

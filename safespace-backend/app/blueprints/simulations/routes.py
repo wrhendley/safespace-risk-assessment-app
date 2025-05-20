@@ -20,7 +20,6 @@ def save_portfolio_simulation():
     user = db.session.execute(
         select(User).where(User.account_id == account.id)
     ).scalars().first()
-    print(user)
     
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -62,7 +61,10 @@ def get_portfolio_simulations():
     account = g.account
     user = db.session.execute(
         select(User).where(User.account_id == account.id)
-    ).scalar_one_or_none()
+    ).scalars().first()
+    # user = db.session.execute(
+    #     select(User).where(User.account_id == account.id)
+    # ).scalar_one_or_none()
     
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -87,7 +89,10 @@ def save_loan_simulation():
     account = g.account
     user = db.session.execute(
         select(User).where(User.account_id == account.id)
-    ).scalar_one_or_none()
+    ).scalars()[0]
+    # user = db.session.execute(
+    #     select(User).where(User.account_id == account.id)
+    # ).scalar_one_or_none()
     
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -107,7 +112,10 @@ def get_loan_simulations():
     account = g.account
     user = db.session.execute(
         select(User).where(User.account_id == account.id)
-    ).scalar_one_or_none()
+    ).scalars()[0]
+    # user = db.session.execute(
+    #     select(User).where(User.account_id == account.id)
+    # ).scalar_one_or_none()
     
     if not user:
         return jsonify({"error": "User not found"}), 404

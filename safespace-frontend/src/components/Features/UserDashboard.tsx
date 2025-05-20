@@ -37,7 +37,7 @@ export default function UserDashboard() {
             { idToken && (
                 <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
                     <iframe
-                    src={`http://localhost:8501/?token=${idToken}`}
+                    src={`http://localhost:8501/?token=${idToken}&name=${userProfile?.firstName || user?.email?.split('@')[0] || 'User'}`}
                     style={{
                         position: 'absolute',
                         top: 0,
