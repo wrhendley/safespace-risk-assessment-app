@@ -18,3 +18,7 @@ baseFontSize = 20
 [theme.sidebar]
 backgroundColor="#1F516B"
 textColor="#FFFFFF"
+
+[server]
+enableCORS = false
+enableXsrfProtection = false
