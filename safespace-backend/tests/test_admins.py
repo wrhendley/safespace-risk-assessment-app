@@ -132,7 +132,7 @@ class TestAdmin(unittest.TestCase):
             'role': 'admin'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.get(f'/users/{self.admin.id}', headers=headers)
+        response = self.client.get(f'/admin/users/{self.admin.id}', headers=headers)
         self.assertEqual(response.status_code, 200) # 200 Successfully Retrieved User Profile Data
         self.assertIn(b'Test', response.data)
 
@@ -145,12 +145,12 @@ class TestAdmin(unittest.TestCase):
             'role': 'admin'
         }
         headers = {'Authorization': 'Bearer valid_token'}
-        response = self.client.get('/users/999', headers=headers)
+        response = self.client.get('/admin/users/999', headers=headers)
         self.assertEqual(response.status_code, 404) # 404 User Not Found
         self.assertIn(b'user not found', response.data)
 
     def test_get_user_by_id_missing_token(self):
-        response = self.client.get(f'/users/{self.admin.id}')
+        response = self.client.get(f'/admin/users/{self.admin.id}')
         self.assertEqual(response.status_code, 401) # 401 Missing Token
         self.assertIn(b'Missing token', response.data)
 
@@ -158,7 +158,7 @@ class TestAdmin(unittest.TestCase):
     def test_get_user_by_id_invalid_token(self, mock_firebase_token):
         mock_firebase_token.side_effect = Exception('Invalid token')
         headers = {'Authorization': 'Bearer invalid_token'}
-        response = self.client.get(f'/users/{self.admin.id}', headers=headers)
+        response = self.client.get(f'/admin/users/{self.admin.id}', headers=headers)
         self.assertEqual(response.status_code, 401) # 401 Invalid Token
         self.assertIn(b'Invalid token', response.data)
 
