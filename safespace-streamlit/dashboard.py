@@ -288,7 +288,7 @@ with tabs[2]:
     interest_rate = st.slider("Interest Rate (%)", 0.0, 20.0, 5.0)
     loan_term = st.slider("Loan Term (Years)", 1, 30, 10)
     after_tax_income = st.number_input("Annual After-Tax Income (USD)", min_value=1000, value=50000, step=1000)
-    income_sources = st.number_input("Number of Income Sources", min_value=1, value=1, step=1)
+    income_source_count = st.number_input("Number of Income Sources", min_value=1, value=1, step=1)
     monthly_debt = st.number_input("Monthly Debt Payments (USD)", min_value=0, value=500, step=50)
     credit_score = st.slider("Credit Score", 300, 850, 700)
     credit_card_limit = st.number_input("Total Credit Card Limit (USD)", min_value=0, value=10000, step=500)
@@ -358,13 +358,13 @@ with tabs[2]:
             score_log.append(("Loan Term (<=20 years)", 0))
 
         # Income Sources
-        if income_sources >= 3:
+        if income_source_count >= 3:
             score += 2
             score_log.append(("3+ Income Sources", 2))
-        elif income_sources == 2:
+        elif income_source_count == 2:
             score += 1
             score_log.append(("2 Income Sources", 1))
-        elif income_sources == 1:
+        elif income_source_count == 1:
             score_log.append(("1 Income Source", 0))
         else:
             score -= 1
@@ -427,12 +427,12 @@ with tabs[2]:
             "credit_score": credit_score,
             "after_tax_income": after_tax_income,
             "monthly_debt": monthly_debt,
-            "dti_ratio": dti_ratio,
-            "lti_ratio": lti_ratio,
+            "debt_to_income_ratio": dti_ratio,
+            "loan_to_income_ratio": lti_ratio,
             "credit_utilization": credit_utilization,
             "loan_risk": risk,
             "num_dependents": num_dependents,
-            "income_sources": income_sources,
+            "income_source_count": income_source_count,
             "credit_card_limit": credit_card_limit,
             "has_real_estate": has_real_estate
         }
