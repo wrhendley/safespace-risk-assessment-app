@@ -60,7 +60,7 @@ jobs:
       - name: Run tests
         run: |
           source venv/bin/activate
-          python -m unittest discover -s safespace-backend/tests -p
+          python -m unittest discover -s safespace-backend/tests -p "test_*.py"
 
   deploy:
     needs: test
