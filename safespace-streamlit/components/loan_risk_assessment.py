@@ -165,10 +165,12 @@ def loan_risk_assessment(token):
 
     if "loan_risk_assessment_data" in st.session_state:
         if st.button("Save Loan Risk Assessment"):
+            apiURL = "http://localhost:5000/"
+            # apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
             try:
                 headers = {"Authorization": f"Bearer {token}"}
                 response = requests.post(
-                    "http://localhost:5000/simulations/loans",
+                    f"{apiURL}/simulations/loans",
                     json=st.session_state["loan_risk_assessment_data"],
                     headers=headers
                 )

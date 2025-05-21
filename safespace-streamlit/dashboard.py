@@ -8,6 +8,8 @@ import requests
 
 token = st.query_params.get("token", [None])
 name = st.query_params.get("name", [None])
+apiURL = "http://localhost:5000/"
+# apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
 
 if token:
     st.session_state["idToken"] = token
@@ -67,7 +69,7 @@ st.markdown("## 📂 Your Saved Risk Assessments")
 if st.button("Load Investment Risk Assessments"):
     try:
         headers = {"Authorization": f"Bearer {token}"}
-        response = requests.get("http://localhost:5000/simulations/investments", headers=headers)
+        response = requests.get(f"{apiURL}simulations/investments", headers=headers)
         if response.status_code == 200:
             investment_data = response.json()
             if investment_data:
@@ -85,7 +87,7 @@ if st.button("Load Investment Risk Assessments"):
 if st.button("Load Loan Risk Assessments"):
     try:
         headers = {"Authorization": f"Bearer {token}"}
-        response = requests.get("http://localhost:5000/simulations/loans", headers=headers)
+        response = requests.get(f"{apiURL}simulations/loans", headers=headers)
         if response.status_code == 200:
             loan_data = response.json()
             if loan_data:
@@ -102,7 +104,7 @@ if st.button("Load Loan Risk Assessments"):
 
 # --- Investment Simulator Tab ---
 with tabs[1]:
-    def portfolio_simulator(token):
+    def portfolio_simulator():
         st.title("📊 Investment Simulator")
         
         amount = st.number_input("💵 Total Investment Amount (USD)", value=10000)
@@ -269,7 +271,7 @@ with tabs[1]:
 
                 try:
                     headers = {"Authorization": f"Bearer {token}"}
-                    response = requests.post("http://localhost:5000/simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
+                    response = requests.post("f"{apiURL}simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
                     if response.status_code == 201:
                         st.success("Risk assessment saved successfully!")
                     else:
@@ -442,7 +444,7 @@ with tabs[2]:
             try:
                 headers = {"Authorization": f"Bearer {token}"}
                 response = requests.post(
-                    "http://localhost:5000/simulations/loans",
+                    f"{apiURL}simulations/loans",
                     json=st.session_state["loan_risk_assessment_data"],
                     headers=headers
                 )

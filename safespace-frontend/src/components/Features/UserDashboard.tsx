@@ -10,6 +10,8 @@ export default function UserDashboard() {
     const { userProfile, isLoading: profileLoading } = useUser();
     const [idToken, setIdToken] = useState<string>('');
 
+    console.log('API URL:', import.meta.env.VITE_API_URL);
+
     useEffect(() => {
         const fetchIdToken = async () => {
         if (user) {
@@ -37,7 +39,7 @@ export default function UserDashboard() {
             { idToken && (
                 <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
                     <iframe
-                    src={`https://dashboard-appx.streamlit.app/?token=${idToken}&name=${userProfile?.firstName || user?.email?.split('@')[0] || 'User'}`}
+                    src={`https://safespace-streamlit-app-cc827f30d6b6.herokuapp.com/?token=${idToken}&name=${userProfile?.firstName || user?.email?.split('@')[0] || 'User'}`}
                     style={{
                         position: 'absolute',
                         top: 0,

@@ -8,6 +8,8 @@ import requests
 # Authenticate user
 token = st.query_params.get("token", [None])
 name = st.query_params.get("name", [None])
+apiURL = "http://localhost:5000/"
+# apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
 
 if token:
     st.session_state["idToken"] = token
@@ -34,7 +36,7 @@ with tabs[0]:
     if st.button("Load Investment Risk Assessments"):
         try:
             headers = {"Authorization": f"Bearer {token}"}
-            response = requests.get("http://localhost:5000/simulations/investments", headers=headers)
+            response = requests.get(f"{apiURL}simulations/investments", headers=headers)
             if response.status_code == 200:
                 investment_data = response.json()
                 if investment_data:
@@ -52,7 +54,7 @@ with tabs[0]:
     if st.button("Load Loan Risk Assessments"):
         try:
             headers = {"Authorization": f"Bearer {token}"}
-            response = requests.get("http://localhost:5000/simulations/loans", headers=headers)
+            response = requests.get(f"{apiURL}simulations/loans", headers=headers)
             if response.status_code == 200:
                 loan_data = response.json()
                 if loan_data:
