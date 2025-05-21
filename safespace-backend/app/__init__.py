@@ -15,15 +15,16 @@ def create_app(config_name = 'DevelopmentConfig'):
     app.config.from_object(f'config.{config_name}')
     
     # Firebase setup
-    if not firebase_admin_apps:        
-        if not os.path.exists(Env.FIREBASE_CREDENTIAL_PATH):
-            raise FileNotFoundError(f"Firebase credentials file not found at {Env.FIREBASE_CREDENTIAL_PATH}")
-        
-        try:
-            cred = credentials.Certificate(Env.FIREBASE_CREDENTIAL_PATH)
-            firebase_app = initialize_app(cred)
-        except ValueError as e:
-            raise ValueError(f"Invalid Firebase credentials file: {e}")
+    if(config_name != 'TestingConfig'):
+        if not firebase_admin_apps:        
+            if not os.path.exists(Env.FIREBASE_CREDENTIAL_PATH):
+                raise FileNotFoundError(f"Firebase credentials file not found at {Env.FIREBASE_CREDENTIAL_PATH}")
+            
+            try:
+                cred = credentials.Certificate(Env.FIREBASE_CREDENTIAL_PATH)
+                firebase_app = initialize_app(cred)
+            except ValueError as e:
+                raise ValueError(f"Invalid Firebase credentials file: {e}")
     
     # Add extensions to app
     db.init_app(app)
