@@ -34,4 +34,4 @@ class TestingConfig:
 class ProductionConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('')
     CACHE_TYPE = 'SimpleCache'
-    CORS_ORIGINS = ["https://develop.d28k1afihrvt34.amplifyapp.com/", "https://main.d28k1afihrvt34.amplifyapp.com"]
+    CORS_ORIGINS = ["https://codingtemple.slack.com/archives/C08L80TUZB6/p1747865873121049", "https://codingtemple.slack.com/archives/C08L80TUZB6/p1747863304180429"]
