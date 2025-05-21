@@ -89,7 +89,7 @@ def get_user(user_id):
 
 # Update User by ID, auth required
 @admins_bp.route('/<int:user_id>', methods=['PUT'])
-@auth_required # applying token verification wrapper to route
+@admin_required # applying token verification wrapper to route
 def update_user(user_id):
     account = g.account
     query = select(User).where(User.account_id == account.id, User.id == user_id)
@@ -111,7 +111,7 @@ def update_user(user_id):
 
 # Delete User by ID, auth required
 @admins_bp.route('/<int:user_id>', methods=['DELETE'])
-@auth_required # applying token verification wrapper to route
+@admin_required # applying token verification wrapper to route
 def delete_user(user_id):
     account = g.account
     query = select(User).where(User.account_id == account.id, User.id == user_id)
