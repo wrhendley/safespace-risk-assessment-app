@@ -60,4 +60,26 @@ jobs:
       - name: Run tests
         run: |
           source venv/bin/activate
-          python -m unittest discover -s safespace-backend/tests -p
+          python -m unittest discover -s safespace-backend/tests -p "test_*.py"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_BACKEND_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_BACKEND_SECRET_KEY }}
+          aws-region: us-east-2
+
+      - name: Run deployment command on EC2 via SSM
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=InstanceIds,Values=i-062fae0082e081d5a" \
+            --comment "Remote deploy from GitHub Actions" \
+            --parameters commands=["cd /home/ec2-user/my-app && git pull && source venv/bin/activate && pip install -r requirements.txt && ./deploy.sh"] \
+            --region us-east-2
+            
