@@ -63,7 +63,7 @@ jobs:
           python -m unittest discover -s safespace-backend/tests -p
 
   deploy:
-    needs: tests
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
