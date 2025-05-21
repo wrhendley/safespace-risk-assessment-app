@@ -22,3 +22,4 @@ textColor="#FFFFFF"
 [server]
 enableCORS = false
 enableXsrfProtection = false
+allowEmbedding = true

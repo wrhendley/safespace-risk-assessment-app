@@ -15,6 +15,7 @@ def portfolio_simulator(token):
     # selected_tickers = [ticker.strip().upper() for ticker in ticker_input.split(",") if ticker.strip()]
     start_date = st.date_input("Select Start Date", min_value=pd.to_datetime('2010-01-01'))
     end_date = st.date_input("Select End Date", min_value=start_date, max_value=pd.to_datetime('today'))
+
     if not selected_tickers:
         st.error("Please enter at least one valid ticker symbol.")
         return
@@ -170,10 +171,11 @@ def portfolio_simulator(token):
             
     if "risk_assessment_data" in st.session_state:
         if st.button("Save Risk Assessment"):
-
+            apiURL = "http://localhost:5000/"
+            # apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com/"
             try:
                 headers = {"Authorization": f"Bearer {token}"}
-                response = requests.post("http://localhost:5000/simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
+                response = requests.post(f"{apiURL}simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
                 if response.status_code == 201:
                     st.success("Risk assessment saved successfully!")
                 else:
