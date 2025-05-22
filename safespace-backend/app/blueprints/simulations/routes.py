@@ -100,6 +100,33 @@ def get_portfolio_simulation(investment_id):
     
     return jsonify(investment_schema.dump(investment_risk_assessment)), 200
 
+@simulations_bp.route("/investments/<int:investment_id>", methods=["DELETE"], strict_slashes=False)
+@auth_required
+@limiter.limit("1 per 10 seconds")
+def delete_portfolio_simulation(investment_id):
+    account = g.account
+    user = db.session.execute(
+        select(User).where(User.account_id == account.id)
+    ).scalar_one_or_none()
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    investment_risk_assessment = db.session.execute(
+        select(InvestmentRiskAssessment)
+        .where(InvestmentRiskAssessment.id == investment_id)
+    ).scalar_one_or_none()
+    
+    if not investment_risk_assessment:
+        return jsonify({"error": "Investment simulation not found"}), 404
+    if user.id not in [user.id for user in investment_risk_assessment.users]:
+        return jsonify({"error": "User not authorized to access this simulation"}), 403
+    
+    db.session.delete(investment_risk_assessment)
+    db.session.commit()
+    
+    return jsonify({"message": "Investment simulation deleted successfully"}), 200
+
 @simulations_bp.route("/loans", methods=["POST"], strict_slashes=False)
 @auth_required
 @limiter.limit("1 per 10 seconds")
