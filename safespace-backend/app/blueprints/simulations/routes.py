@@ -127,6 +127,71 @@ def delete_portfolio_simulation(investment_id):
     
     return jsonify({"message": "Investment simulation deleted successfully"}), 200
 
+@simulations_bp.route("/investments/<int:investment_id>", methods=["PUT"], strict_slashes=False)
+@auth_required
+@limiter.limit("1 per 10 seconds")
+def update_portfolio_simulation(investment_id):
+    data = request.get_json()
+    ticker_data = data.pop("ticker_data", [])
+
+    account = g.account
+    user = db.session.execute(
+        select(User).where(User.account_id == account.id)
+    ).scalar_one_or_none()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    investment_risk_assessment = db.session.execute(
+        select(InvestmentRiskAssessment).where(
+            InvestmentRiskAssessment.id == investment_id
+        )
+    ).scalar_one_or_none()
+
+    if not investment_risk_assessment:
+        return jsonify({"error": "Investment simulation not found"}), 404
+
+    if user not in investment_risk_assessment.users:
+        return jsonify({"error": "User not authorized to access this simulation"}), 403
+
+    try:
+        validated_data = investment_schema.load(data, session=db.session)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+    # Update main assessment fields
+    for key, value in validated_data.items():
+        setattr(investment_risk_assessment, key, value)
+
+    # Map existing and incoming assets by ticker
+    existing_assets = {asset.ticker: asset for asset in investment_risk_assessment.assets}
+    incoming_assets = {ticker["ticker"]: ticker for ticker in ticker_data}
+
+    # Delete removed assets
+    for ticker in set(existing_assets.keys()) - set(incoming_assets.keys()):
+        db.session.delete(existing_assets[ticker])
+
+    # Update existing or create new assets
+    for ticker, ticker_info in incoming_assets.items():
+        ticker_info["investment_risk_assessment_id"] = investment_risk_assessment.id
+        try:
+            asset_data = asset_schema.load(ticker_info)
+        except ValidationError as err:
+            return jsonify({"ticker": err.messages}), 400
+
+        if ticker in existing_assets:
+            # Update existing asset
+            for key, value in asset_data.items():
+                setattr(existing_assets[ticker], key, value)
+        else:
+            # Create new asset
+            new_asset = Asset(**asset_data)
+            db.session.add(new_asset)
+            investment_risk_assessment.assets.append(new_asset)
+
+    db.session.commit()
+    return jsonify(investment_schema.dump(investment_risk_assessment)), 200
+
 @simulations_bp.route("/loans", methods=["POST"], strict_slashes=False)
 @auth_required
 @limiter.limit("1 per 10 seconds")
