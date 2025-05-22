@@ -8,8 +8,8 @@ import requests
 
 token = st.query_params.get("token", [None])
 name = st.query_params.get("name", [None])
-apiURL = "http://localhost:5000/"
-# apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
+# apiURL = "http://localhost:5000/"
+apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
 
 if token:
     st.session_state["idToken"] = token
@@ -271,7 +271,7 @@ with tabs[1]:
 
                 try:
                     headers = {"Authorization": f"Bearer {token}"}
-                    response = requests.post("f"{apiURL}simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
+                    response = requests.post("f{apiURL}simulations/investments", json=st.session_state["risk_assessment_data"], headers=headers)
                     if response.status_code == 201:
                         st.success("Risk assessment saved successfully!")
                     else:
