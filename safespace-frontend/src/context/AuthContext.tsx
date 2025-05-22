@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [idToken, setIdToken] = useState<string>('');
 
     useEffect(() => {
         setLoading(true);
@@ -38,6 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
             await createUserWithEmailAndPassword(auth, email, password);
+            
         } catch (err: any) {
             setError(err.message);
             throw err;
@@ -47,27 +47,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signIn = async (email: string, password: string) => {
-        try {
-            setLoading(true);
-            await signInWithEmailAndPassword(auth, email, password);
+    try {
+        setLoading(true);
+        await signInWithEmailAndPassword(auth, email, password);
 
-            await api.put("/accounts/update", { is_active: true });
-        } catch (err: any) {
-            setError(err.message);
-            throw err;
-        } finally {
-            setLoading(false);
+        // Get the ID token from Firebase
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("Failed to retrieve current Firebase user.");
+
+        const idToken = await currentUser.getIdToken(true);
+
+        // Attempt to update the backend
+        await api.put("/accounts/update", { is_active: true }, {
+            headers: {
+                Authorization: `Bearer ${idToken}`
+            }
+        });
+
+        setError(null); // clear error if success
+    } catch (err: any) {
+        // If backend update fails, sign out from Firebase to maintain consistency
+        if (auth.currentUser) {
+            await signOut(auth).catch(() => {
+                console.warn("Failed to sign out user after backend error.");
+            });
         }
-    };
+
+        setError(err.message || "An error occurred during sign in.");
+        throw err;
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     const logOut = async () => {
         try {
             setLoading(true);
-            // const currentUser = auth.currentUser;
+            const currentUser = auth.currentUser;
 
-            // if (currentUser) {
-            //     await api.put("/accounts/update", { is_active: false });
-            // }
+            if (currentUser) {
+                await api.put("/accounts/update", { is_active: false });
+            }
     
             await signOut(auth);
         } catch (err: any) {

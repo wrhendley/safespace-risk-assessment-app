@@ -6,7 +6,7 @@ import OurMission from "./OurMission";
 import OurFeatures from "./OurFeatures";
 
 function AboutUs(){
-
+    console.log()
     return (
         <div className='aboutus-scroll-container'>
         <div className="snap-section">

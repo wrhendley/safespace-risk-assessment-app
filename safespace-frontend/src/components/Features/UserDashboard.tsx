@@ -10,8 +10,6 @@ export default function UserDashboard() {
     const { userProfile, isLoading: profileLoading } = useUser();
     const [idToken, setIdToken] = useState<string>('');
 
-    console.log('API URL:', import.meta.env.VITE_API_URL);
-
     useEffect(() => {
         const fetchIdToken = async () => {
         if (user) {
