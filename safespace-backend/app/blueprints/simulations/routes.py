@@ -223,3 +223,38 @@ def delete_loan_simulation(loan_id):
     db.session.commit()
     
     return jsonify({"message": "Loan simulation deleted successfully"}), 200
+
+@simulations_bp.route("/loans/<int:loan_id>", methods=["PUT"], strict_slashes=False)
+@auth_required
+@limiter.limit("1 per 10 seconds")
+def update_loan_simulation(loan_id):
+    data = request.get_json()
+    try:
+        validated_data = loan_schema.load(data, session=db.session)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    
+    account = g.account
+    user = db.session.execute(
+        select(User).where(User.account_id == account.id)
+    ).scalar_one_or_none()
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    loan_risk_assessment = db.session.execute(
+        select(LoanRiskAssessment)
+        .where(LoanRiskAssessment.id == loan_id)
+    ).scalar_one_or_none()
+    
+    if not loan_risk_assessment:
+        return jsonify({"error": "Loan simulation not found"}), 404
+    if user.id not in [user.id for user in loan_risk_assessment.users]:
+        return jsonify({"error": "User not authorized to access this simulation"}), 403
+    
+    for key, value in validated_data.items():
+        setattr(loan_risk_assessment, key, value)
+    
+    db.session.commit()
+    
+    return jsonify(loan_schema.dump(loan_risk_assessment)), 200
