@@ -10,7 +10,6 @@ export interface UserProfile {
     lastName: string;
     phoneNumber: string;
     role: string;
-  // Add other fields as needed (e.g. riskProfile, income, etc.)
 }
 
 interface UserContextType {
@@ -37,19 +36,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
         setIsLoading(true);
         try {
-            console.log("About to make an API call");
-            const token = await user.getIdToken();
-            // const response = await axios.get("https://ec2-18-216-211-58.us-east-2.compute.amazonaws.com/users/me", 
-            //     {headers: {Authorization: `Bearer ${token}` }}
-            // );
             const response = await api.get("/users/me");
             const data = response.data;
-            console.log(data);
-            // const accountResponse = await axios.get("https://ec2-18-216-211-58.us-east-2.compute.amazonaws.com/accounts/me", 
-            //     {headers: {Authorization: `Bearer ${token}` }});
+
             const accountResponse = await api.get("/accounts/me")
             const accountData = accountResponse.data;
-            console.log(accountData);
+
             setUserProfile({
                 id: data.id,
                 firstName: data.first_name, 

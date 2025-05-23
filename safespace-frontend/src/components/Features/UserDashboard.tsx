@@ -10,8 +10,6 @@ export default function UserDashboard() {
     const { userProfile, isLoading: profileLoading } = useUser();
     const [idToken, setIdToken] = useState<string>('');
 
-    console.log('API URL:', import.meta.env.VITE_API_URL);
-
     useEffect(() => {
         const fetchIdToken = async () => {
         if (user) {
@@ -32,10 +30,6 @@ export default function UserDashboard() {
 
     return (
         <Container className="my-5 p-0">
-            {/* <h1 className='text-center mb-3'>
-                {userProfile?.firstName || user?.email?.split('@')[0] || 'User'}'s Dashboard!
-            </h1> */}
-
             { idToken && (
                 <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
                     <iframe
@@ -53,24 +47,6 @@ export default function UserDashboard() {
                     />
                 </div>
             )}
-            {/* { idToken && (
-                <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
-                    <iframe
-                    src={`http://localhost:8501/?token=${idToken}&name=${userProfile?.firstName || user?.email?.split('@')[0] || 'User'}`}
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                        padding: 0
-                    }}
-                    title="User Dashboard"
-                    />
-                </div>
-            )} */}
-
         </Container>
     )
 }
