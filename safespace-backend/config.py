@@ -34,4 +34,8 @@ class TestingConfig:
 class ProductionConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('')
     CACHE_TYPE = 'SimpleCache'
-    CORS_ORIGINS = ["https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com", "https://safespace-streamlit-app-cc827f30d6b6.herokuapp.com/", "https://develop.d28k1afihrvt34.amplifyapp.com/", "https://main.d28k1afihrvt34.amplifyapp.com"]
+    CORS_ORIGINS = ["https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com",
+                    "https://safespace-streamlit-app-cc827f30d6b6.herokuapp.com",
+                    "https://develop.d28k1afihrvt34.amplifyapp.com",
+                    "https://main.d28k1afihrvt34.amplifyapp.com",
+                    "https://safespacefinancial.duckdns.org"]
