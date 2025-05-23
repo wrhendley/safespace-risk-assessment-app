@@ -42,7 +42,7 @@
 #             "Authorization": "Bearer fake_token",
 #             "Content-Type": "application/json"
 #         }
-#         response = self.client.post("/users/risk-assessments", headers=headers, json=payload)
+#         response = self.client.post("/api/users/risk-assessments", headers=headers, json=payload)
 
 #         # Assert the response
 #         self.assertEqual(response.status_code, 201)
@@ -72,7 +72,7 @@
 #         headers = {
 #             "Authorization": "Bearer fake_token"
 #         }
-#         response = self.client.get("/users/risk-assessments", headers=headers)
+#         response = self.client.get("/api/users/risk-assessments", headers=headers)
 
 #         # Assert the response
 #         self.assertEqual(response.status_code, 200)
@@ -100,7 +100,7 @@
 #         headers = {
 #             "Authorization": "Bearer valid_token"
 #         }
-#         response = self.client.delete(f"users/risk-assessments", headers=headers, json=json)
+#         response = self.client.delete(f"/api/users/risk-assessments", headers=headers, json=json)
 
 #         # Assert the response
 #         self.assertEqual(response.status_code, 200)
