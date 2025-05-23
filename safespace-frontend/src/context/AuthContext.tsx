@@ -47,38 +47,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signIn = async (email: string, password: string) => {
-    try {
-        setLoading(true);
-        await signInWithEmailAndPassword(auth, email, password);
+        try {
+            setLoading(true);
+            await signInWithEmailAndPassword(auth, email, password);
 
-        // Get the ID token from Firebase
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("Failed to retrieve current Firebase user.");
+            // Get the ID token from Firebase
+            const currentUser = auth.currentUser;
+            if (!currentUser) throw new Error("Failed to retrieve current Firebase user.");
 
-        const idToken = await currentUser.getIdToken(true);
+            const idToken = await currentUser.getIdToken(true);
 
-        // Attempt to update the backend
-        await api.put("/accounts/update", { is_active: true }, {
-            headers: {
-                Authorization: `Bearer ${idToken}`
-            }
-        });
-
-        setError(null); // clear error if success
-    } catch (err: any) {
-        // If backend update fails, sign out from Firebase to maintain consistency
-        if (auth.currentUser) {
-            await signOut(auth).catch(() => {
-                console.warn("Failed to sign out user after backend error.");
+            // Attempt to update the backend
+            await api.put("/accounts/update", { is_active: true }, {
+                headers: {
+                    Authorization: `Bearer ${idToken}`
+                }
             });
-        }
 
-        setError(err.message || "An error occurred during sign in.");
-        throw err;
-    } finally {
-        setLoading(false);
-    }
-};
+            setError(null); // clear error if success
+        } catch (err: any) {
+            // If backend update fails, sign out from Firebase to maintain consistency
+            if (auth.currentUser) {
+                await signOut(auth).catch(() => {
+                    console.warn("Failed to sign out user after backend error.");
+                });
+            }
+
+            setError(err.message || "An error occurred during sign in.");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     const logOut = async () => {
