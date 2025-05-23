@@ -85,12 +85,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             setLoading(true);
             const currentUser = auth.currentUser;
-
+            await signOut(auth);
             if (currentUser) {
                 await api.put("/accounts/update", { is_active: false });
             }
-    
-            await signOut(auth);
         } catch (err: any) {
             setError(err.message);
         } finally {
