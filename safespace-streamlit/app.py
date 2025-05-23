@@ -8,8 +8,8 @@ import requests
 # Authenticate user
 token = st.query_params.get("token", [None])
 name = st.query_params.get("name", [None])
-apiURL = "http://localhost:5000/"
-# apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
+# apiURL = "http://localhost:5000/"
+apiURL = "https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com"
 
 if token:
     st.session_state["idToken"] = token
