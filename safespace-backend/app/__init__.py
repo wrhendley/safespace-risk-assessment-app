@@ -9,7 +9,7 @@ from config import Env
 from firebase_admin import credentials, initialize_app, _apps as firebase_admin_apps
 import os
 
-def create_app(config_name = 'DevelopmentConfig'):
+def create_app(config_name = 'ProductionConfig'):
     app = Flask(__name__)
     app.config.from_object(f'config.{config_name}')
     
