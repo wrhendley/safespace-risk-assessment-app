@@ -80,6 +80,6 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --targets "Key=InstanceIds,Values=i-062fae0082e081d5a" \
             --comment "Remote deploy from GitHub Actions" \
-            --parameters commands=["cd /home/ec2-user/myapp && git pull && source venv/bin/activate && pip install -r requirements.txt && ./deploy.sh"] \
+            --parameters commands=["cd /home/ec2-user/myapp && git pull && cd safespace-backend && source venv/bin/activate && pip install -r requirements.txt && ./deploy.sh"] \
             --region us-east-2
             
