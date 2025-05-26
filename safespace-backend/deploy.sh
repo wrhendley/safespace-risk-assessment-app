@@ -19,6 +19,11 @@ python3 -m pip install --upgrade pip
 echo "Installing dependencies..."
 pip install -r requirements.txt
 
+echo "Verifying pip install context..."
+which python
+which pip
+pip list
+
 echo "Checking Python/Flask versions..."
 which python3
 python3 --version
