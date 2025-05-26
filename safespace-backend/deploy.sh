@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "Changing to app directory..."
-cd /home/ec2-user/myapp/safespace-backend
-
 echo "Marking repo as safe for Git..."
 git config --global --add safe.directory /home/ec2-user/myapp
+
+echo "Changing to app directory..."
+cd /home/ec2-user/myapp/safespace-backend
 
 echo "Pulling latest changes..."
 git pull origin develop  # change to 'main' when ready
