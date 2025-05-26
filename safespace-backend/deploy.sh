@@ -10,8 +10,16 @@ git config --global --add safe.directory /home/ec2-user/myapp
 echo "Pulling latest changes..."
 git pull origin develop  # change to 'main' when ready
 
-echo "Activating virtual environment..."
+# Deleting old venv, if any
+if [ -d "venv" ]; then
+    echo "Removing old virtual environment..."
+    rm -rf venv
+fi
+
+echo "Creating virtual environment..."
 python3.10 -m venv venv
+
+echo "Activating virtual environment..."
 source venv/bin/activate
 
 echo "Upgrading pip..."
