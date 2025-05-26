@@ -8,6 +8,8 @@ cd /home/ec2-user/myapp
 
 echo "Marking repo as safe for Git..."
 git config --global --add safe.directory "$(pwd)"
+
+echo "Checking safe for Git..."
 git config --global --get-all safe.directory
 
 echo "Changing to develop branch"
