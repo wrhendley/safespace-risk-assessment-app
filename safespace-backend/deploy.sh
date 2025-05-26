@@ -11,13 +11,14 @@ echo "Pulling latest changes..."
 git pull origin develop  # change to 'main' when ready
 
 echo "Activating virtual environment..."
+python3.10 -m venv venv
 source venv/bin/activate
 
 echo "Upgrading pip..."
-python3 -m pip install --upgrade pip
+python3.10 -m pip install --upgrade pip
 
 echo "Installing dependencies..."
-pip install -r requirements.txt
+pip install --upgrade -r requirements.txt
 
 echo "Verifying pip install context..."
 which python
@@ -25,7 +26,7 @@ which pip
 pip list
 
 echo "Checking Python/Flask versions..."
-which python3
+which python3.10
 python3 --version
 which flask || echo "Flask not found!"
 flask --version || echo "Flask command failed!"
