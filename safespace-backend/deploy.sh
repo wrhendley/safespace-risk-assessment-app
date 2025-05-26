@@ -1,15 +1,23 @@
 #!/bin/bash
 set -e
 
+export HOME=/home/ec2-user
+
 echo "Changing to app directory..."
-cd /home/ec2-user/myapp/safespace-backend
+cd /home/ec2-user/myapp
 
 echo "Marking repo as safe for Git..."
 git config --global --add safe.directory "$(pwd)"
 git config --global --get-all safe.directory
 
+echo "Changing to develop branch"
+git checkout develop
+
 echo "Pulling latest changes..."
 git pull origin develop  # change to 'main' when ready
+
+echo "Navigating to backend folder"
+cd safespace-backend
 
 # Deleting old venv, if any
 if [ -d "venv" ]; then
