@@ -6,6 +6,7 @@ cd /home/ec2-user/myapp/safespace-backend
 
 echo "Marking repo as safe for Git..."
 git config --global --add safe.directory "$(pwd)"
+git config --global --get-all safe.directory
 
 echo "Pulling latest changes..."
 git pull origin develop  # change to 'main' when ready
