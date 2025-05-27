@@ -7,7 +7,11 @@ echo "Changing to app directory..."
 cd /home/ec2-user/myapp
 
 echo "Marking repo as safe for Git..."
-git config --global --add safe.directory "$(pwd)"
+sudo git config --system --add safe.directory "$(pwd)"
+
+# Optional sanity check:
+echo "Current user: $(whoami)"
+echo "Repo owner: $(stat -c '%U' .)"
 
 echo "Checking safe for Git..."
 git config --global --get-all safe.directory
