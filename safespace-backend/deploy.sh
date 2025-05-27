@@ -15,7 +15,7 @@ echo "Current user: $(whoami)"
 echo "Repo owner: $(stat -c '%U' .)"
 
 echo "Checking safe for Git..."
-git config --global --get-all safe.directory
+sudo git config --system --get-all safe.directory
 
 echo "Changing to develop branch"
 git checkout develop
