@@ -7,8 +7,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 class Env:
     FLASK_ENV = os.getenv('FLASK_ENV')
     
-    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-    
 class DevelopmentConfig:
     POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'postgres')
@@ -19,6 +17,7 @@ class DevelopmentConfig:
         f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}'
         )
     
+    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
     SQLALCHEMY_DATABASE_URI = POSTGRES_URI
     DEBUG = True
     CACHE_TYPE = 'SimpleCache'
@@ -32,6 +31,7 @@ class TestingConfig:
 
 class ProductionConfig:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    FIREBASE_CREDENTIAL_PATH = "/home/ec2-user/myapp/secrets/firebase_credentials.json"
     CACHE_TYPE = 'SimpleCache'
     CORS_ORIGINS = ["https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com",
                     "https://safespace-streamlit-app-cc827f30d6b6.herokuapp.com",
