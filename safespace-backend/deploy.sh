@@ -17,11 +17,8 @@ echo "Repo owner: $(stat -c '%U' .)"
 echo "Checking safe for Git..."
 sudo git config --system --get-all safe.directory
 
-echo "Changing to develop branch"
-git checkout develop
-
 echo "Pulling latest changes..."
-git pull origin develop  # change to 'main' when ready
+git pull
 
 echo "Navigating to backend folder"
 cd safespace-backend
