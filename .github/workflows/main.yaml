@@ -80,15 +80,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --targets "Key=InstanceIds,Values=i-062fae0082e081d5a" \
             --comment "Remote deploy from GitHub Actions" \
-            --parameters '{"commands":["mkdir -p /home/ec2-user/myapp/secrets",
-                                      "printf \"%s\" '"'"'${{ secrets.FIREBASE_CREDENTIAL }}'"'"' > /home/ec2-user/myapp/secrets/firebase_credentials.json",
-                                      "chmod 600 /home/ec2-user/myapp/secrets/firebase_credentials.json",
-                                      "cd /home/ec2-user/myapp", 
-                                      "git config --global --add safe.directory $(pwd)", 
-                                      "cd safespace-backend", 
-                                      "git config --global --add safe.directory $(pwd)", 
-                                      "chmod +x deploy.sh", 
-                                      "bash deploy.sh"]}' \
+            --parameters '{"commands":["mkdir -p /home/ec2-user/myapp/secrets", "printf \"%s\" '"'"'${{ secrets.FIREBASE_CREDENTIAL }}'"'"' > /home/ec2-user/myapp/secrets/firebase_credentials.json", "chmod 600 /home/ec2-user/myapp/secrets/firebase_credentials.json", "cd /home/ec2-user/myapp", "git config --global --add safe.directory $(pwd)", "cd safespace-backend", "git config --global --add safe.directory $(pwd)", "chmod +x deploy.sh", "bash deploy.sh"]}' \
             --region us-east-2 \
             --output text \
             --query "Command.CommandId" > command_id.txt
