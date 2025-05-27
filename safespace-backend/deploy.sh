@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 export HOME=/home/ec2-user
 
