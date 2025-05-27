@@ -81,7 +81,7 @@ jobs:
             --targets "Key=InstanceIds,Values=i-062fae0082e081d5a" \
             --comment "Remote deploy from GitHub Actions" \
             --parameters '{"commands":["mkdir -p /home/ec2-user/myapp/secrets",
-                                      "echo \"$FIREBASE_CREDENTIAL\" > /home/ec2-user/myapp/secrets/firebase_credentials.json",
+                                      "printf \"%s\" '"'"'${{ secrets.FIREBASE_CREDENTIAL }}'"'"' > /home/ec2-user/myapp/secrets/firebase_credentials.json",
                                       "chmod 600 /home/ec2-user/myapp/secrets/firebase_credentials.json",
                                       "cd /home/ec2-user/myapp", 
                                       "git config --global --add safe.directory $(pwd)", 
@@ -93,7 +93,7 @@ jobs:
             --output text \
             --query "Command.CommandId" > command_id.txt
         env:
-          FIREBASE_CREDENTIALS_JSON: ${{ secrets.FIREBASE_CREDENTIAL }}   
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIAL }}   
 
       - name: Wait for command to complete
         run: |
