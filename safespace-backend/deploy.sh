@@ -66,6 +66,5 @@ echo "Restarting service..."
 sudo systemctl restart safespace-backend
 
 echo "Restarting Gunicorn..."
-pkill gunicorn
-nohup venv/bin/gunicorn flask_app:create_app --factory --workers 4 --bind 0.0.0.0:8000 > gunicorn.log 2>&1 &
+sudo systemctl restart gunicorn
 echo "Gunicorn restarted!"
