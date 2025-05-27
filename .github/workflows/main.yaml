@@ -83,9 +83,7 @@ jobs:
             --parameters '{"commands":["mkdir -p /home/ec2-user/myapp/secrets", "cd /home/ec2-user/myapp", "git config --global --add safe.directory $(pwd)", "cd safespace-backend", "git config --global --add safe.directory $(pwd)", "chmod +x deploy.sh", "bash deploy.sh"]}' \
             --region us-east-2 \
             --output text \
-            --query "Command.CommandId" > command_id.txt
-        env:
-          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIAL }}   
+            --query "Command.CommandId" > command_id.txt   
 
       - name: Wait for command to complete
         run: |
