@@ -5,7 +5,7 @@ import os
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class Env:
-    FLASK_ENV = os.getenv('FLASK_ENV')
+    FLASK_ENV = os.getenv('FLASK_ENV', 'ProductionConfig')
     
     FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
     
