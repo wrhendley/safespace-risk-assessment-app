@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 echo "Changing to app directory..."
 cd /home/ec2-user/myapp/safespace-backend
