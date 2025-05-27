@@ -80,14 +80,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --targets "Key=InstanceIds,Values=i-062fae0082e081d5a" \
             --comment "Remote deploy from GitHub Actions" \
-            --parameters '{"commands":[
-              "export HOME=/home/ec2-user",
-              "cd /home/ec2-user/myapp",
-              "git config --global --add safe.directory $(pwd)",
-              "cd safespace-backend",
-              "git config --global --add safe.directory $(pwd)",
-              "./deploy.sh"
-            ]}' \
+            --parameters '{"commands":["cd /home/ec2-user/myapp", "git config --global --add safe.directory $(pwd)", "cd safespace-backend", "git config --global --add safe.directory $(pwd)", "bash deploy.sh"]}' \
             --region us-east-2 \
             --output text \
             --query "Command.CommandId" > command_id.txt
