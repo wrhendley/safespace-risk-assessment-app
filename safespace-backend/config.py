@@ -10,9 +10,9 @@ class Env:
     FIREBASE_CREDENTIAL_PATH = "/home/ec2-user/myapp/secrets/firebase_credentials.json"
     
 class DevelopmentConfig:
-    POSTGRES_USER = os.getenv('POSTGRES_USER')
-    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-    POSTGRES_DB = os.getenv('POSTGRES_DB')
+    POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
+    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'postgres')
+    POSTGRES_DB = os.getenv('POSTGRES_DB', 'safespace')
     POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
     POSTGRES_PORT = os.getenv('POSTGRES_PORT', 5432)
     POSTGRES_URI = (
