@@ -64,3 +64,8 @@ flask db upgrade
 
 echo "Restarting service..."
 sudo systemctl restart safespace-backend
+
+echo "Restarting Gunicorn..."
+pkill gunicorn
+nohup gunicorn -w 4 -b 0.0.0.0:8000 app:app > gunicorn.log 2>&1 &
+echo "Gunicorn restarted!"
