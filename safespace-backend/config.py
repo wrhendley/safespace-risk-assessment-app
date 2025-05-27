@@ -31,7 +31,7 @@ class TestingConfig:
     CORS_ORIGINS = ["http://localhost:5173"]
 
 class ProductionConfig:
-    SQLALCHEMY_DATABASE_URI = os.environ.get('')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     CACHE_TYPE = 'SimpleCache'
     CORS_ORIGINS = ["https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com",
                     "https://safespace-streamlit-app-cc827f30d6b6.herokuapp.com",
