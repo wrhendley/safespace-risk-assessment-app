@@ -34,9 +34,9 @@ def create_app(config_name = 'ProductionConfig'):
     migrate.init_app(app, db)
     
     # Register blueprints
-    app.register_blueprint(accounts_bp, url_prefix='/api/accounts')
-    app.register_blueprint(users_bp, url_prefix='/api/users')
-    app.register_blueprint(admins_bp, url_prefix='/api/admin/users')
-    app.register_blueprint(simulations_bp, url_prefix='/api/simulations')
+    app.register_blueprint(accounts_bp, url_prefix='/accounts')
+    app.register_blueprint(users_bp, url_prefix='/users')
+    app.register_blueprint(admins_bp, url_prefix='/admin/users')
+    app.register_blueprint(simulations_bp, url_prefix='/simulations')
     
     return app
