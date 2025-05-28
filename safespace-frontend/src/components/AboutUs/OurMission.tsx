@@ -1,22 +1,9 @@
-import React, { useEffect } from "react";
-import { Container, Button, Row, Col, Image } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import SignOutButton from "../Authorization/SignOutButton";
+import React from "react";
+import { Container, Row, Col, Image } from "react-bootstrap";
 import { faChevronCircleDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function OurMission(){
-    const navigate = useNavigate();
-    const { user } = useAuth();
-
-    useEffect(()=>{
-        if (user){
-            const idToken = user?.getIdToken();
-            console.log(idToken);
-        }
-    },[user]);
-
     return (
         <>
         <Container className="p-5 my-5 rounded mb-3" id="our-mission">

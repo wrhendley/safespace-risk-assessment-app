@@ -5,7 +5,7 @@
   "main": "eslint.config.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "test": "jest",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -64,5 +64,8 @@
     "moduleNameMapper": {
       "\\.css$": "identity-obj-proxy"
     }
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

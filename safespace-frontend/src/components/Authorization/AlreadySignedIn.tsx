@@ -2,6 +2,8 @@ import { Container, Row, Col, Button, Image } from 'react-bootstrap';
 import { useAuth } from '../../context/AuthContext';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import DashboardButton from '../Navigation/DashboardButton';
+import SignOutButton from '../Navigation/SignOutButton';
 
 function AlreadySignedIn(){
     const { logOut} = useAuth();
@@ -20,8 +22,7 @@ function AlreadySignedIn(){
                     <h1 className='text-danger'>Already Signed In</h1>
                     <p>Sorry, looks like you're already signed in. If you'd like to switch users, sign out and try again. </p>
                     <div className='text-center'>
-                        <><Button variant="primary" onClick={()=>navigate('/userdashboard')}>Go to Dashboard</Button>
-                        <Button variant="secondary" onClick={()=>logOut()}>Sign Out</Button></>
+                        <><DashboardButton/><SignOutButton/></>
                     </div>
                     
                 </Col>

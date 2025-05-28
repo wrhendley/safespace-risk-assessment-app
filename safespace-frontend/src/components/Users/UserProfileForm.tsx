@@ -39,9 +39,7 @@ const UserProfileForm: React.FC = () => {
         if (user) {
             try {
                 // Call API to delete the user account
-                // const idToken = await user.getIdToken(true);
-                const response = await api.delete(`/users/`, 
-                    // {headers: {Authorization: `Bearer ${idToken}`}}
+                const response = await api.delete(`/users/me`, 
                 );
 
                 if (response.status === 200) {
@@ -83,13 +81,11 @@ const UserProfileForm: React.FC = () => {
 
             let response;
             if (newUser) {
-                response = await api.post('/users/', userData, {
-                    // headers: { Authorization: `Bearer ${idToken}` }
+                response = await api.post('/users/me', userData, {
                 });
                 setNewUser(false);
             } else {
-                response = await api.put('/users/', userData, {
-                    // headers: { Authorization: `Bearer ${idToken}` }
+                response = await api.put('/users/me', userData, {
                 });
             }
 
@@ -151,7 +147,7 @@ const UserProfileForm: React.FC = () => {
                     show={showSuccessUpdateModal}
                     onClose={() => {
                         setShowSuccessUpdateModal(false);
-                        navigate('/userdashboard');
+                        navigate('/user-dashboard');
                     }}
                     title="Success!"
                     message="Your user profile has been successfully updated."

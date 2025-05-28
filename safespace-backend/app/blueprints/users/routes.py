@@ -12,6 +12,8 @@ DEFAULT_PER_PAGE = 10
 MAX_PER_PAGE = 100
 
 
+# User Routes
+
 # Create User
 @users_bp.route('/', methods=['POST'])
 @auth_required # applying token verification wrapper to route
@@ -30,23 +32,23 @@ def create_user():
     
     return user_schema.jsonify(new_user), 201
 
-# Get User by ID, auth required
-@users_bp.route('/', methods=['GET'])
-@auth_required # applying token verification wrapper to route
-def get_user():
+# Get Current User 
+@users_bp.route('/me', methods=['GET'])
+@auth_required
+def get_current_user():
     account = g.account
     query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()
 
-    if user == None:
+    if user is None:
         return jsonify({"message": "user not found"}), 404
-    
+
     return user_schema.jsonify(user), 200
 
-# Update User by ID, auth required
-@users_bp.route('/', methods=['PUT'])
+# Update current User, auth required
+@users_bp.route('/me', methods=['PUT'])
 @auth_required # applying token verification wrapper to route
-def update_user():
+def update_current_user():
     account = g.account
     query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()
@@ -65,10 +67,10 @@ def update_user():
     db.session.commit()
     return user_schema.jsonify(user), 200
 
-# Delete User by ID, auth required
-@users_bp.route('/', methods=['DELETE'])
+# Delete current User, auth required
+@users_bp.route('/me', methods=['DELETE'])
 @auth_required # applying token verification wrapper to route
-def delete_user():
+def delete_current_user():
     account = g.account
     query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()

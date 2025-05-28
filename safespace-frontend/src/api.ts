@@ -2,8 +2,7 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000',
-    // baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_URL, // for Vite
     withCredentials: true, // keep this if your backend uses cookies
 });
 

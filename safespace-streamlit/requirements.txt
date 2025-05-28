@@ -1,0 +1,111 @@
+# Core framework
+streamlit==1.45.0
+Flask==3.1.0
+Flask-Caching==2.3.1
+flask-cors==5.0.1
+Flask-Limiter==3.12
+flask-marshmallow==1.3.0
+Flask-Migrate==4.1.0
+Flask-SQLAlchemy==3.1.1
+flask-swagger==0.2.14
+flask-swagger-ui==4.11.1
+
+# Data handling and plotting
+pandas==2.2.3
+numpy==2.2.5
+matplotlib==3.10.1
+plotly==6.0.1
+altair==5.5.0
+pydeck==0.9.1
+
+# Financial data
+yfinance==0.2.61
+multitasking==0.0.11
+
+# Firebase and Google Cloud
+firebase-admin==6.7.0
+google-api-core==2.24.2
+google-api-python-client==2.167.0
+google-auth==2.39.0
+google-auth-httplib2==0.2.0
+google-cloud-core==2.4.3
+google-cloud-firestore==2.20.2
+google-cloud-storage==3.1.0
+google-crc32c==1.7.1
+google-resumable-media==2.7.2
+googleapis-common-protos==1.70.0
+grpcio==1.71.0
+grpcio-status==1.71.0
+httplib2==0.22.0
+
+# Authentication
+PyJWT==2.10.1
+python-jwt==2.0.1
+rsa==4.9.1
+pycryptodome==3.22.0
+oauth2client==4.1.3
+
+# Database and ORM
+SQLAlchemy==2.0.40
+psycopg2-binary==2.9.10
+peewee==3.18.1
+
+# Serialization
+marshmallow==3.26.1
+marshmallow-sqlalchemy==1.4.2
+
+# HTML parsing
+beautifulsoup4==4.13.4
+lxml==5.4.0
+soupsieve==2.7
+
+# Config and environment
+python-dotenv==1.1.0
+
+# API requests
+requests==2.32.3
+urllib3==1.26.20
+requests-toolbelt==0.10.1
+
+# Utility packages
+cachetools==5.5.2
+watchdog==6.0.0
+typing_extensions==4.13.2
+wrapt==1.17.2
+attrs==25.3.0
+colorama==0.4.6
+itsdangerous==2.2.0
+Werkzeug==3.1.3
+Jinja2==3.1.6
+MarkupSafe==3.0.2
+click==8.1.8
+
+# Misc
+PyYAML==6.0.2
+pillow==11.2.1
+Deprecated==1.2.18
+fonttools==4.57.0
+kiwisolver==1.4.8
+cycler==0.12.1
+toml==0.10.2
+Pygments==2.19.1
+rich==13.9.4
+
+# JSON schema validation
+jsonschema==4.23.0
+jsonschema-specifications==2025.4.1
+referencing==0.36.2
+rpds-py==0.24.0
+
+# Others you may need (safe to keep)
+blinker==1.9.0
+msgpack==1.1.0
+pyasn1==0.6.1
+pyasn1_modules==0.4.2
+certifi==2025.1.31
+charset-normalizer==3.4.1
+idna==3.10
+six==1.17.0
+platformdirs==4.3.8
+packaging==24.2
+iniconfig==2.1.0

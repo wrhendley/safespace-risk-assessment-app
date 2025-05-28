@@ -23,64 +23,72 @@ const SignUp = () => {
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
-    
+
+        setErrorPage(null); // clear old errors
+
         if (!email || !password || !confirmPassword || !role) {
             setErrorPage("Please fill out all required fields.");
             return;
         }
-    
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setErrorPage("Please enter a valid email address.");
             return;
         }
-    
+
         if (password !== confirmPassword) {
             setErrorPage("Passwords do not match.");
             return;
         }
-    
+
         const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
         if (!strongPasswordRegex.test(password)) {
             setErrorPage("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
             return;
         }
-    
+
         try {
-            // First, register with Firebase
+            // 1. Register user in Firebase
             await signUp(email, password);
 
-            setJustLoggedIn(true);
-            
-            // Get ID token from the signed-in user
-            // wait until the user context is populated
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("User not available after registration.");
-            // const idToken = await currentUser.getIdToken(true);
 
-            // Send the email verification link to the user
-            await sendEmailVerification(currentUser);
+            const idToken = await currentUser.getIdToken(true);
 
-            // Send to backend
+            // 2. Try creating user in backend
             const payload = {
                 email: email,
                 firebase_uid: currentUser.uid,
                 role: role || "user",
             };
 
-            const response = await api.post("/accounts/", payload,
-                // {headers: {Authorization: `Bearer ${idToken}`}}
-            );
-    
-            if (response.status < 200 || response.status>=300) {
-                throw new Error("Failed to create account.");
+            const response = await api.post("/accounts/", payload, {
+                headers: { Authorization: `Bearer ${idToken}` },
+            });
+
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error("Failed to create account in backend.");
             }
-    
+
+            // 3. If backend succeeded, send verification email
+            await sendEmailVerification(currentUser);
+
+            setJustLoggedIn(true);
             setShowSuccessModal(true);
         } catch (err: any) {
+            // Rollback: Delete Firebase user if backend fails
+            if (auth.currentUser) {
+                await auth.currentUser.delete().catch(() => {
+                    console.warn("Failed to delete Firebase user after backend error.");
+                });
+            }
+
             setErrorPage(err.message || "An error occurred during the registration process.");
         }
     };
+
 
     if (loading) {
         return <LoadingPage />;
