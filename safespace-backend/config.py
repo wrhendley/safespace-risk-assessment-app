@@ -7,7 +7,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 class Env:
     FLASK_ENV = os.getenv('FLASK_ENV', 'ProductionConfig')
     
-    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', '/home/ec2-user/secrets/firebase_credentials.json')
+    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', '/home/ec2-user/myapp/secrets/firebase_credentials.json')
     
 class DevelopmentConfig:
     POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
