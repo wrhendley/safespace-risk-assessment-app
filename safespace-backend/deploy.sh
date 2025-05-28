@@ -8,7 +8,7 @@ echo "Changing to app directory..."
 cd /home/ec2-user/myapp
 
 echo "Marking repo as safe for Git..."
-sudo git config --system --add safe.directory "$(pwd)"
+# sudo git config --system --add safe.directory "$(pwd)"
 
 # Optional sanity check:
 echo "Current user: $(whoami)"
