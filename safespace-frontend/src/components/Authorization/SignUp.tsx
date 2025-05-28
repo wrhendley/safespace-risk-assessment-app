@@ -94,7 +94,7 @@ const SignUp = () => {
         return <LoadingPage />;
     }
 
-    if (user && !justLoggedIn) {
+    if (user && !justLoggedIn && !loading && !errorPage) {
         return <AlreadySignedIn />;
     }
 
