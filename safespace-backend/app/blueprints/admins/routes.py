@@ -34,8 +34,13 @@ def create_admin():
         return jsonify({"error": "Internal server error"}), 500
     
     new_admin = User(**admin_data)
-    db.session.add(new_admin)
-    db.session.commit()
+    
+    try:
+        db.session.add(new_admin)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
     return admin_schema.jsonify(new_admin), 201
 
@@ -106,7 +111,12 @@ def update_user(user_id):
     for field, value in user_data.items():
         setattr(user, field, value)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
+    
     return user_schema.jsonify(user), 200
 
 # Delete User by ID, auth required
@@ -116,6 +126,12 @@ def delete_user(user_id):
     account = g.account
     query = select(User).where(User.account_id == account.id, User.id == user_id)
     user = db.session.execute(query).scalars().first()
-    db.session.delete(user)
-    db.session.commit()
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
+    
     return jsonify({"message": f"succesfully deleted user {user.id}"}), 200
