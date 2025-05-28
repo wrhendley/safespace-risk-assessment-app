@@ -27,9 +27,13 @@ def create_user():
         return jsonify(e.messages), 400
     
     new_user = User(**user_data)
-    db.session.add(new_user)
-    db.session.commit()
     
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
     return user_schema.jsonify(new_user), 201
 
 # Get Current User 
@@ -64,7 +68,13 @@ def update_current_user():
     for field, value in user_data.items():
         setattr(user, field, value)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
+    
+    db.session.refresh(user)
     return user_schema.jsonify(user), 200
 
 # Delete current User, auth required
@@ -74,6 +84,12 @@ def delete_current_user():
     account = g.account
     query = select(User).where(User.account_id == account.id)
     user = db.session.execute(query).scalars().first()
-    db.session.delete(user)
-    db.session.commit()
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
+    
     return jsonify({"message": f"succesfully deleted user {user.id}"}), 200
