@@ -50,7 +50,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 role: accountData.role
             });       
             } catch (err) {
-            console.error("Failed to fetch user profile", err);
+                if (err.response?.status === 404) {
+                    setUserProfile(null); // no user found is ok
+                } else {
+                    console.error("Failed to fetch user", err);
+                }
         } finally {
             setIsLoading(false);
         }
