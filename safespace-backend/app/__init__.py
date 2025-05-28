@@ -40,4 +40,3 @@ def create_app(config_name = 'ProductionConfig'):
     app.register_blueprint(simulations_bp, url_prefix='/simulations')
     
     return app
-
