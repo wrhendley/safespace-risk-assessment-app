@@ -60,7 +60,7 @@ class TestSimulations(unittest.TestCase):
                 'Authorization': 'Bearer test_token',
                 'Content-Type': 'application/json'
             }
-            response = self.client.post('/api/simulations/investments', json=data, headers=headers)
+            response = self.client.post('/simulations/investments', json=data, headers=headers)
             self.assertEqual(response.status_code, 201)
             assessment = InvestmentRiskAssessment.query.first()
             self.assertIsNotNone(assessment)
@@ -100,7 +100,7 @@ class TestSimulations(unittest.TestCase):
                 'Authorization': 'Bearer test_token',
                 'Content-Type': 'application/json'
             }
-            response = self.client.post('/api/simulations/investments', json=data, headers=headers)
+            response = self.client.post('/simulations/investments', json=data, headers=headers)
             self.assertEqual(response.status_code, 400)
 
     @patch('app.utils.util.auth.verify_id_token')
@@ -137,11 +137,11 @@ class TestSimulations(unittest.TestCase):
                 'Authorization': 'Bearer test_token',
                 'Content-Type': 'application/json'
             }
-            response = self.client.post('/api/simulations/investments', json=data, headers=headers)
+            response = self.client.post('/simulations/investments', json=data, headers=headers)
             self.assertEqual(response.status_code, 201)
             
             assessment = InvestmentRiskAssessment.query.first()
-            response = self.client.get('/api/simulations/investments', headers=headers)
+            response = self.client.get('/simulations/investments', headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn('risk_score', response.json[0])
 
@@ -150,7 +150,7 @@ class TestSimulations(unittest.TestCase):
         mock_verify_id_token.return_value = {"user_id": "test_uid"}
         
         with self.client:
-            response = self.client.get('/api/simulations/investments', headers={'Authorization': 'Bearer test_token'})
+            response = self.client.get('/simulations/investments', headers={'Authorization': 'Bearer test_token'})
             self.assertEqual(response.status_code, 404)
             self.assertIn('No investment simulations found', response.json.get('message'))
 
@@ -180,7 +180,7 @@ class TestSimulations(unittest.TestCase):
                 'Authorization': 'Bearer test_token',
                 'Content-Type': 'application/json'
             }
-            response = self.client.post('/api/simulations/loans', json=data, headers=headers)
+            response = self.client.post('/simulations/loans', json=data, headers=headers)
             self.assertEqual(response.status_code, 201)
             assessment = LoanRiskAssessment.query.first()
             self.assertIsNotNone(assessment)
@@ -211,7 +211,7 @@ class TestSimulations(unittest.TestCase):
                 'Authorization': 'Bearer test_token',
                 'Content-Type': 'application/json'
             }
-            response = self.client.post('/api/simulations/loans', json=data, headers=headers)
+            response = self.client.post('/simulations/loans', json=data, headers=headers)
             self.assertEqual(response.status_code, 400)
 
     @patch('app.utils.util.auth.verify_id_token')
@@ -239,11 +239,11 @@ class TestSimulations(unittest.TestCase):
                 'Authorization': 'Bearer test_token',
                 'Content-Type': 'application/json'
             }
-            response = self.client.post('/api/simulations/loans', json=data, headers=headers)
+            response = self.client.post('/simulations/loans', json=data, headers=headers)
             self.assertEqual(response.status_code, 201)
             
             assessment = LoanRiskAssessment.query.first()
-            response = self.client.get('/api/simulations/loans', headers=headers)
+            response = self.client.get('/simulations/loans', headers=headers)
             self.assertEqual(response.status_code, 200)
             self.assertIn('loan_amount', response.json[0])
             self.assertIn(assessment.loan_amount, response.json[0].values())
@@ -253,6 +253,6 @@ class TestSimulations(unittest.TestCase):
         mock_verify_id_token.return_value = {"user_id": "test_uid"}
         
         with self.client:
-            response = self.client.get('/api/simulations/loans', headers={'Authorization': 'Bearer test_token'})
+            response = self.client.get('/simulations/loans', headers={'Authorization': 'Bearer test_token'})
             self.assertEqual(response.status_code, 404)
             self.assertIn('No loan simulations found', response.json.get('message'))
