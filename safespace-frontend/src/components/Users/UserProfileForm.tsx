@@ -81,7 +81,7 @@ const UserProfileForm: React.FC = () => {
 
             let response;
             if (newUser) {
-                response = await api.post('/users/me', userData, {
+                response = await api.post('/users', userData, {
                 });
                 setNewUser(false);
             } else {
