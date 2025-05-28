@@ -16,6 +16,7 @@ const SignUp = () => {
     const [role, setRole] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [justLoggedIn, setJustLoggedIn] = useState<boolean>(false);
+    const [submitting, setSubmitting] = useState<boolean>(false);
     const [errorPage, setErrorPage] = useState<string | null>(null);
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const SignUp = () => {
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
-
+        setSubmitting(true);
         setErrorPage(null); // clear old errors
 
         if (!email || !password || !confirmPassword || !role) {
@@ -84,17 +85,18 @@ const SignUp = () => {
                     console.warn("Failed to delete Firebase user after backend error.");
                 });
             }
-
             setErrorPage(err.message || "An error occurred during the registration process.");
+        }finally{
+            setSubmitting(false);
         }
     };
 
 
-    if (loading) {
+    if (loading || submitting) {
         return <LoadingPage />;
     }
 
-    if (user && !justLoggedIn && !loading && !errorPage) {
+    if (user && !justLoggedIn && !loading && !errorPage && !submitting) {
         return <AlreadySignedIn />;
     }
 
