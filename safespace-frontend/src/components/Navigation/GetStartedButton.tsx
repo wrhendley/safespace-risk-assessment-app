@@ -1,15 +1,16 @@
+// GetStartedButton.tsx
+// This button navigates the user to the Sign Up page. 
+
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function GetStartedButton(){
+    // Navigation
     const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate('/accounts/signup');
-    }
     return(
-        <Button variant='secondary' onClick={()=>handleClick()}>Get Started</Button>
+        <Button variant='secondary' onClick={()=>navigate('/accounts/signup')}>Get Started</Button>
     )
 }
 

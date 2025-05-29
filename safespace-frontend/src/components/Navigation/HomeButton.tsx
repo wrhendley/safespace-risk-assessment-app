@@ -1,16 +1,16 @@
+// HomeButton.tsx
+// This button navigates the user to the home page. 
+
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 
 function HomeButton(){
+    // Navigation
     const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate('/');
-    }
     return(
-        <Button variant='primary' onClick={()=>handleClick()}>Go Home</Button>
+        <Button variant='primary' onClick={()=>navigate('/')}>Go Home</Button>
     )
 }
 

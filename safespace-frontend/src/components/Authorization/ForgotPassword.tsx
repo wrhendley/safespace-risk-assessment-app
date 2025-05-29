@@ -1,3 +1,6 @@
+// ForgotPassword.tsx
+// This page allows users to request a password reset email via Firebase Authentication.
+
 import React, { FormEvent, useState } from 'react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
@@ -6,15 +9,20 @@ import { Container, Row, Col, Form, Button, Image, Alert } from 'react-bootstrap
 import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
-    const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
+    // Form and state management
+    const [email, setEmail] = useState<string>('');
+    const [error, setError] = useState<string>('');
     const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+
+    // React Router navigation hook
     const navigate = useNavigate();
 
-    const handleSubmit = async (e:FormEvent) => {
+    // Handles password reset email submission
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setError('');
 
+        // Basic form validation
         if (!email) {
             setError('Email is required.');
             return;
@@ -27,6 +35,7 @@ const ForgotPassword = () => {
         }
 
         try {
+            // Send reset email using Firebase
             await sendPasswordResetEmail(auth, email);
             setEmail('');
             setShowSuccessModal(true);
@@ -37,46 +46,55 @@ const ForgotPassword = () => {
 
     return (
         <Container className="p-5 my-5 rounded flex-grow-1 d-flex align-items-center">
-                <Row className="align-items-center">
-                    <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
+            <Row className="align-items-center">
+                {/* Form column */}
+                <Col xs={12} md={6} order={{ xs: 2, md: 1 }}>
                     <h1>Forgotten password? Let's reset it.</h1>
                     <Form onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3" controlId="loginEmail">
+                        {/* Email input */}
+                        <Form.Group className="mb-3" controlId="resetEmail">
                             <Form.Label>Email address</Form.Label>
                             <Form.Control 
                                 type="email" 
-                                placeholder="Enter your email"                     
+                                placeholder="Enter your email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}/>
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
                         </Form.Group>
-                        <div className='text-center'>
-                            <Button variant='primary' type='submit'>Submit</Button>
-                            <Button variant='secondary' onClick={()=>navigate('/')}>Cancel</Button>
+
+                        {/* Action buttons */}
+                        <div className="text-center">
+                            <Button variant="primary" type="submit">Submit</Button>{' '}
+                            <Button variant="secondary" onClick={() => navigate('/')}>Cancel</Button>
                         </div>
-                        {(error) && (
-                            <Alert variant="danger">
+
+                        {/* Error message */}
+                        {error && (
+                            <Alert variant="danger" className="mt-3">
                                 {error}
                             </Alert>
-                        )}                
-                        </Form>
-                        <SuccessModal 
-                        show={showSuccessModal}
-                        onClose={() => {
-                            setShowSuccessModal(false);
-                            navigate('/accounts/login');
-                        }}
-                        title="Password Reset Email Sent!"
-                        message= {`Please check your inbox and junk just in case.`}
-                        buttonText="Close"
-                        />
-                    </Col>
+                        )}
+                    </Form>
+                </Col>
 
-                    <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
-                        <Image src="/forgot-password-img.jpg" alt="" width="100%" fluid />
-                    </Col>
-
-                </Row>
-            </Container>
+                {/* Illustration column */}
+                <Col xs={12} md={6} order={{ xs: 1, md: 2 }} className="text-center mb-4 mb-md-0">
+                    <Image src="/forgot-password-img.jpg" alt="Forgot password illustration" width="100%" fluid />
+                </Col>
+            </Row>
+            
+            {/* Success modal shown after reset email is sent */}
+            <SuccessModal 
+                show={showSuccessModal}
+                onClose={() => {
+                    setShowSuccessModal(false);
+                    navigate('/accounts/login');
+                }}
+                title="Password Reset Email Sent!"
+                message="Please check your inbox—and your junk folder just in case."
+                buttonText="Close"
+            />
+        </Container>
     );
 };
 
