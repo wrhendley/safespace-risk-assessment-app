@@ -15,7 +15,7 @@ MAX_PER_PAGE = 100
 # User Routes
 
 # Create User
-@users_bp.route('/', methods=['POST'])
+@users_bp.route('/', methods=['POST'], strict_slashes=False)
 @auth_required # applying token verification wrapper to route
 @limiter.limit("5 per minute")
 def create_user():
@@ -37,7 +37,7 @@ def create_user():
     return user_schema.jsonify(new_user), 201
 
 # Get Current User 
-@users_bp.route('/me', methods=['GET'])
+@users_bp.route('/me', methods=['GET'], strict_slashes=False)
 @auth_required
 def get_current_user():
     account = g.account
@@ -50,7 +50,7 @@ def get_current_user():
     return user_schema.jsonify(user), 200
 
 # Update current User, auth required
-@users_bp.route('/me', methods=['PUT'])
+@users_bp.route('/me', methods=['PUT'], strict_slashes=False)
 @auth_required # applying token verification wrapper to route
 def update_current_user():
     account = g.account
@@ -78,7 +78,7 @@ def update_current_user():
     return user_schema.jsonify(user), 200
 
 # Delete current User, auth required
-@users_bp.route('/me', methods=['DELETE'])
+@users_bp.route('/me', methods=['DELETE'], strict_slashes=False)
 @auth_required # applying token verification wrapper to route
 def delete_current_user():
     account = g.account
