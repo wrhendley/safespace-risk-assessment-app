@@ -63,7 +63,7 @@ def get_all_users():
 
         users_data = []
         for user, account in results:
-            user_data = user_schema.dump(user)
+            user_data = admin_schema.dump(user)
             user_data["account"] = {"id": account.id, "email": account.email, "role": account.role}
             users_data.append(user_data)
 
@@ -86,7 +86,7 @@ def get_user(user_id):
             logging.warning(f"User with ID {user_id} not found for account {account.id}")
             return jsonify({"message": "user not found"}), 404
 
-        return user_schema.jsonify(user), 200
+        return admin_schema.jsonify(user), 200
 
     except Exception as e:
         logging.error(f"Error fetching user with ID {user_id}: {str(e)}")
@@ -104,7 +104,7 @@ def update_user(user_id):
         return jsonify({"message": "user not found"}), 404
 
     try: 
-        user_data = user_create_schema.load(request.json)
+        user_data = admin_create_schema.load(request.json)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
@@ -117,7 +117,7 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
-    return user_schema.jsonify(user), 200
+    return admin_schema.jsonify(user), 200
 
 # Delete User by ID, auth required
 @admins_bp.route('/<int:user_id>', methods=['DELETE'])
