@@ -153,12 +153,12 @@ def loan_risk_assessment(token):
             "credit_score": credit_score,
             "after_tax_income": after_tax_income,
             "monthly_debt": monthly_debt,
-            "dti_ratio": dti_ratio,
-            "lti_ratio": lti_ratio,
+            "debt_to_income_ratio": dti_ratio,
+            "loan_to_income_ratio": lti_ratio,
             "credit_utilization": credit_utilization,
             "loan_risk": risk,
             "num_dependents": num_dependents,
-            "income_sources": income_sources,
+            "income_source_count": income_sources,
             "credit_card_limit": credit_card_limit,
             "has_real_estate": has_real_estate
         }
