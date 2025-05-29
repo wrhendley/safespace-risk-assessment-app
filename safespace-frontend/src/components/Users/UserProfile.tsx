@@ -6,11 +6,18 @@ import NoAccess from "../LandingPages/NoAccess";
 import LoadingPage from "../LandingPages/LoadingPage";
 import DashboardButton from "../Navigation/DashboardButton";
 import { useUser } from '../../context/UserContext';
+import { useEffect } from "react";
 
 const UserProfile: React.FC = () => {
     const { user, loading: authLoading, error } = useAuth();
     const { userProfile, isLoading: profileLoading } = useUser();
     const navigate = useNavigate();
+
+    useEffect(()=>{
+        if(!userProfile && !profileLoading && !authLoading){
+            navigate('/users/');
+        }  
+    }, [])
 
     if (!user && !authLoading && !profileLoading) {
         return <NoAccess />;
@@ -19,11 +26,7 @@ const UserProfile: React.FC = () => {
     if (authLoading || profileLoading) {
         return <LoadingPage />;
     }
-
-    if(!userProfile && !profileLoading && !authLoading){
-        navigate('/users/');
-    }    
-
+    
     return userProfile ? (
         <Container className="p-5 my-5 rounded">
             <Row className="justify-content-center">
