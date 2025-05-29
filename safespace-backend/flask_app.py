@@ -9,6 +9,7 @@ if not env:
 print(f"Starting app with config: {env}")
 
 app = create_app(env)
+app.config['SQLALCHEMY_ECHO'] = True  # Enable SQLAlchemy echo for debugging
 
 with app.app_context():
     db.create_all()
