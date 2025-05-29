@@ -1,5 +1,7 @@
+// AboutUs.tsx
+// This page renders all the different snap sections, including OurMission, Team, OurFeatures, and ContactUs.
+
 import React from "react";
-import { Container, Image } from "react-bootstrap";
 import ContactUs from "./ContactUs";
 import Team from "./Team";
 import OurMission from "./OurMission";
@@ -9,7 +11,7 @@ function AboutUs(){
     console.log()
     return (
         <div className='aboutus-scroll-container'>
-        <div className="snap-section">
+            <div className="snap-section">
                 <OurMission />
             </div>
 

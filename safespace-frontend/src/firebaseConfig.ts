@@ -1,14 +1,10 @@
 // firebaseConfig.ts
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 import React from "react";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyBXANc2BHmB4vHfI432U689rMN8QNDkJF8",
     authDomain: "safespace-risk-assessment-app.firebaseapp.com",

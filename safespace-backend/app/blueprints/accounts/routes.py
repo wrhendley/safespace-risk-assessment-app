@@ -24,8 +24,13 @@ def create_account():
         return jsonify(e.messages), 400
     
     new_account = Account(**account_data)
-    db.session.add(new_account)
-    db.session.commit()
+    
+    try:
+        db.session.add(new_account)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
     return account_schema.jsonify(new_account), 201
 

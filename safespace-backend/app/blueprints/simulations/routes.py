@@ -35,8 +35,12 @@ def save_portfolio_simulation():
         return jsonify(err.messages), 400
 
     new_investment_risk_assessment = InvestmentRiskAssessment(**validated_data)
-    db.session.add(new_investment_risk_assessment)
-    db.session.flush()
+    try:
+        db.session.add(new_investment_risk_assessment)
+        db.session.flush()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to create investment risk assessment: {str(e)}"}), 400
     
     assets = []
     for ticker in ticker_data:
@@ -50,7 +54,11 @@ def save_portfolio_simulation():
     
     new_investment_risk_assessment.assets = assets
     
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to save investment risk assessment: {str(e)}"}), 400
     
     return jsonify(investment_schema.dump(new_investment_risk_assessment)), 201
 
@@ -122,8 +130,12 @@ def delete_portfolio_simulation(investment_id):
     if user.id not in [user.id for user in investment_risk_assessment.users]:
         return jsonify({"error": "User not authorized to access this simulation"}), 403
     
-    db.session.delete(investment_risk_assessment)
-    db.session.commit()
+    try:
+        db.session.delete(investment_risk_assessment)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete investment simulation: {str(e)}"}), 400
     
     return jsonify({"message": "Investment simulation deleted successfully"}), 200
 
@@ -189,7 +201,13 @@ def update_portfolio_simulation(investment_id):
             db.session.add(new_asset)
             investment_risk_assessment.assets.append(new_asset)
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update investment simulation: {str(e)}"}), 400
+    
+    db.session.refresh(investment_risk_assessment)
     return jsonify(investment_schema.dump(investment_risk_assessment)), 200
 
 @simulations_bp.route("/loans", methods=["POST"], strict_slashes=False)
@@ -212,8 +230,12 @@ def save_loan_simulation():
     new_loan_risk_assessment = LoanRiskAssessment(**data)
     new_loan_risk_assessment.users.append(user)
     
-    db.session.add(new_loan_risk_assessment)
-    db.session.commit()
+    try:
+        db.session.add(new_loan_risk_assessment)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to create loan risk assessment: {str(e)}"}), 400
     
     return jsonify(loan_schema.dump(new_loan_risk_assessment)), 201
 
@@ -284,8 +306,12 @@ def delete_loan_simulation(loan_id):
     if user.id not in [user.id for user in loan_risk_assessment.users]:
         return jsonify({"error": "User not authorized to access this simulation"}), 403
     
-    db.session.delete(loan_risk_assessment)
-    db.session.commit()
+    try:
+        db.session.delete(loan_risk_assessment)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete loan simulation: {str(e)}"}), 400
     
     return jsonify({"message": "Loan simulation deleted successfully"}), 200
 
@@ -320,6 +346,10 @@ def update_loan_simulation(loan_id):
     for key, value in validated_data.items():
         setattr(loan_risk_assessment, key, value)
     
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update loan simulation: {str(e)}"}), 400
     
     return jsonify(loan_schema.dump(loan_risk_assessment)), 200

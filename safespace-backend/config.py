@@ -1,26 +1,24 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class Env:
-    POSTGRES_USER = os.getenv('POSTGRES_USER')
-    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-    POSTGRES_DB = os.getenv('POSTGRES_DB')
+    FLASK_ENV = os.getenv('FLASK_ENV', 'ProductionConfig')
+    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', '/home/ec2-user/myapp/secrets/firebase_credentials.json')
+    
+class DevelopmentConfig:
+    POSTGRES_USER = os.getenv('POSTGRES_USER', 'postgres')
+    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'postgres')
+    POSTGRES_DB = os.getenv('POSTGRES_DB', 'safespace')
     POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
     POSTGRES_PORT = os.getenv('POSTGRES_PORT', 5432)
     POSTGRES_URI = (
         f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}'
         )
     
-    FLASK_ENV = os.getenv('FLASK_ENV')
-    
-    FIREBASE_CREDENTIAL_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-    FIREBASE_CONFIG = os.getenv('FIREBASE_CONFIG')
-    
-class DevelopmentConfig:
-    SQLALCHEMY_DATABASE_URI = Env.POSTGRES_URI
+    SQLALCHEMY_DATABASE_URI = POSTGRES_URI
     DEBUG = True
     CACHE_TYPE = 'SimpleCache'
     CORS_ORIGINS = ["http://localhost:5173"]
@@ -32,7 +30,8 @@ class TestingConfig:
     CORS_ORIGINS = ["http://localhost:5173"]
 
 class ProductionConfig:
-    SQLALCHEMY_DATABASE_URI = os.environ.get('')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    print(f"Using DATABASE_URL: {SQLALCHEMY_DATABASE_URI}")
     CACHE_TYPE = 'SimpleCache'
     CORS_ORIGINS = ["https://ec2-3-133-140-182.us-east-2.compute.amazonaws.com",
                     "https://safespace-streamlit-app-cc827f30d6b6.herokuapp.com",

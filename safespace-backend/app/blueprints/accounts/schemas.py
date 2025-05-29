@@ -8,17 +8,17 @@ class AccountSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Account # basing schema on Account Table Model
 
-        fields = (
-            'id',
-            'email',
-            'firebase_uid',
-            'role',
-            'is_active',
-            'created_at',
-            'updated_at',
-            'email_verified',
-            'user_id'
-        )
+        # fields = (
+        #     'id',
+        #     'email',
+        #     'firebase_uid',
+        #     'role',
+        #     'is_active',
+        #     'created_at',
+        #     'updated_at',
+        #     'email_verified',
+        #     'user_id'
+        # )
         
     
 # instantiating schemas

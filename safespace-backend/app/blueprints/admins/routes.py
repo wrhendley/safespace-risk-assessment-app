@@ -18,7 +18,7 @@ MAX_PER_PAGE = 100
 # Admin Routes (RBAC)
 
 # Create Admin User
-@admins_bp.route('/', methods=['POST'])
+@admins_bp.route('/', methods=['POST'], strict_slashes=False)
 @admin_required # applying token verification wrapper to route
 @limiter.limit("5 per minute")
 def create_admin():
@@ -34,13 +34,18 @@ def create_admin():
         return jsonify({"error": "Internal server error"}), 500
     
     new_admin = User(**admin_data)
-    db.session.add(new_admin)
-    db.session.commit()
+    
+    try:
+        db.session.add(new_admin)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
     
     return admin_schema.jsonify(new_admin), 201
 
 # Get All Users
-@admins_bp.route('/', methods=['GET'])
+@admins_bp.route('/', methods=['GET'], strict_slashes=False)
 @admin_required
 def get_all_users():
     try:
@@ -58,7 +63,7 @@ def get_all_users():
 
         users_data = []
         for user, account in results:
-            user_data = user_schema.dump(user)
+            user_data = admin_schema.dump(user)
             user_data["account"] = {"id": account.id, "email": account.email, "role": account.role}
             users_data.append(user_data)
 
@@ -69,7 +74,7 @@ def get_all_users():
         return jsonify({"error": "Internal server error"}), 500
 
 # Get User by ID, auth required
-@admins_bp.route('/<int:user_id>', methods=['GET'])
+@admins_bp.route('/<int:user_id>', methods=['GET'], strict_slashes=False)
 @admin_required # applying token verification wrapper to route
 def get_user(user_id):
     try:    
@@ -81,14 +86,14 @@ def get_user(user_id):
             logging.warning(f"User with ID {user_id} not found for account {account.id}")
             return jsonify({"message": "user not found"}), 404
 
-        return user_schema.jsonify(user), 200
+        return admin_schema.jsonify(user), 200
 
     except Exception as e:
         logging.error(f"Error fetching user with ID {user_id}: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Update User by ID, auth required
-@admins_bp.route('/<int:user_id>', methods=['PUT'])
+@admins_bp.route('/<int:user_id>', methods=['PUT'], strict_slashes=False)
 @admin_required # applying token verification wrapper to route
 def update_user(user_id):
     account = g.account
@@ -99,23 +104,34 @@ def update_user(user_id):
         return jsonify({"message": "user not found"}), 404
 
     try: 
-        user_data = user_create_schema.load(request.json)
+        user_data = admin_create_schema.load(request.json)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
     for field, value in user_data.items():
         setattr(user, field, value)
 
-    db.session.commit()
-    return user_schema.jsonify(user), 200
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
+    
+    return admin_schema.jsonify(user), 200
 
 # Delete User by ID, auth required
-@admins_bp.route('/<int:user_id>', methods=['DELETE'])
+@admins_bp.route('/<int:user_id>', methods=['DELETE'], strict_slashes=False)
 @admin_required # applying token verification wrapper to route
 def delete_user(user_id):
     account = g.account
     query = select(User).where(User.account_id == account.id, User.id == user_id)
     user = db.session.execute(query).scalars().first()
-    db.session.delete(user)
-    db.session.commit()
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'There was an error: {str(e)}'}), 400
+    
     return jsonify({"message": f"succesfully deleted user {user.id}"}), 200
